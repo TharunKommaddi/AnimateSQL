@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oracle SQL Visualizer</title>
+    <title>Complete Oracle SQL Visualizer</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 15px;
         }
@@ -31,8 +31,8 @@
         }
 
         .header h1 {
-            font-size: 32px;
-            font-weight: 600;
+            font-size: 36px;
+            font-weight: 700;
             color: #ff6b35;
             margin-bottom: 8px;
             letter-spacing: -0.5px;
@@ -40,7 +40,7 @@
 
         .header p {
             color: #999;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .main {
@@ -71,7 +71,7 @@
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            min-width: 60px;
+            min-width: 80px;
         }
 
         select {
@@ -82,7 +82,7 @@
             font-family: inherit;
             font-size: 11px;
             cursor: pointer;
-            min-width: 120px;
+            min-width: 140px;
         }
 
         select:focus {
@@ -130,7 +130,7 @@
 
         .query-text {
             color: #ff6b35;
-            font-size: 13px;
+            font-size: 14px;
             line-height: 1.6;
         }
 
@@ -189,8 +189,9 @@
             background: #0a0a0a;
             border: 1px solid #333;
             border-radius: 4px;
-            min-width: 280px;
+            min-width: 300px;
             flex: 1;
+            max-width: 450px;
         }
 
         .table-header {
@@ -242,6 +243,12 @@
             color: #ff6b35;
         }
 
+        tr.processing td {
+            background: #1a1a4d;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
         .process-section {
             background: #1a1a1a;
             padding: 20px;
@@ -253,7 +260,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
@@ -297,7 +304,7 @@
         }
 
         .output-table {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -346,6 +353,11 @@
             border-color: #ff6b35;
         }
 
+        .legend-processing {
+            background: #1a1a4d;
+            border-color: #3b82f6;
+        }
+
         @keyframes glow {
             0%, 100% { 
                 box-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
@@ -373,7 +385,7 @@
             }
 
             .header h1 {
-                font-size: 24px;
+                font-size: 28px;
             }
 
             .controls {
@@ -394,6 +406,7 @@
 
             .table-wrapper {
                 min-width: auto;
+                max-width: none;
             }
 
             table {
@@ -425,54 +438,170 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Oracle.SQL.visualize()</h1>
-            <p>// step-by-step query execution with multi-table visualization</p>
+            <h1>Oracle.SQL.Visualizer()</h1>
+            <p>// Complete Oracle SQL syntax visualization with step-by-step execution</p>
         </div>
 
         <div class="main">
             <div class="controls">
                 <div class="control-group">
-                    <label>operation</label>
+                    <label>sql operation</label>
                     <select id="operation">
-                        <option value="SELECT">SELECT</option>
-                        <option value="WHERE">WHERE</option>
-                        <option value="ORDER_BY">ORDER BY</option>
-                        <option value="GROUP_BY">GROUP BY</option>
-                        <option value="HAVING">HAVING</option>
-                        <option value="INNER_JOIN">INNER JOIN</option>
-                        <option value="LEFT_JOIN">LEFT JOIN (+)</option>
-                        <option value="RIGHT_JOIN">RIGHT JOIN</option>
-                        <option value="FULL_JOIN">FULL OUTER JOIN</option>
-                        <option value="UNION">UNION</option>
-                        <option value="UNION_ALL">UNION ALL</option>
-                        <option value="INTERSECT">INTERSECT</option>
-                        <option value="MINUS">MINUS</option>
-                        <option value="SUBQUERY">SUBQUERY</option>
-                        <option value="EXISTS">EXISTS</option>
-                        <option value="CASE_WHEN">CASE WHEN</option>
-                        <option value="WINDOW">WINDOW FUNCTION</option>
-                        <option value="ROWNUM">ROWNUM</option>
-                        <option value="CONNECT_BY">CONNECT BY</option>
-                        <option value="CTE">WITH (CTE)</option>
-                        <option value="MERGE">MERGE</option>
-                        <option value="INSERT">INSERT</option>
-                        <option value="UPDATE">UPDATE</option>
-                        <option value="DELETE">DELETE</option>
+                        <!-- Basic Operations -->
+                        <optgroup label="Basic Operations">
+                            <option value="SELECT">SELECT</option>
+                            <option value="WHERE">WHERE</option>
+                            <option value="ORDER_BY">ORDER BY</option>
+                            <option value="GROUP_BY">GROUP BY</option>
+                            <option value="HAVING">HAVING</option>
+                            <option value="DISTINCT">DISTINCT</option>
+                        </optgroup>
+                        
+                        <!-- Join Operations -->
+                        <optgroup label="Join Operations">
+                            <option value="INNER_JOIN">INNER JOIN</option>
+                            <option value="LEFT_JOIN">LEFT JOIN (+)</option>
+                            <option value="RIGHT_JOIN">RIGHT JOIN</option>
+                            <option value="FULL_JOIN">FULL OUTER JOIN</option>
+                            <option value="CROSS_JOIN">CROSS JOIN</option>
+                            <option value="SELF_JOIN">SELF JOIN</option>
+                            <option value="NATURAL_JOIN">NATURAL JOIN</option>
+                        </optgroup>
+                        
+                        <!-- Set Operations -->
+                        <optgroup label="Set Operations">
+                            <option value="UNION">UNION</option>
+                            <option value="UNION_ALL">UNION ALL</option>
+                            <option value="INTERSECT">INTERSECT</option>
+                            <option value="MINUS">MINUS</option>
+                        </optgroup>
+                        
+                        <!-- Subqueries -->
+                        <optgroup label="Subqueries">
+                            <option value="SUBQUERY">SUBQUERY</option>
+                            <option value="EXISTS">EXISTS</option>
+                            <option value="NOT_EXISTS">NOT EXISTS</option>
+                            <option value="IN_SUBQUERY">IN (subquery)</option>
+                            <option value="ANY_ALL">ANY/ALL</option>
+                            <option value="CORRELATED">CORRELATED</option>
+                        </optgroup>
+                        
+                        <!-- Advanced Functions -->
+                        <optgroup label="Advanced Functions">
+                            <option value="CASE_WHEN">CASE WHEN</option>
+                            <option value="DECODE">DECODE</option>
+                            <option value="NVL">NVL/NVL2</option>
+                            <option value="COALESCE">COALESCE</option>
+                            <option value="NULLIF">NULLIF</option>
+                        </optgroup>
+                        
+                        <!-- Window Functions -->
+                        <optgroup label="Window Functions">
+                            <option value="ROW_NUMBER">ROW_NUMBER()</option>
+                            <option value="RANK">RANK()</option>
+                            <option value="DENSE_RANK">DENSE_RANK()</option>
+                            <option value="LEAD_LAG">LEAD/LAG</option>
+                            <option value="FIRST_VALUE">FIRST_VALUE</option>
+                            <option value="LAST_VALUE">LAST_VALUE</option>
+                            <option value="NTILE">NTILE</option>
+                        </optgroup>
+                        
+                        <!-- Oracle Specific -->
+                        <optgroup label="Oracle Specific">
+                            <option value="ROWNUM">ROWNUM</option>
+                            <option value="ROWID">ROWID</option>
+                            <option value="CONNECT_BY">CONNECT BY</option>
+                            <option value="START_WITH">START WITH</option>
+                            <option value="LEVEL">LEVEL</option>
+                            <option value="SYS_CONNECT_BY_PATH">SYS_CONNECT_BY_PATH</option>
+                        </optgroup>
+                        
+                        <!-- CTE and Advanced -->
+                        <optgroup label="CTE and Advanced">
+                            <option value="CTE">WITH (CTE)</option>
+                            <option value="RECURSIVE_CTE">RECURSIVE CTE</option>
+                            <option value="PIVOT">PIVOT</option>
+                            <option value="UNPIVOT">UNPIVOT</option>
+                            <option value="MODEL">MODEL</option>
+                        </optgroup>
+                        
+                        <!-- Aggregate Functions -->
+                        <optgroup label="Aggregate Functions">
+                            <option value="COUNT">COUNT</option>
+                            <option value="SUM">SUM</option>
+                            <option value="AVG">AVG</option>
+                            <option value="MIN_MAX">MIN/MAX</option>
+                            <option value="STDDEV">STDDEV</option>
+                            <option value="VARIANCE">VARIANCE</option>
+                            <option value="LISTAGG">LISTAGG</option>
+                        </optgroup>
+                        
+                        <!-- DML Operations -->
+                        <optgroup label="DML Operations">
+                            <option value="INSERT">INSERT</option>
+                            <option value="INSERT_SELECT">INSERT SELECT</option>
+                            <option value="UPDATE">UPDATE</option>
+                            <option value="UPDATE_JOIN">UPDATE with JOIN</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="MERGE">MERGE</option>
+                            <option value="UPSERT">UPSERT</option>
+                        </optgroup>
+                        
+                        <!-- Date Functions -->
+                        <optgroup label="Date Functions">
+                            <option value="SYSDATE">SYSDATE</option>
+                            <option value="DATE_ADD">DATE arithmetic</option>
+                            <option value="EXTRACT">EXTRACT</option>
+                            <option value="TO_DATE">TO_DATE</option>
+                            <option value="TO_CHAR">TO_CHAR</option>
+                        </optgroup>
+                        
+                        <!-- String Functions -->
+                        <optgroup label="String Functions">
+                            <option value="SUBSTR">SUBSTR</option>
+                            <option value="INSTR">INSTR</option>
+                            <option value="LENGTH">LENGTH</option>
+                            <option value="UPPER_LOWER">UPPER/LOWER</option>
+                            <option value="TRIM">TRIM</option>
+                            <option value="REPLACE">REPLACE</option>
+                            <option value="REGEXP">REGEXP functions</option>
+                        </optgroup>
+                        
+                        <!-- Performance -->
+                        <optgroup label="Performance">
+                            <option value="HINTS">HINTS</option>
+                            <option value="INDEX_SCAN">INDEX SCAN</option>
+                            <option value="EXPLAIN_PLAN">EXPLAIN PLAN</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>complexity</label>
+                    <select id="complexity">
+                        <option value="basic">basic</option>
+                        <option value="intermediate" selected>intermediate</option>
+                        <option value="advanced">advanced</option>
+                        <option value="expert">expert</option>
                     </select>
                 </div>
 
                 <div class="control-group">
                     <label>speed</label>
                     <select id="speed">
+                        <option value="3000">very slow</option>
                         <option value="2000">slow</option>
                         <option value="1000" selected>normal</option>
                         <option value="500">fast</option>
+                        <option value="250">very fast</option>
                     </select>
                 </div>
 
                 <div class="control-group">
                     <button id="playBtn">play</button>
+                    <button id="pauseBtn">pause</button>
                     <button id="resetBtn">reset</button>
+                    <button id="nextBtn">step</button>
                 </div>
             </div>
 
@@ -483,29 +612,29 @@
 
             <div class="step-section">
                 <div class="step-info">
-                    <div id="stepCounter" class="step-counter">step 1/6</div>
+                    <div id="stepCounter" class="step-counter">step 1/10</div>
                 </div>
-                <div id="stepText" class="step-text">ready to execute query...</div>
+                <div id="stepText" class="step-text">ready to execute comprehensive oracle sql query...</div>
             </div>
 
             <div class="input-section">
-                <div class="section-title">Input Tables</div>
+                <div class="section-title">Input Tables / Data Sources</div>
                 <div class="tables-container" id="inputTables">
                     <!-- Dynamic tables will be inserted here -->
                 </div>
             </div>
 
             <div class="process-section">
-                <div class="section-title">Process Area</div>
+                <div class="section-title">Oracle Engine Processing</div>
                 <div class="process-area">
-                    <div class="process-box" id="processBox">INITIALIZING QUERY EXECUTION...</div>
+                    <div class="process-box" id="processBox">INITIALIZING ORACLE SQL ENGINE...</div>
                     <div class="connection-line"></div>
-                    <div class="process-detail" id="processDetail">Query engine starting up. Parsing SQL statement and preparing execution plan.</div>
+                    <div class="process-detail" id="processDetail">Oracle database engine starting up. Parsing SQL statement, building execution plan, and preparing for query execution with all Oracle-specific optimizations.</div>
                 </div>
             </div>
 
             <div class="output-section">
-                <div class="section-title">Output Result</div>
+                <div class="section-title">Query Result / Output</div>
                 <div class="table-wrapper output-table">
                     <div class="table-header" id="outputHeader">QUERY RESULT</div>
                     <table id="outputTable">
@@ -526,835 +655,422 @@
                         <span>matching</span>
                     </div>
                     <div class="legend-item">
+                        <div class="legend-box legend-processing"></div>
+                        <span>computing</span>
+                    </div>
+                    <div class="legend-item">
                         <div class="legend-box legend-normal"></div>
                         <span>idle</span>
                     </div>
                 </div>
-                <div id="status">ready</div>
+                <div id="status">ready for oracle sql execution</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Oracle sample data
+        // Complete Oracle sample data with more tables and relationships
         const emp = [
             { empno: 7369, ename: 'SMITH', job: 'CLERK', mgr: 7902, hiredate: '17-DEC-80', sal: 800, comm: null, deptno: 20 },
             { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', mgr: 7698, hiredate: '20-FEB-81', sal: 1600, comm: 300, deptno: 30 },
             { empno: 7521, ename: 'WARD', job: 'SALESMAN', mgr: 7698, hiredate: '22-FEB-81', sal: 1250, comm: 500, deptno: 30 },
             { empno: 7566, ename: 'JONES', job: 'MANAGER', mgr: 7839, hiredate: '02-APR-81', sal: 2975, comm: null, deptno: 20 },
             { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', mgr: 7698, hiredate: '28-SEP-81', sal: 1250, comm: 1400, deptno: 30 },
-            { empno: 7698, ename: 'BLAKE', job: 'MANAGER', mgr: 7839, hiredate: '01-MAY-81', sal: 2850, comm: null, deptno: 30 }
+            { empno: 7698, ename: 'BLAKE', job: 'MANAGER', mgr: 7839, hiredate: '01-MAY-81', sal: 2850, comm: null, deptno: 30 },
+            { empno: 7782, ename: 'CLARK', job: 'MANAGER', mgr: 7839, hiredate: '09-JUN-81', sal: 2450, comm: null, deptno: 10 },
+            { empno: 7788, ename: 'SCOTT', job: 'ANALYST', mgr: 7566, hiredate: '19-APR-87', sal: 3000, comm: null, deptno: 20 },
+            { empno: 7839, ename: 'KING', job: 'PRESIDENT', mgr: null, hiredate: '17-NOV-81', sal: 5000, comm: null, deptno: 10 },
+            { empno: 7844, ename: 'TURNER', job: 'SALESMAN', mgr: 7698, hiredate: '08-SEP-81', sal: 1500, comm: 0, deptno: 30 },
+            { empno: 7876, ename: 'ADAMS', job: 'CLERK', mgr: 7788, hiredate: '23-MAY-87', sal: 1100, comm: null, deptno: 20 },
+            { empno: 7900, ename: 'JAMES', job: 'CLERK', mgr: 7698, hiredate: '03-DEC-81', sal: 950, comm: null, deptno: 30 },
+            { empno: 7902, ename: 'FORD', job: 'ANALYST', mgr: 7566, hiredate: '03-DEC-81', sal: 3000, comm: null, deptno: 20 },
+            { empno: 7934, ename: 'MILLER', job: 'CLERK', mgr: 7782, hiredate: '23-JAN-82', sal: 1300, comm: null, deptno: 10 }
         ];
 
         const dept = [
-            { deptno: 10, dname: 'ACCOUNTING', loc: 'NEW YORK' },
-            { deptno: 20, dname: 'RESEARCH', loc: 'DALLAS' },
-            { deptno: 30, dname: 'SALES', loc: 'CHICAGO' },
-            { deptno: 40, dname: 'OPERATIONS', loc: 'BOSTON' }
+            { deptno: 10, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 },
+            { deptno: 20, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+            { deptno: 30, dname: 'SALES', loc: 'CHICAGO', budget: 600000 },
+            { deptno: 40, dname: 'OPERATIONS', loc: 'BOSTON', budget: 400000 }
         ];
 
-        // Complete Oracle SQL Operations with proper step-by-step flow
+        const salgrade = [
+            { grade: 1, losal: 700, hisal: 1200 },
+            { grade: 2, losal: 1201, hisal: 1400 },
+            { grade: 3, losal: 1401, hisal: 2000 },
+            { grade: 4, losal: 2001, hisal: 3000 },
+            { grade: 5, losal: 3001, hisal: 9999 }
+        ];
+
+        const bonus = [
+            { ename: 'SMITH', job: 'CLERK', sal: 800, comm: 100 },
+            { ename: 'ALLEN', job: 'SALESMAN', sal: 1600, comm: 300 },
+            { ename: 'WARD', job: 'SALESMAN', sal: 1250, comm: 500 }
+        ];
+
+        // Comprehensive Oracle SQL Operations
         const operations = {
             'SELECT': {
-                query: 'SELECT ename, sal FROM emp;',
-                totalSteps: 6,
-                steps: [
-                    { 
-                        stepNum: 0,
-                        text: 'initializing select operation - parsing query...', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                        highlight: [], 
-                        processBox: 'SELECT OPERATION\nPARSING QUERY\nINITIALIZING...',
-                        processDetail: 'Oracle parser analyzing SQL statement. Identifying columns to project: ENAME, SAL. Preparing table scan on EMP.',
-                        outputColumns: ['ename', 'sal'],
-                        outputData: []
-                    },
-                    { 
-                        stepNum: 1,
-                        text: 'table scan started - reading first row: SMITH', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                        highlight: [0], 
-                        processBox: 'TABLE SCAN\nREADING ROW 1\nSMITH - EXTRACTING',
-                        processDetail: 'Reading first row from EMP table. Extracting ENAME=SMITH and SAL=800. Adding to result buffer.',
-                        outputColumns: ['ename', 'sal'],
-                        outputData: [{ ename: 'SMITH', sal: 800 }]
-                    },
-                    { 
-                        stepNum: 2,
-                        text: 'continuing scan - reading row 2: ALLEN', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                        highlight: [0, 1], 
-                        processBox: 'TABLE SCAN\nREADING ROW 2\nALLEN - EXTRACTING',
-                        processDetail: 'Reading second row. Extracting ENAME=ALLEN and SAL=1600. Adding to result buffer.',
-                        outputColumns: ['ename', 'sal'],
-                        outputData: [
-                            { ename: 'SMITH', sal: 800 }, 
-                            { ename: 'ALLEN', sal: 1600 }
-                        ]
-                    },
-                    { 
-                        stepNum: 3,
-                        text: 'scan progress - rows 3 and 4: WARD, JONES', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                        highlight: [0, 1, 2, 3], 
-                        processBox: 'TABLE SCAN\nREADING ROWS 3-4\nWARD, JONES',
-                        processDetail: 'Processing rows 3-4. Extracting WARD(1250) and JONES(2975). Adding to result buffer.',
-                        outputColumns: ['ename', 'sal'],
-                        outputData: [
-                            { ename: 'SMITH', sal: 800 }, 
-                            { ename: 'ALLEN', sal: 1600 },
-                            { ename: 'WARD', sal: 1250 },
-                            { ename: 'JONES', sal: 2975 }
-                        ]
-                    },
-                    { 
-                        stepNum: 4,
-                        text: 'processing final rows: MARTIN, BLAKE', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                        highlight: [0, 1, 2, 3, 4, 5], 
-                        processBox: 'TABLE SCAN\nREADING ROWS 5-6\nMARTIN, BLAKE',
-                        processDetail: 'Processing final rows. Extracting MARTIN(1250) and BLAKE(2850). Adding to result buffer.',
-                        outputColumns: ['ename', 'sal'],
-                        outputData: [
-                            { ename: 'SMITH', sal: 800 }, 
-                            { ename: 'ALLEN', sal: 1600 },
-                            { ename: 'WARD', sal: 1250 },
-                            { ename: 'JONES', sal: 2975 },
-                            { ename: 'MARTIN', sal: 1250 },
-                            { ename: 'BLAKE', sal: 2850 }
-                        ]
-                    },
-                    { 
-                        stepNum: 5,
-                        text: 'select operation complete - 6 rows returned', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                        highlight: [0, 1, 2, 3, 4, 5], 
-                        processBox: 'OPERATION COMPLETE\nROWS SCANNED: 6\nROWS RETURNED: 6\nCOLUMNS: 2',
-                        processDetail: 'SELECT operation complete. Full table scan processed 6 rows. Projected 2 columns (ENAME, SAL) for all rows.',
-                        outputColumns: ['ename', 'sal'],
-                        outputData: [
-                            { ename: 'SMITH', sal: 800 }, 
-                            { ename: 'ALLEN', sal: 1600 },
-                            { ename: 'WARD', sal: 1250 },
-                            { ename: 'JONES', sal: 2975 },
-                            { ename: 'MARTIN', sal: 1250 },
-                            { ename: 'BLAKE', sal: 2850 }
-                        ]
-                    }
-                ]
-            },
-            'WHERE': {
-                query: 'SELECT * FROM emp WHERE deptno = 30;',
+                query: 'SELECT empno, ename, sal, deptno FROM emp WHERE sal > 1000 ORDER BY sal DESC;',
                 totalSteps: 8,
                 steps: [
                     { 
                         stepNum: 0,
-                        text: 'parsing where clause - setting up filter predicate...', 
+                        text: 'oracle parser analyzing complete SELECT statement...', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
                         highlight: [], 
-                        processBox: 'WHERE CLAUSE\nPREDICATE: deptno = 30\nINITIALIZING FILTER',
-                        processDetail: 'Parsing WHERE clause. Setting up filter predicate: deptno = 30. Preparing filtered table scan.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        processBox: 'ORACLE SQL PARSER\nSTATEMENT: SELECT\nCLAUSES: WHERE, ORDER BY\nOPTIMIZER: COST-BASED',
+                        processDetail: 'Oracle SQL parser breaking down complex SELECT statement. Identified projection columns, WHERE filter, ORDER BY clause. Cost-based optimizer calculating execution plan.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
                         outputData: []
                     },
                     { 
                         stepNum: 1,
-                        text: 'evaluating row 1: SMITH - deptno(20) = 30? FALSE', 
+                        text: 'execution plan: table scan with filter then sort operation', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        highlight: [0], 
-                        processBox: 'FILTER EVALUATION\nSMITH: deptno = 20\n20 = 30? FALSE\nREJECTED',
-                        processDetail: 'Evaluating SMITH: deptno=20. Condition 20=30 evaluates to FALSE. Row rejected, not added to result.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        highlight: [], 
+                        processBox: 'EXECUTION PLAN\n1. FULL TABLE SCAN\n2. FILTER (sal > 1000)\n3. SORT (sal DESC)\n4. PROJECT COLUMNS',
+                        processDetail: 'Oracle optimizer chose: (1) Full table scan on EMP, (2) Apply WHERE filter sal > 1000, (3) Sort by sal DESC, (4) Project selected columns.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
                         outputData: []
                     },
                     { 
                         stepNum: 2,
-                        text: 'evaluating row 2: ALLEN - deptno(30) = 30? TRUE', 
+                        text: 'table scan started - evaluating WHERE clause for each row', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        highlight: [1], 
-                        processBox: 'FILTER EVALUATION\nALLEN: deptno = 30\n30 = 30? TRUE\nACCEPTED',
-                        processDetail: 'Evaluating ALLEN: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                        outputData: [{ empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 }]
+                        highlight: [0, 1, 2], 
+                        processBox: 'TABLE SCAN + FILTER\nSMITH: 800 > 1000? NO\nALLEN: 1600 > 1000? YES\nWARD: 1250 > 1000? YES',
+                        processDetail: 'Scanning EMP table with WHERE filter. SMITH (800) rejected, ALLEN (1600) and WARD (1250) pass filter condition.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                        outputData: []
                     },
                     { 
                         stepNum: 3,
-                        text: 'evaluating row 3: WARD - deptno(30) = 30? TRUE', 
+                        text: 'continuing scan - more employees evaluated against filter', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        highlight: [2], 
-                        processBox: 'FILTER EVALUATION\nWARD: deptno = 30\n30 = 30? TRUE\nACCEPTED',
-                        processDetail: 'Evaluating WARD: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                        outputData: [
-                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
-                            { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 }
-                        ]
+                        highlight: [0, 1, 2, 3, 4, 5], 
+                        processBox: 'FILTER PROGRESS\nJONES: 2975 > 1000? YES\nMARTIN: 1250 > 1000? YES\nBLAKE: 2850 > 1000? YES\nFILTERED: 5/6 SO FAR',
+                        processDetail: 'Continue filtering: JONES (2975), MARTIN (1250), BLAKE (2850) all pass. Building filtered result set for sorting.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                        outputData: []
                     },
                     { 
                         stepNum: 4,
-                        text: 'evaluating row 4: JONES - deptno(20) = 30? FALSE', 
+                        text: 'scan complete - collecting all qualifying rows for sort operation', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        highlight: [3], 
-                        processBox: 'FILTER EVALUATION\nJONES: deptno = 20\n20 = 30? FALSE\nREJECTED',
-                        processDetail: 'Evaluating JONES: deptno=20. Condition 20=30 evaluates to FALSE. Row rejected, not added to result.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                        outputData: [
-                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
-                            { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 }
-                        ]
-                    },
-                    { 
-                        stepNum: 5,
-                        text: 'evaluating row 5: MARTIN - deptno(30) = 30? TRUE', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        highlight: [4], 
-                        processBox: 'FILTER EVALUATION\nMARTIN: deptno = 30\n30 = 30? TRUE\nACCEPTED',
-                        processDetail: 'Evaluating MARTIN: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                        outputData: [
-                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
-                            { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 },
-                            { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', sal: 1250, deptno: 30 }
-                        ]
-                    },
-                    { 
-                        stepNum: 6,
-                        text: 'evaluating row 6: BLAKE - deptno(30) = 30? TRUE', 
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        highlight: [5], 
-                        processBox: 'FILTER EVALUATION\nBLAKE: deptno = 30\n30 = 30? TRUE\nACCEPTED',
-                        processDetail: 'Evaluating BLAKE: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
-                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        highlight: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 
+                        processBox: 'SCAN COMPLETE\nTOTAL ROWS: 14\nFILTERED ROWS: 11\nQUALIFYING: sal > 1000\nREADY FOR SORT',
+                       processDetail: 'Full table scan complete. Out of 14 employees, 11 have salary > 1000. Collected qualifying rows: ALLEN, WARD, JONES, MARTIN, BLAKE, CLARK, SCOTT, KING, TURNER, ADAMS, FORD, MILLER.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 5,
+                       text: 'sort operation - ordering by salary descending', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       highlight: [8, 7, 12, 3, 5], 
+                       processBox: 'SORT OPERATION\nORDER BY: sal DESC\nKING: 5000 (1st)\nSCOTT: 3000 (2nd)\nFORD: 3000 (3rd)\nJONES: 2975 (4th)\nBLAKE: 2850 (5th)',
+                       processDetail: 'Oracle sort algorithm ordering filtered rows by salary descending. Top salaries: KING (5000), SCOTT (3000), FORD (3000), JONES (2975), BLAKE (2850).',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
                        outputData: [
-                           { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
-                           { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 },
-                           { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', sal: 1250, deptno: 30 },
-                           { empno: 7698, ename: 'BLAKE', job: 'MANAGER', sal: 2850, deptno: 30 }
+                           { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
+                           { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
+                           { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 }
+                       ]
+                   },
+                   { 
+                       stepNum: 6,
+                       text: 'sort continuing - middle range salaries positioned', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       highlight: [8, 7, 12, 3, 5, 6, 1, 9, 2, 4], 
+                       processBox: 'SORT PROGRESS\nCLARK: 2450 (6th)\nALLEN: 1600 (7th)\nTURNER: 1500 (8th)\nMILLER: 1300 (9th)\nWARD: 1250 (10th)\nMARTIN: 1250 (11th)',
+                       processDetail: 'Sort continuing with middle-range salaries: CLARK (2450), ALLEN (1600), TURNER (1500), MILLER (1300), WARD (1250), MARTIN (1250).',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: [
+                           { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
+                           { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
+                           { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 },
+                           { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
+                           { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 },
+                           { empno: 7782, ename: 'CLARK', sal: 2450, deptno: 10 }
                        ]
                    },
                    { 
                        stepNum: 7,
-                       text: 'where operation complete - 4 rows match condition', 
+                       text: 'select operation complete - final sorted result with projection', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                       highlight: [1, 2, 4, 5], 
-                       processBox: 'WHERE COMPLETE\nROWS SCANNED: 6\nROWS MATCHED: 4\nFILTER APPLIED',
-                       processDetail: 'WHERE operation complete. Scanned 6 rows, 4 matched condition (deptno=30). Final result contains all employees in department 30.',
-                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       highlight: [8, 7, 12, 3, 5, 6, 1, 9, 2, 4, 10], 
+                       processBox: 'OPERATION COMPLETE\nFILTERED: 11 rows\nSORTED: sal DESC\nPROJECTED: 4 columns\nFINAL RESULT READY',
+                       processDetail: 'SELECT operation complete. Applied WHERE filter (11/14 rows qualify), sorted by salary descending, projected 4 columns (empno, ename, sal, deptno). Final result set ready.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
                        outputData: [
-                           { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
-                           { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 },
-                           { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', sal: 1250, deptno: 30 },
-                           { empno: 7698, ename: 'BLAKE', job: 'MANAGER', sal: 2850, deptno: 30 }
+                           { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
+                           { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
+                           { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 },
+                           { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
+                           { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 },
+                           { empno: 7782, ename: 'CLARK', sal: 2450, deptno: 10 },
+                           { empno: 7499, ename: 'ALLEN', sal: 1600, deptno: 30 },
+                           { empno: 7844, ename: 'TURNER', sal: 1500, deptno: 30 },
+                           { empno: 7934, ename: 'MILLER', sal: 1300, deptno: 10 },
+                           { empno: 7521, ename: 'WARD', sal: 1250, deptno: 30 },
+                           { empno: 7654, ename: 'MARTIN', sal: 1250, deptno: 30 },
+                           { empno: 7876, ename: 'ADAMS', sal: 1100, deptno: 20 }
                        ]
                    }
                ]
            },
+
            'INNER_JOIN': {
-               query: 'SELECT e.ename, e.sal, d.dname, d.loc\nFROM emp e INNER JOIN dept d ON e.deptno = d.deptno;',
-               totalSteps: 8,
+               query: 'SELECT e.ename, e.sal, d.dname, d.loc, d.budget\nFROM emp e INNER JOIN dept d ON e.deptno = d.deptno\nWHERE e.sal > 2000 ORDER BY e.sal DESC;',
+               totalSteps: 10,
                steps: [
                    { 
                        stepNum: 0,
-                       text: 'preparing inner join - analyzing join condition...', 
+                       text: 'parsing complex join query with where and order by clauses...', 
                        inputTables: [
                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
                        ],
                        highlight: [], 
                        highlightSecond: [],
-                       processBox: 'INNER JOIN SETUP\nCONDITION: e.deptno = d.deptno\nALGORITHM: NESTED LOOP',
-                       processDetail: 'Setting up INNER JOIN operation. Join condition: e.deptno = d.deptno. Using nested loop algorithm.',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       processBox: 'COMPLEX JOIN ANALYSIS\nTABLES: emp (e), dept (d)\nJOIN: e.deptno = d.deptno\nFILTER: e.sal > 2000\nSORT: e.sal DESC',
+                       processDetail: 'Parsing complex INNER JOIN with additional WHERE clause and ORDER BY. Join condition: e.deptno = d.deptno, Filter: sal > 2000, Sort: sal DESC.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
                        outputData: []
                    },
                    { 
                        stepNum: 1,
-                       text: 'processing SMITH (deptno=20) - searching dept table...', 
+                       text: 'optimizer choosing join algorithm - nested loop with filter pushdown', 
                        inputTables: [
                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
                        ],
-                       highlight: [0], 
+                       highlight: [], 
                        highlightSecond: [],
-                       processBox: 'JOIN PROCESSING\nSMITH: deptno = 20\nSEARCHING DEPT TABLE\nLOOKING FOR MATCH...',
-                       processDetail: 'Processing SMITH with deptno=20. Searching DEPT table for matching deptno=20...',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       processBox: 'OPTIMIZER DECISION\nALGORITHM: NESTED LOOP\nFILTER PUSHDOWN: sal > 2000\nJOIN ORDER: emp → dept\nESTIMATED COST: LOW',
+                       processDetail: 'Oracle optimizer chose nested loop join. Filter pushdown optimization: apply sal > 2000 filter early. Join order: emp (driving) → dept (driven).',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
                        outputData: []
                    },
                    { 
                        stepNum: 2,
-                       text: 'match found: SMITH joins with RESEARCH department', 
+                       text: 'scanning emp table with filter - finding high salary employees', 
                        inputTables: [
                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
                        ],
-                       highlight: [0], 
+                       highlight: [0, 1, 2, 3, 4, 5], 
+                       highlightSecond: [],
+                       processBox: 'EMP SCAN + FILTER\nSMITH: 800 < 2000 ✗\nALLEN: 1600 < 2000 ✗\nWARD: 1250 < 2000 ✗\nJONES: 2975 > 2000 ✓\nMARTIN: 1250 < 2000 ✗\nBLAKE: 2850 > 2000 ✓',
+                       processDetail: 'Scanning EMP table with sal > 2000 filter. Early filtering: JONES (2975) and BLAKE (2850) qualify so far. Lower salary employees filtered out early.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 3,
+                       text: 'continuing emp scan - more high earners found', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
+                       ],
+                       highlight: [6, 7, 8, 9, 10, 11, 12, 13], 
+                       highlightSecond: [],
+                       processBox: 'EMP SCAN CONTINUES\nCLARK: 2450 > 2000 ✓\nSCOTT: 3000 > 2000 ✓\nKING: 5000 > 2000 ✓\nTURNER: 1500 < 2000 ✗\nADAMS: 1100 < 2000 ✗\nFORD: 3000 > 2000 ✓',
+                       processDetail: 'Continuing EMP scan: CLARK (2450), SCOTT (3000), KING (5000), FORD (3000) all qualify. TURNER, ADAMS, JAMES, MILLER filtered out.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 4,
+                       text: 'join processing - KING (dept 10) seeking ACCOUNTING department', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
+                       ],
+                       highlight: [8], 
+                       highlightSecond: [0],
+                       processBox: 'JOIN PROCESSING\nKING: deptno = 10\nSEEKING: dept.deptno = 10\nMATCH: ACCOUNTING\nJOIN SUCCESSFUL',
+                       processDetail: 'Processing KING (deptno=10, sal=5000). Searching DEPT table for deptno=10. Match found: ACCOUNTING department in NEW YORK with budget 500000.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
+                       outputData: [
+                           { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 }
+                       ]
+                   },
+                   { 
+                       stepNum: 5,
+                       text: 'join processing - SCOTT and FORD (dept 20) with RESEARCH', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
+                       ],
+                       highlight: [7, 12], 
                        highlightSecond: [1],
-                       processBox: 'JOIN MATCH FOUND\nSMITH (20) → RESEARCH (20)\nADDING TO RESULT',
-                       processDetail: 'Match found! SMITH (deptno=20) joins with RESEARCH department (deptno=20). Adding to result set.',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                       outputData: [{ ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' }]
-                   },
-                   { 
-                       stepNum: 3,
-                       text: 'processing ALLEN (deptno=30) - searching for match...', 
-                       inputTables: [
-                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                       ],
-                       highlight: [1], 
-                       highlightSecond: [2],
-                       processBox: 'JOIN PROCESSING\nALLEN: deptno = 30\nMATCH: SALES (30)\nADDING TO RESULT',
-                       processDetail: 'Processing ALLEN (deptno=30). Found match with SALES department (deptno=30). Adding to result.',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       processBox: 'JOIN PROCESSING\nSCOTT: deptno = 20\nFORD: deptno = 20\nMATCH: RESEARCH\nBOTH JOINED',
+                       processDetail: 'Processing SCOTT and FORD (both deptno=20, sal=3000). Both match with RESEARCH department in DALLAS, budget 750000. Two successful joins.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
                        outputData: [
-                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
-                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' }
-                       ]
-                   },
-                   { 
-                       stepNum: 4,
-                       text: 'processing WARD and JONES - finding matches...', 
-                       inputTables: [
-                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                       ],
-                       highlight: [2, 3], 
-                       highlightSecond: [1, 2],
-                       processBox: 'JOIN PROCESSING\nWARD (30) → SALES\nJONES (20) → RESEARCH\nBOTH MATCHED',
-                       processDetail: 'Processing WARD (deptno=30) → SALES and JONES (deptno=20) → RESEARCH. Both find matches.',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                       outputData: [
-                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
-                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' }
-                       ]
-                   },
-                   { 
-                       stepNum: 5,
-                       text: 'processing MARTIN and BLAKE - final matches...', 
-                       inputTables: [
-                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                       ],
-                       highlight: [4, 5], 
-                       highlightSecond: [2],
-                       processBox: 'JOIN PROCESSING\nMARTIN (30) → SALES\nBLAKE (30) → SALES\nBOTH MATCHED',
-                       processDetail: 'Processing final employees: MARTIN (30) → SALES and BLAKE (30) → SALES. Both find matches.',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                       outputData: [
-                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
-                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' },
-                           { ename: 'MARTIN', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO' }
+                           { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 },
+                           { ename: 'SCOTT', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'FORD', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 }
                        ]
                    },
                    { 
                        stepNum: 6,
-                       text: 'inner join complete - all employees matched', 
+                       text: 'join processing - JONES (dept 20) and BLAKE (dept 30) matching', 
                        inputTables: [
                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
                        ],
-                       highlight: [0, 1, 2, 3, 4, 5], 
+                       highlight: [3, 5], 
                        highlightSecond: [1, 2],
-                       processBox: 'INNER JOIN COMPLETE\nEMP ROWS: 6\nMATCHES: 6\nRESULT ROWS: 6',
-                       processDetail: 'INNER JOIN operation complete. All 6 employees found matching departments. Final result contains employee and department details.',
-                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       processBox: 'JOIN PROCESSING\nJONES: deptno = 20 → RESEARCH\nBLAKE: deptno = 30 → SALES\nBOTH MATCHED',
+                       processDetail: 'Processing JONES (deptno=20, sal=2975) → RESEARCH. Processing BLAKE (deptno=30, sal=2850) → SALES in CHICAGO, budget 600000.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
                        outputData: [
-                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
-                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' },
-                           { ename: 'MARTIN', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO' }
+                           { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 },
+                           { ename: 'SCOTT', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'FORD', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO', budget: 600000 }
+                       ]
+                   },
+                   { 
+                       stepNum: 7,
+                       text: 'join processing - CLARK (dept 10) completing joins', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
+                       ],
+                       highlight: [6], 
+                       highlightSecond: [0],
+                       processBox: 'JOIN PROCESSING\nCLARK: deptno = 10\nMATCH: ACCOUNTING\nJOIN COMPLETE\nALL MATCHES FOUND',
+                       processDetail: 'Processing final high earner: CLARK (deptno=10, sal=2450) → ACCOUNTING department. All qualifying employees successfully joined with departments.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
+                       outputData: [
+                           { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 },
+                           { ename: 'SCOTT', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'FORD', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO', budget: 600000 },
+                           { ename: 'CLARK', sal: 2450, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 }
+                       ]
+                   },
+                   { 
+                       stepNum: 8,
+                       text: 'sorting joined results by salary descending', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
+                       ],
+                       highlight: [8, 7, 12, 3, 5, 6], 
+                       highlightSecond: [0, 1, 2],
+                       processBox: 'SORT OPERATION\nORDER BY: e.sal DESC\nKING: 5000 (1st)\nSCOTT/FORD: 3000 (tie)\nJONES: 2975\nBLAKE: 2850\nCLARK: 2450 (last)',
+                       processDetail: 'Sorting joined results by employee salary descending. Final order: KING (5000), SCOTT (3000), FORD (3000), JONES (2975), BLAKE (2850), CLARK (2450).',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
+                       outputData: [
+                           { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 },
+                           { ename: 'SCOTT', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'FORD', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO', budget: 600000 },
+                           { ename: 'CLARK', sal: 2450, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 }
+                       ]
+                   },
+                   { 
+                       stepNum: 9,
+                       text: 'complex join operation complete - 6 high earners with departments', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc', 'budget'] }
+                       ],
+                       highlight: [8, 7, 12, 3, 5, 6], 
+                       highlightSecond: [0, 1, 2],
+                       processBox: 'OPERATION COMPLETE\nJOIN TYPE: INNER\nFILTERED: sal > 2000\nJOINED: 6 employees\nSORTED: sal DESC\nCOMPLETE RESULT',
+                       processDetail: 'Complex INNER JOIN complete. Started with 14 employees, filtered to 6 with sal > 2000, joined with departments, sorted by salary. Final result shows high earners with full department details.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc', 'budget'],
+                       outputData: [
+                           { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 },
+                           { ename: 'SCOTT', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'FORD', sal: 3000, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS', budget: 750000 },
+                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO', budget: 600000 },
+                           { ename: 'CLARK', sal: 2450, dname: 'ACCOUNTING', loc: 'NEW YORK', budget: 500000 }
                        ]
                    }
                ]
            },
-           'UNION': {
-               query: 'SELECT ename FROM emp WHERE sal > 2000\nUNION\nSELECT ename FROM emp WHERE deptno = 20;',
-               totalSteps: 7,
+
+           'ROW_NUMBER': {
+               query: 'SELECT ename, sal, deptno,\n       ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal DESC) as salary_rank,\n       ROW_NUMBER() OVER (ORDER BY sal DESC) as overall_rank\nFROM emp;',
+               totalSteps: 12,
                steps: [
                    { 
                        stepNum: 0,
-                       text: 'preparing union operation - will execute two queries...', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
-                       ],
+                       text: 'parsing complex window functions with multiple OVER clauses...', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                        highlight: [], 
-                       highlightSecond: [],
-                       processBox: 'UNION OPERATION\nTWO QUERIES TO EXECUTE\nTHEN COMBINE RESULTS',
-                       processDetail: 'Setting up UNION operation. Will execute Query 1 (sal > 2000) and Query 2 (deptno = 20), then combine results removing duplicates.',
-                       outputColumns: ['ename'],
+                       processBox: 'WINDOW FUNCTION ANALYSIS\nFUNCTION: ROW_NUMBER()\nWINDOW 1: PARTITION BY deptno ORDER BY sal DESC\nWINDOW 2: ORDER BY sal DESC\nDUAL RANKING SYSTEM',
+                       processDetail: 'Parsing complex window functions. Two ROW_NUMBER() functions: (1) salary_rank within each department, (2) overall_rank across all employees. Both ordered by salary descending.',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
                        outputData: []
                    },
                    { 
                        stepNum: 1,
-                       text: 'executing query 1: SELECT ename WHERE sal > 2000...', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
-                       ],
-                       highlight: [], 
-                       highlightSecond: [],
-                       processBox: 'EXECUTING QUERY 1\nFILTER: sal > 2000\nSCANNING EMP TABLE...',
-                       processDetail: 'Executing first query: SELECT ename FROM emp WHERE sal > 2000. Scanning EMP table for high salary employees...',
-                       outputColumns: ['ename'],
+                       text: 'analyzing data for partition boundaries and sort requirements', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                       highlight: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 
+                       processBox: 'PARTITION ANALYSIS\nDEPT 10: CLARK, KING, MILLER\nDEPT 20: SMITH, JONES, SCOTT, ADAMS, FORD\nDEPT 30: ALLEN, WARD, MARTIN, BLAKE, TURNER, JAMES\nTOTAL: 14 EMPLOYEES',
+                       processDetail: 'Identifying partitions: Dept 10 (3 employees), Dept 20 (5 employees), Dept 30 (6 employees). Total 14 employees across 3 departments for window processing.',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
                        outputData: []
                    },
                    { 
                        stepNum: 2,
-                       text: 'query 1 complete - found JONES and BLAKE', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [],
-                       processBox: 'QUERY 1 COMPLETE\nFOUND: JONES (2975)\nFOUND: BLAKE (2850)\nRESULT SET 1 READY',
-                       processDetail: 'Query 1 complete. Found 2 employees with salary > 2000: JONES (2975) and BLAKE (2850). Result set 1 ready.',
-                       outputColumns: ['ename'],
+                       text: 'creating overall salary ranking - sorting all employees', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                       highlight: [8], 
+                       processBox: 'OVERALL RANKING\nSORT: sal DESC (all employees)\nKING: 5000 → rank 1\nSCOTT: 3000 → rank 2\nFORD: 3000 → rank 3\nTOP PERFORMER: KING',
+                       processDetail: 'Creating overall ranking by sorting all 14 employees by salary DESC. KING leads with 5000, followed by SCOTT and FORD both at 3000.',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
                        outputData: []
                    },
                    { 
                        stepNum: 3,
-                       text: 'executing query 2: SELECT ename WHERE deptno = 20...', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [],
-                       processBox: 'EXECUTING QUERY 2\nFILTER: deptno = 20\nSCANNING EMP TABLE...',
-                       processDetail: 'Executing second query: SELECT ename FROM emp WHERE deptno = 20. Scanning EMP table for department 20 employees...',
-                       outputColumns: ['ename'],
-                       outputData: []
-                   },
-                   { 
-                       stepNum: 4,
-                       text: 'query 2 complete - found SMITH and JONES', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [
-                               { ename: 'SMITH' }, { ename: 'JONES' }
-                           ], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [0, 1],
-                       processBox: 'QUERY 2 COMPLETE\nFOUND: SMITH (dept 20)\nFOUND: JONES (dept 20)\nRESULT SET 2 READY',
-                       processDetail: 'Query 2 complete. Found 2 employees in department 20: SMITH and JONES. Result set 2 ready.',
-                       outputColumns: ['ename'],
-                       outputData: []
-                   },
-                   { 
-                       stepNum: 5,
-                       text: 'combining result sets - removing duplicate JONES...', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [
-                               { ename: 'SMITH' }, { ename: 'JONES' }
-                           ], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [0, 1],
-                       processBox: 'UNION PROCESSING\nCOMBINING RESULTS\nDUPLICATE FOUND: JONES\nREMOVING DUPLICATE',
-                       processDetail: 'Combining result sets. Found duplicate: JONES appears in both sets. UNION removes duplicates automatically.',
-                       outputColumns: ['ename'],
+                       text: 'processing department 10 partition - ACCOUNTING employees', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                       highlight: [6, 8, 13], 
+                       processBox: 'DEPT 10 PARTITION\nKING: 5000 → dept_rank 1\nCLARK: 2450 → dept_rank 2\nMILLER: 1300 → dept_rank 3\nACCOUNTING COMPLETE',
+                       processDetail: 'Processing department 10 (ACCOUNTING): KING (5000) ranks #1, CLARK (2450) ranks #2, MILLER (1300) ranks #3 within department.',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
                        outputData: [
-                           { ename: 'JONES' }, 
-                           { ename: 'BLAKE' }, 
-                           { ename: 'SMITH' }
+                           { ename: 'KING', sal: 5000, deptno: 10, salary_rank: 1, overall_rank: 1 },
+                           { ename: 'CLARK', sal: 2450, deptno: 10, salary_rank: 2, overall_rank: 6 },
+                           { ename: 'MILLER', sal: 1300, deptno: 10, salary_rank: 3, overall_rank: 12 }
                        ]
                    },
                    { 
-                       stepNum: 6,
-                       text: 'union complete - 3 unique employees returned', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [
-                               { ename: 'SMITH' }, { ename: 'JONES' }
-                           ], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [0, 1],
-                       processBox: 'UNION COMPLETE\nQUERY 1: 2 rows\nQUERY 2: 2 rows\nDUPLICATE: 1\nFINAL: 3 rows',
-                       processDetail: 'UNION operation complete. Combined 4 total rows from both queries, removed 1 duplicate (JONES). Final result: 3 unique employees.',
-                       outputColumns: ['ename'],
-                       outputData: [
-                           { ename: 'JONES' }, 
-                           { ename: 'BLAKE' }, 
-                           { ename: 'SMITH' }
-                       ]
-                   }
-               ]
-           },
-           'WINDOW': {
-               query: 'SELECT ename, sal, ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal DESC) as rn\nFROM emp;',
-               totalSteps: 6,
-               steps: [
-                   { 
-                       stepNum: 0,
-                       text: 'parsing window function - setting up partitions...', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [], 
-                       processBox: 'WINDOW FUNCTION\nPARTITION BY: deptno\nORDER BY: sal DESC\nFUNCTION: ROW_NUMBER()',
-                       processDetail: 'Setting up window function. Will partition data by DEPTNO, order by SAL DESC within each partition, then assign ROW_NUMBER.',
-                       outputColumns: ['ename', 'sal', 'rn'],
-                       outputData: []
-                   },
-                   { 
-                       stepNum: 1,
-                       text: 'identifying partitions - found dept 20 and dept 30...', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [0, 1, 2, 3, 4, 5], 
-                       processBox: 'PARTITION ANALYSIS\nPARTITION 20: SMITH, JONES\nPARTITION 30: ALLEN, WARD, MARTIN, BLAKE\nCREATING GROUPS...',
-                       processDetail: 'Analyzing data for partitions. Found 2 partitions: Dept 20 (SMITH, JONES) and Dept 30 (ALLEN, WARD, MARTIN, BLAKE).',
-                       outputColumns: ['ename', 'sal', 'rn'],
-                       outputData: []
-                   },
-                   { 
-                       stepNum: 2,
-                       text: 'sorting partition 20 by salary DESC: JONES first, SMITH second', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [0, 3], 
-                       processBox: 'PARTITION 20 SORT\nJONES: sal = 2975 (1st)\nSMITH: sal = 800 (2nd)\nORDERING COMPLETE',
-                       processDetail: 'Sorting partition 20 by salary DESC. JONES (2975) ranks first, SMITH (800) ranks second.',
-                       outputColumns: ['ename', 'sal', 'rn'],
-                       outputData: []
-                   },
-                   { 
-                       stepNum: 3,
-                       text: 'sorting partition 30 by salary DESC...', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [1, 2, 4, 5], 
-                       processBox: 'PARTITION 30 SORT\nBLAKE: 2850 (1st)\nALLEN: 1600 (2nd)\nWARD: 1250 (3rd)\nMARTIN: 1250 (4th)',
-                       processDetail: 'Sorting partition 30 by salary DESC. Order: BLAKE (2850), ALLEN (1600), WARD (1250), MARTIN (1250).',
-                       outputColumns: ['ename', 'sal', 'rn'],
-                       outputData: []
-                   },
-                   { 
                        stepNum: 4,
-                       text: 'assigning row numbers within each partition...', 
+                       text: 'processing department 20 partition - RESEARCH employees', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [0, 1, 2, 3, 4, 5], 
-                       processBox: 'ROW NUMBER ASSIGNMENT\nPART 20: JONES=1, SMITH=2\nPART 30: BLAKE=1, ALLEN=2\n         WARD=3, MARTIN=4',
-                       processDetail: 'Assigning ROW_NUMBER within each partition. Partition 20: JONES=1, SMITH=2. Partition 30: BLAKE=1, ALLEN=2, WARD=3, MARTIN=4.',
-                       outputColumns: ['ename', 'sal', 'rn'],
+                       highlight: [0, 3, 7, 10, 12], 
+                       processBox: 'DEPT 20 PARTITION\nSCOTT: 3000 → dept_rank 1\nFORD: 3000 → dept_rank 2\nJONES: 2975 → dept_rank 3\nADAMS: 1100 → dept_rank 4\nSMITH: 800 → dept_rank 5',
+                       processDetail: 'Processing department 20 (RESEARCH): SCOTT and FORD tie at 3000 (ranks 1,2), JONES at 2975 (rank 3), ADAMS at 1100 (rank 4), SMITH at 800 (rank 5).',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
                        outputData: [
-                           { ename: 'JONES', sal: 2975, rn: 1 },
-                           { ename: 'SMITH', sal: 800, rn: 2 },
-                           { ename: 'BLAKE', sal: 2850, rn: 1 },
-                           { ename: 'ALLEN', sal: 1600, rn: 2 },
-                           { ename: 'WARD', sal: 1250, rn: 3 },
-                           { ename: 'MARTIN', sal: 1250, rn: 4 }
+                           { ename: 'KING', sal: 5000, deptno: 10, salary_rank: 1, overall_rank: 1 },
+                           { ename: 'CLARK', sal: 2450, deptno: 10, salary_rank: 2, overall_rank: 6 },
+                           { ename: 'MILLER', sal: 1300, deptno: 10, salary_rank: 3, overall_rank: 12 },
+                           { ename: 'SCOTT', sal: 3000, deptno: 20, salary_rank: 1, overall_rank: 2 },
+                           { ename: 'FORD', sal: 3000, deptno: 20, salary_rank: 2, overall_rank: 3 },
+                           { ename: 'JONES', sal: 2975, deptno: 20, salary_rank: 3, overall_rank: 4 },
+                           { ename: 'ADAMS', sal: 1100, deptno: 20, salary_rank: 4, overall_rank: 13 },
+                           { ename: 'SMITH', sal: 800, deptno: 20, salary_rank: 5, overall_rank: 14 }
                        ]
                    },
                    { 
                        stepNum: 5,
-                       text: 'window function complete - row numbers assigned', 
+                       text: 'processing department 30 partition - SALES employees (part 1)', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [0, 1, 2, 3, 4, 5], 
-                       processBox: 'WINDOW COMPLETE\nPARTITIONS: 2\nROWS PROCESSED: 6\nROW NUMBERS ASSIGNED',
-                       processDetail: 'Window function complete. Processed 2 partitions, assigned row numbers to all 6 employees based on salary rank within their department.',
-                       outputColumns: ['ename', 'sal', 'rn'],
-                       outputData: [
-                           { ename: 'JONES', sal: 2975, rn: 1 },
-                           { ename: 'SMITH', sal: 800, rn: 2 },
-                           { ename: 'BLAKE', sal: 2850, rn: 1 },
-                           { ename: 'ALLEN', sal: 1600, rn: 2 },
-                           { ename: 'WARD', sal: 1250, rn: 3 },
-                           { ename: 'MARTIN', sal: 1250, rn: 4 }
-                       ]
-                   }
-               ]
-           }
-       };
-
-       // Animation state variables
-       let currentOperation = 'SELECT';
-       let currentStep = 0;
-       let isAnimating = false;
-       let animationInterval = null;
-       let animationSpeed = 1000;
-
-       // DOM element references
-       const operationSelect = document.getElementById('operation');
-       const speedSelect = document.getElementById('speed');
-       const playBtn = document.getElementById('playBtn');
-       const resetBtn = document.getElementById('resetBtn');
-       const queryText = document.getElementById('queryText');
-       const stepCounter = document.getElementById('stepCounter');
-       const stepText = document.getElementById('stepText');
-       const inputTables = document.getElementById('inputTables');
-       const processBox = document.getElementById('processBox');
-       const processDetail = document.getElementById('processDetail');
-       const outputHeader = document.getElementById('outputHeader');
-       const outputTableHead = document.getElementById('outputTableHead');
-       const outputTableBody = document.getElementById('outputTableBody');
-       const status = document.getElementById('status');
-
-       // Event listeners
-       operationSelect.addEventListener('change', handleOperationChange);
-       speedSelect.addEventListener('change', handleSpeedChange);
-       playBtn.addEventListener('click', handlePlayPause);
-       resetBtn.addEventListener('click', handleReset);
-
-       // Event handler functions
-       function handleOperationChange(e) {
-           currentOperation = e.target.value;
-           handleReset();
-       }
-
-       function handleSpeedChange(e) {
-           animationSpeed = parseInt(e.target.value);
-       }
-
-       function handlePlayPause() {
-           if (isAnimating) {
-               pauseAnimation();
-           } else {
-               startAnimation();
-           }
-       }
-
-       function handleReset() {
-           pauseAnimation();
-           currentStep = 0;
-           updateDisplay();
-           updateStatus('ready');
-       }
-
-       // Animation control functions
-       function startAnimation() {
-           const operation = operations[currentOperation];
-           if (!operation) return;
-
-           // If we're at the end, reset first
-           if (currentStep >= operation.totalSteps - 1) {
-               handleReset();
-               return;
-           }
-           
-           isAnimating = true;
-           updatePlayButton();
-           updateStatus('executing...');
-           
-           animationInterval = setInterval(() => {
-               const operation = operations[currentOperation];
-               if (currentStep < operation.totalSteps - 1) {
-                   currentStep++;
-                   updateDisplay();
-               } else {
-                   pauseAnimation();
-                   updateStatus('complete');
-               }
-           }, animationSpeed);
-       }
-
-       function pauseAnimation() {
-           isAnimating = false;
-           if (animationInterval) {
-               clearInterval(animationInterval);
-               animationInterval = null;
-           }
-           updatePlayButton();
-           if (status.textContent === 'executing...') {
-               updateStatus('paused');
-           }
-       }
-
-       function updatePlayButton() {
-           playBtn.textContent = isAnimating ? 'pause' : 'play';
-           if (isAnimating) {
-               playBtn.classList.add('active');
-           } else {
-               playBtn.classList.remove('active');
-           }
-       }
-
-       function updateStatus(statusText) {
-           status.textContent = statusText;
-       }
-
-       // Display update function
-       function updateDisplay() {
-           const operation = operations[currentOperation];
-           if (!operation || !operation.steps[currentStep]) return;
-           
-           const step = operation.steps[currentStep];
-           
-           // Update query text
-           queryText.innerHTML = operation.query.replace(/\n/g, '<br>');
-           
-           // Update step counter and text
-           stepCounter.textContent = `step ${currentStep + 1}/${operation.totalSteps}`;
-           stepText.textContent = step.text;
-           
-           // Update process area
-           processBox.textContent = step.processBox;
-           processDetail.textContent = step.processDetail;
-           
-           // Update input tables
-           renderInputTables(step);
-           
-           // Update output table
-           renderOutputTable(step);
-       }
-
-       // Input tables rendering function
-       function renderInputTables(step) {
-           inputTables.innerHTML = '';
-           
-           if (!step.inputTables || step.inputTables.length === 0) return;
-           
-           step.inputTables.forEach((tableConfig, tableIndex) => {
-               const tableWrapper = document.createElement('div');
-               tableWrapper.className = 'table-wrapper';
-               
-               // Table header
-               const tableHeader = document.createElement('div');
-               tableHeader.className = 'table-header';
-               tableHeader.textContent = tableConfig.name;
-               tableWrapper.appendChild(tableHeader);
-               
-               // Table
-               const table = document.createElement('table');
-               
-               // Table head
-               const thead = document.createElement('thead');
-               const headerRow = document.createElement('tr');
-               tableConfig.columns.forEach(col => {
-                   const th = document.createElement('th');
-                   th.textContent = col;
-                   headerRow.appendChild(th);
-               });
-               thead.appendChild(headerRow);
-               table.appendChild(thead);
-               
-               // Table body
-               const tbody = document.createElement('tbody');
-               tableConfig.data.forEach((row, rowIndex) => {
-                   const tr = document.createElement('tr');
-                   
-                   // Apply highlighting based on table index
-                   // Apply highlighting based on table index
-                   if (tableIndex === 0 && step.highlight && step.highlight.includes(rowIndex)) {
-                       tr.classList.add('highlighted');
-                   }
-                   if (tableIndex === 1 && step.highlightSecond && step.highlightSecond.includes(rowIndex)) {
-                       tr.classList.add('matching');
-                   }
-                   
-                   // Create table cells
-                   tableConfig.columns.forEach(col => {
-                       const td = document.createElement('td');
-                       let value = row[col];
-                       
-                       // Format values
-                       if (value === null || value === undefined) {
-                           value = 'NULL';
-                       } else if (typeof value === 'number') {
-                           value = value.toLocaleString();
-                       }
-                       
-                       td.textContent = value;
-                       tr.appendChild(td);
-                   });
-                   
-                   tbody.appendChild(tr);
-               });
-               table.appendChild(tbody);
-               
-               tableWrapper.appendChild(table);
-               inputTables.appendChild(tableWrapper);
-           });
-       }
-
-       // Output table rendering function
-       function renderOutputTable(step) {
-           outputHeader.textContent = 'QUERY RESULT';
-           outputTableHead.innerHTML = '';
-           outputTableBody.innerHTML = '';
-           
-           if (step.outputData && step.outputData.length > 0) {
-               // Create table header
-               const headerRow = document.createElement('tr');
-               const columns = step.outputColumns || Object.keys(step.outputData[0]);
-               
-               columns.forEach(col => {
-                   const th = document.createElement('th');
-                   th.textContent = col.toUpperCase();
-                   headerRow.appendChild(th);
-               });
-               outputTableHead.appendChild(headerRow);
-               
-               // Create table body
-               step.outputData.forEach((row, rowIndex) => {
-                   const tr = document.createElement('tr');
-                   
-                   columns.forEach(col => {
-                       const td = document.createElement('td');
-                       let value = row[col];
-                       
-                       // Format values
-                       if (value === null || value === undefined) {
-                           value = '';
-                       } else if (typeof value === 'number') {
-                           value = value.toLocaleString();
-                       }
-                       
-                       td.textContent = value;
-                       tr.appendChild(td);
-                   });
-                   
-                   outputTableBody.appendChild(tr);
-               });
-           } else {
-               // Show empty state
-               const emptyRow = document.createElement('tr');
-               const emptyCell = document.createElement('td');
-               emptyCell.textContent = 'No results yet...';
-               emptyCell.style.color = '#666';
-               emptyCell.style.fontStyle = 'italic';
-               emptyCell.style.textAlign = 'center';
-               emptyCell.style.padding = '20px';
-               emptyCell.colSpan = 10; // Span multiple columns
-               emptyRow.appendChild(emptyCell);
-               outputTableBody.appendChild(emptyRow);
-           }
-       }
-
-       // Initialize the application
-       function initializeApp() {
-           updateDisplay();
-           updateStatus('ready');
-       }
-
-       // Start the application when DOM is loaded
-       document.addEventListener('DOMContentLoaded', initializeApp);
-       
-       // Also initialize immediately in case DOM is already loaded
-       if (document.readyState === 'loading') {
-           // DOM is still loading
-       } else {
-           // DOM is already loaded
-           initializeApp();
-       }
-   </script>
-</body>
-</html>
+                       highlight: [1, 2, 4, 5, 9, 11], 
+                      
