@@ -1,34 +1,982 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,shrink-to-fit=no"
-    />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#40454d" />
-    <meta name="msapplication-TileColor" content="#40454d" />
-    <meta name="theme-color" content="#40454d" />
-    <meta
-      name="keywords"
-      content="sql, animate, visualise, visualize, helper, animator"
-    />
-    <meta
-      name="description"
-      content="Forgetting or don't understand something in SQL? Animate away your SQL questions by choosing a keyword and pressing Visualize! You can even customize queries to help you better understand SQL."
-    />
-    <title>Animate SQL</title>
-    <link href="./css/2.944ef2d5.chunk.css" rel="stylesheet" />
-    <link href="./css/main.b10bb7f7.chunk.css" rel="stylesheet" />
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <script src="./js/2.1062ff5f.chunk.js"></script>
-    <script src="./js/main.d0c2f3c9.chunk.js"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Cascadia Code', 'Consolas', monospace;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            line-height: 1.4;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .main {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .controls {
+            background: #1a1a1a;
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-group label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select {
+            background: #222;
+            border: 1px solid #444;
+            color: #e8e8e8;
+            padding: 8px 12px;
+            font-family: inherit;
+            font-size: 12px;
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        button {
+            background: #333;
+            border: 1px solid #555;
+            color: #e8e8e8;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 0;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #444;
+            border-color: #666;
+        }
+
+        button.active {
+            background: #00ff88;
+            color: #000;
+            border-color: #00ff88;
+        }
+
+        .query-section {
+            background: #0d1117;
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .query-label {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .query-text {
+            color: #00ff88;
+            font-size: 14px;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+
+        .step-section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .step-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .step-counter {
+            background: #333;
+            color: #e8e8e8;
+            padding: 4px 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step-text {
+            color: #ccc;
+            font-size: 13px;
+        }
+
+        .table-wrapper {
+            background: #111;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #111;
+            font-size: 12px;
+        }
+
+        th {
+            background: #222;
+            color: #999;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #333;
+            font-size: 11px;
+        }
+
+        td {
+            padding: 10px 8px;
+            border: 1px solid #333;
+            color: #e8e8e8;
+            transition: all 0.3s ease;
+        }
+
+        tr.highlighted td {
+            background: #004d2a;
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .status-bar {
+            background: #0a0a0a;
+            padding: 12px 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-box {
+            width: 12px;
+            height: 12px;
+            border: 1px solid;
+        }
+
+        .legend-highlighted {
+            background: #004d2a;
+            border-color: #00ff88;
+        }
+
+        .legend-normal {
+            background: #111;
+            border-color: #333;
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .pulsing {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: space-between;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            table {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SQL.visualize()</h1>
+            <p>// step-by-step query execution</p>
+        </div>
+
+        <div class="main">
+            <div class="controls">
+                <div class="control-group">
+                    <label>operation</label>
+                    <select id="operation">
+                        <option value="SELECT">select</option>
+                        <option value="WHERE">where</option>
+                        <option value="ORDER_BY">order by</option>
+                        <option value="GROUP_BY">group by</option>
+                        <option value="HAVING">having</option>
+                        <option value="INNER_JOIN">inner join</option>
+                        <option value="LEFT_JOIN">left join</option>
+                        <option value="RIGHT_JOIN">right join</option>
+                        <option value="FULL_JOIN">full outer join</option>
+                        <option value="CROSS_JOIN">cross join</option>
+                        <option value="SELF_JOIN">self join</option>
+                        <option value="UNION">union</option>
+                        <option value="UNION_ALL">union all</option>
+                        <option value="INTERSECT">intersect</option>
+                        <option value="EXCEPT">except</option>
+                        <option value="SUBQUERY">subquery</option>
+                        <option value="EXISTS">exists</option>
+                        <option value="CASE_WHEN">case when</option>
+                        <option value="WINDOW">window function</option>
+                        <option value="CTE">with (cte)</option>
+                        <option value="INSERT">insert</option>
+                        <option value="UPDATE">update</option>
+                        <option value="DELETE">delete</option>
+                        <option value="AGGREGATE">aggregate</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>speed</label>
+                    <select id="speed">
+                        <option value="2000">slow</option>
+                        <option value="1000" selected>normal</option>
+                        <option value="500">fast</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <button id="playBtn">play</button>
+                    <button id="resetBtn">reset</button>
+                </div>
+            </div>
+
+            <div class="query-section">
+                <div class="query-label">query</div>
+                <div id="queryText" class="query-text">SELECT * FROM employees;</div>
+            </div>
+
+            <div class="step-section">
+                <div class="step-info">
+                    <div id="stepCounter" class="step-counter">step 1/6</div>
+                </div>
+                <div id="stepText" class="step-text">ready to execute query...</div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="dataTable">
+                    <thead>
+                        <tr id="tableHeader">
+                            <th>id</th>
+                            <th>name</th>
+                            <th>department</th>
+                            <th>salary</th>
+                            <th>hire_date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="status-bar">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box legend-highlighted"></div>
+                        <span>processing</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-normal"></div>
+                        <span>idle</span>
+                    </div>
+                </div>
+                <div id="status">ready</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const employees = [
+            { id: 1, name: 'alice_johnson', department: 'engineering', salary: 75000, hire_date: '2022-01-15', manager_id: 3 },
+            { id: 2, name: 'bob_smith', department: 'marketing', salary: 60000, hire_date: '2021-06-10', manager_id: null },
+            { id: 3, name: 'carol_davis', department: 'engineering', salary: 82000, hire_date: '2020-03-22', manager_id: null },
+            { id: 4, name: 'david_wilson', department: 'sales', salary: 55000, hire_date: '2023-02-18', manager_id: 6 },
+            { id: 5, name: 'eva_brown', department: 'hr', salary: 58000, hire_date: '2021-11-05', manager_id: null },
+            { id: 6, name: 'frank_miller', department: 'engineering', salary: 78000, hire_date: '2022-09-12', manager_id: 3 }
+        ];
+
+        const departments = [
+            { id: 1, name: 'engineering', budget: 500000, location: 'floor_3' },
+            { id: 2, name: 'marketing', budget: 200000, location: 'floor_2' },
+            { id: 3, name: 'sales', budget: 150000, location: 'floor_1' },
+            { id: 4, name: 'hr', budget: 100000, location: 'floor_2' },
+            { id: 5, name: 'finance', budget: 300000, location: 'floor_4' }
+        ];
+
+        const projects = [
+            { id: 1, name: 'web_app', department: 'engineering', budget: 100000 },
+            { id: 2, name: 'mobile_app', department: 'engineering', budget: 80000 },
+            { id: 3, name: 'ad_campaign', department: 'marketing', budget: 50000 },
+            { id: 4, name: 'sales_tool', department: 'sales', budget: 30000 }
+        ];
+
+        const operations = {
+            'SELECT': {
+                query: 'SELECT name, salary FROM employees;',
+                steps: [
+                    { step: 0, text: 'scanning table rows...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 1, text: 'reading row 1: alice_johnson', highlight: [0], columns: ['name', 'salary'] },
+                    { step: 2, text: 'reading row 2: bob_smith', highlight: [0, 1], columns: ['name', 'salary'] },
+                    { step: 3, text: 'reading row 3: carol_davis', highlight: [0, 1, 2], columns: ['name', 'salary'] },
+                    { step: 4, text: 'reading remaining rows...', highlight: [0, 1, 2, 3], columns: ['name', 'salary'] },
+                    { step: 5, text: 'projection complete: 6 rows, 2 columns', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary'] }
+                ]
+            },
+            'WHERE': {
+                query: 'SELECT * FROM employees WHERE department = "engineering";',
+                steps: [
+                    { step: 0, text: 'applying filter condition...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 1, text: 'alice_johnson.department == "engineering" → true', highlight: [0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 2, text: 'bob_smith.department == "engineering" → false', highlight: [0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 3, text: 'carol_davis.department == "engineering" → true', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 4, text: 'david_wilson.department == "engineering" → false', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 5, text: 'eva_brown.department == "engineering" → false', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 6, text: 'frank_miller.department == "engineering" → true', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 7, text: 'filter complete: 3 rows match condition', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] }
+                ]
+            },
+            'ORDER_BY': {
+                query: 'SELECT * FROM employees ORDER BY salary DESC;',
+                steps: [
+                    { step: 0, text: 'collecting rows for sort operation...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 1, text: 'comparing salary values...', highlight: [0, 1, 2, 3, 4, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 2, text: 'max salary found: carol_davis (82000)', highlight: [2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 3, text: 'next: frank_miller (78000)', highlight: [2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 4, text: 'next: alice_johnson (75000)', highlight: [2, 5, 0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 5, text: 'next: bob_smith (60000)', highlight: [2, 5, 0, 1], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 6, text: 'next: eva_brown (58000)', highlight: [2, 5, 0, 1, 4], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 7, text: 'sort complete: descending order by salary', highlight: [2, 5, 0, 1, 4, 3], columns: ['id', 'name', 'department', 'salary', 'hire_date'] }
+                ]
+            },
+            'GROUP_BY': {
+                query: 'SELECT department, COUNT(*) FROM employees GROUP BY department;',
+                steps: [
+                    { step: 0, text: 'initializing groups by department...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 1, text: 'group["engineering"] += alice_johnson', highlight: [0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 2, text: 'group["marketing"] += bob_smith', highlight: [1], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 3, text: 'group["engineering"] += carol_davis', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 4, text: 'group["sales"] += david_wilson', highlight: [3], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 5, text: 'group["hr"] += eva_brown', highlight: [4], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 6, text: 'group["engineering"] += frank_miller', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 7, text: 'aggregation complete: 4 groups created', highlight: [], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 },
+                        { department: 'marketing', count: 1 },
+                        { department: 'sales', count: 1 },
+                        { department: 'hr', count: 1 }
+                    ]}
+                ]
+            },
+            'HAVING': {
+                query: 'SELECT department, COUNT(*) FROM employees GROUP BY department HAVING COUNT(*) > 1;',
+                steps: [
+                    { step: 0, text: 'grouping by department first...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 1, text: 'creating groups: engineering(3), marketing(1), sales(1), hr(1)', highlight: [0, 1, 2, 3, 4, 5], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 },
+                        { department: 'marketing', count: 1 },
+                        { department: 'sales', count: 1 },
+                        { department: 'hr', count: 1 }
+                    ]},
+                    { step: 2, text: 'applying having condition: engineering.count > 1 → true', highlight: [0], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 },
+                        { department: 'marketing', count: 1 },
+                        { department: 'sales', count: 1 },
+                        { department: 'hr', count: 1 }
+                    ]},
+                    { step: 3, text: 'applying having condition: marketing.count > 1 → false', highlight: [0], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 },
+                        { department: 'marketing', count: 1 },
+                        { department: 'sales', count: 1 },
+                        { department: 'hr', count: 1 }
+                    ]},
+                    { step: 4, text: 'applying having condition: sales.count > 1 → false', highlight: [0], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 },
+                        { department: 'marketing', count: 1 },
+                        { department: 'sales', count: 1 },
+                        { department: 'hr', count: 1 }
+                    ]},
+                    { step: 5, text: 'applying having condition: hr.count > 1 → false', highlight: [0], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 },
+                        { department: 'marketing', count: 1 },
+                        { department: 'sales', count: 1 },
+                        { department: 'hr', count: 1 }
+                    ]},
+                    { step: 6, text: 'having complete: only engineering has count > 1', highlight: [0], columns: ['department', 'count'], data: [
+                        { department: 'engineering', count: 3 }
+                    ]}
+                ]
+            },
+            'INNER_JOIN': {
+                query: 'SELECT e.name, e.salary, d.location FROM employees e INNER JOIN departments d ON e.department = d.name;',
+                steps: [
+                    { step: 0, text: 'preparing inner join operation...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                    { step: 1, text: 'matching alice_johnson.department with departments.name', highlight: [0], columns: ['name', 'salary', 'location'] },
+                    { step: 2, text: 'matching bob_smith.department with departments.name', highlight: [0, 1], columns: ['name', 'salary', 'location'] },
+                    { step: 3, text: 'matching carol_davis.department with departments.name', highlight: [0, 1, 2], columns: ['name', 'salary', 'location'] },
+                    { step: 4, text: 'matching david_wilson.department with departments.name', highlight: [0, 1, 2, 3], columns: ['name', 'salary', 'location'] },
+                    { step: 5, text: 'matching eva_brown.department with departments.name', highlight: [0, 1, 2, 3, 4], columns: ['name', 'salary', 'location'] },
+                    { step: 6, text: 'matching frank_miller.department with departments.name', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary', 'location'] },
+                    { step: 7, text: 'inner join complete: all employees matched', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary', 'location'], data: [
+                        { name: 'alice_johnson', salary: 75000, location: 'floor_3' },
+                        { name: 'bob_smith', salary: 60000, location: 'floor_2' },
+                        { name: 'carol_davis', salary: 82000, location: 'floor_3' },
+                        { name: 'david_wilson', salary: 55000, location: 'floor_1' },
+                        { name: 'eva_brown', salary: 58000, location: 'floor_2' },
+                        { name: 'frank_miller', salary: 78000, location: 'floor_3' }
+                    ]}
+                ]
+            },
+            'LEFT_JOIN': {
+                query: 'SELECT d.name, d.budget, p.name as project FROM departments d LEFT JOIN projects p ON d.name = p.department;',
+                steps: [
+                    { step: 0, text: 'preparing left join: departments as left table', highlight: [], columns: ['id', 'name', 'budget', 'location'] },
+                    { step: 1, text: 'engineering department → finding matching projects', highlight: [0], columns: ['name', 'budget', 'project'] },
+                    { step: 2, text: 'marketing department → finding matching projects', highlight: [0, 1], columns: ['name', 'budget', 'project'] },
+                    { step: 3, text: 'sales department → finding matching projects', highlight: [0, 1, 2], columns: ['name', 'budget', 'project'] },
+                    { step: 4, text: 'hr department → no matching projects (null)', highlight: [0, 1, 2, 3], columns: ['name', 'budget', 'project'] },
+                    { step: 5, text: 'finance department → no matching projects (null)', highlight: [0, 1, 2, 3, 4], columns: ['name', 'budget', 'project'] },
+                    { step: 6, text: 'left join complete: all departments included', highlight: [0, 1, 2, 3, 4], columns: ['name', 'budget', 'project'], data: [
+                        { name: 'engineering', budget: 500000, project: 'web_app' },
+                        { name: 'engineering', budget: 500000, project: 'mobile_app' },
+                        { name: 'marketing', budget: 200000, project: 'ad_campaign' },
+                        { name: 'sales', budget: 150000, project: 'sales_tool' },
+                        { name: 'hr', budget: 100000, project: null },
+                        { name: 'finance', budget: 300000, project: null }
+                    ]}
+                ]
+            },
+            'RIGHT_JOIN': {
+                query: 'SELECT p.name as project, p.budget, d.location FROM projects p RIGHT JOIN departments d ON p.department = d.name;',
+                steps: [
+                    { step: 0, text: 'preparing right join: departments as right table', highlight: [], columns: ['id', 'name', 'department', 'budget'] },
+                    { step: 1, text: 'web_app project → matching with engineering dept', highlight: [0], columns: ['project', 'budget', 'location'] },
+                    { step: 2, text: 'mobile_app project → matching with engineering dept', highlight: [0, 1], columns: ['project', 'budget', 'location'] },
+                    { step: 3, text: 'ad_campaign project → matching with marketing dept', highlight: [0, 1, 2], columns: ['project', 'budget', 'location'] },
+                    { step: 4, text: 'sales_tool project → matching with sales dept', highlight: [0, 1, 2, 3], columns: ['project', 'budget', 'location'] },
+                    { step: 5, text: 'hr dept → no matching projects (null project)', highlight: [0, 1, 2, 3], columns: ['project', 'budget', 'location'] },
+                    { step: 6, text: 'finance dept → no matching projects (null project)', highlight: [0, 1, 2, 3], columns: ['project', 'budget', 'location'] },
+                    { step: 7, text: 'right join complete: all departments included', highlight: [0, 1, 2, 3], columns: ['project', 'budget', 'location'], data: [
+                        { project: 'web_app', budget: 100000, location: 'floor_3' },
+                        { project: 'mobile_app', budget: 80000, location: 'floor_3' },
+                        { project: 'ad_campaign', budget: 50000, location: 'floor_2' },
+                        { project: 'sales_tool', budget: 30000, location: 'floor_1' },
+                        { project: null, budget: null, location: 'floor_2' },
+                        { project: null, budget: null, location: 'floor_4' }
+                    ]}
+                ]
+            },
+            'FULL_JOIN': {
+                query: 'SELECT COALESCE(d.name, p.department) as dept, d.budget, p.name as project FROM departments d FULL OUTER JOIN projects p ON d.name = p.department;',
+                steps: [
+                    { step: 0, text: 'preparing full outer join: matching all records', highlight: [], columns: ['id', 'name', 'budget', 'location'] },
+                    { step: 1, text: 'matching engineering dept with projects', highlight: [0], columns: ['dept', 'budget', 'project'] },
+                    { step: 2, text: 'matching marketing dept with projects', highlight: [0, 1], columns: ['dept', 'budget', 'project'] },
+                    { step: 3, text: 'matching sales dept with projects', highlight: [0, 1, 2], columns: ['dept', 'budget', 'project'] },
+                    { step: 4, text: 'including hr dept (no projects)', highlight: [0, 1, 2, 3], columns: ['dept', 'budget', 'project'] },
+                    { step: 5, text: 'including finance dept (no projects)', highlight: [0, 1, 2, 3, 4], columns: ['dept', 'budget', 'project'] },
+                    { step: 6, text: 'full outer join complete: all records from both tables', highlight: [0, 1, 2, 3, 4], columns: ['dept', 'budget', 'project'], data: [
+                        { dept: 'engineering', budget: 500000, project: 'web_app' },
+                        { dept: 'engineering', budget: 500000, project: 'mobile_app' },
+                        { dept: 'marketing', budget: 200000, project: 'ad_campaign' },
+                        { dept: 'sales', budget: 150000, project: 'sales_tool' },
+                        { dept: 'hr', budget: 100000, project: null },
+                        { dept: 'finance', budget: 300000, project: null }
+                   ]}
+               ]
+           },
+           'CROSS_JOIN': {
+               query: 'SELECT e.name, d.name as dept_name FROM employees e CROSS JOIN departments d LIMIT 12;',
+               steps: [
+                   { step: 0, text: 'preparing cross join: cartesian product', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'alice_johnson × all departments (5 combinations)', highlight: [0], columns: ['name', 'dept_name'] },
+                   { step: 2, text: 'bob_smith × all departments (5 combinations)', highlight: [0, 1], columns: ['name', 'dept_name'] },
+                   { step: 3, text: 'cross join in progress: 6 employees × 5 departments = 30 rows', highlight: [0, 1, 2], columns: ['name', 'dept_name'] },
+                   { step: 4, text: 'continuing cartesian product...', highlight: [0, 1, 2, 3], columns: ['name', 'dept_name'] },
+                   { step: 5, text: 'cross join complete: showing first 12 results', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'dept_name'], data: [
+                       { name: 'alice_johnson', dept_name: 'engineering' },
+                       { name: 'alice_johnson', dept_name: 'marketing' },
+                       { name: 'alice_johnson', dept_name: 'sales' },
+                       { name: 'bob_smith', dept_name: 'engineering' },
+                       { name: 'bob_smith', dept_name: 'marketing' },
+                       { name: 'bob_smith', dept_name: 'sales' },
+                       { name: 'carol_davis', dept_name: 'engineering' },
+                       { name: 'carol_davis', dept_name: 'marketing' },
+                       { name: 'david_wilson', dept_name: 'engineering' },
+                       { name: 'david_wilson', dept_name: 'marketing' },
+                       { name: 'eva_brown', dept_name: 'engineering' },
+                       { name: 'frank_miller', dept_name: 'engineering' }
+                   ]}
+               ]
+           },
+           'SELF_JOIN': {
+               query: 'SELECT e1.name as employee, e2.name as manager FROM employees e1 LEFT JOIN employees e2 ON e1.manager_id = e2.id;',
+               steps: [
+                   { step: 0, text: 'preparing self join: employees table with itself', highlight: [], columns: ['id', 'name', 'department', 'salary', 'manager_id'] },
+                   { step: 1, text: 'alice_johnson.manager_id(3) → finding carol_davis', highlight: [0], columns: ['employee', 'manager'] },
+                   { step: 2, text: 'bob_smith.manager_id(null) → no manager', highlight: [0, 1], columns: ['employee', 'manager'] },
+                   { step: 3, text: 'carol_davis.manager_id(null) → no manager', highlight: [0, 1, 2], columns: ['employee', 'manager'] },
+                   { step: 4, text: 'david_wilson.manager_id(6) → finding frank_miller', highlight: [0, 1, 2, 3], columns: ['employee', 'manager'] },
+                   { step: 5, text: 'eva_brown.manager_id(null) → no manager', highlight: [0, 1, 2, 3, 4], columns: ['employee', 'manager'] },
+                   { step: 6, text: 'frank_miller.manager_id(3) → finding carol_davis', highlight: [0, 1, 2, 3, 4, 5], columns: ['employee', 'manager'] },
+                   { step: 7, text: 'self join complete: employee-manager relationships', highlight: [0, 1, 2, 3, 4, 5], columns: ['employee', 'manager'], data: [
+                       { employee: 'alice_johnson', manager: 'carol_davis' },
+                       { employee: 'bob_smith', manager: null },
+                       { employee: 'carol_davis', manager: null },
+                       { employee: 'david_wilson', manager: 'frank_miller' },
+                       { employee: 'eva_brown', manager: null },
+                       { employee: 'frank_miller', manager: 'carol_davis' }
+                   ]}
+               ]
+           },
+           'UNION': {
+               query: 'SELECT name, salary FROM employees WHERE department = "engineering" UNION SELECT name, salary FROM employees WHERE salary > 70000;',
+               steps: [
+                   { step: 0, text: 'executing first query: engineering employees', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'first result set: alice, carol, frank', highlight: [0, 2, 5], columns: ['name', 'salary'] },
+                   { step: 2, text: 'executing second query: salary > 70000', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'second result set: alice, carol, frank', highlight: [0, 2, 5], columns: ['name', 'salary'] },
+                   { step: 4, text: 'combining result sets...', highlight: [0, 2, 5], columns: ['name', 'salary'] },
+                   { step: 5, text: 'removing duplicates (union behavior)', highlight: [0, 2, 5], columns: ['name', 'salary'] },
+                   { step: 6, text: 'union complete: 3 unique records', highlight: [0, 2, 5], columns: ['name', 'salary'], data: [
+                       { name: 'alice_johnson', salary: 75000 },
+                       { name: 'carol_davis', salary: 82000 },
+                       { name: 'frank_miller', salary: 78000 }
+                   ]}
+               ]
+           },
+           'UNION_ALL': {
+               query: 'SELECT department FROM employees WHERE salary > 60000 UNION ALL SELECT department FROM employees WHERE hire_date > "2022-01-01";',
+               steps: [
+                   { step: 0, text: 'executing first query: salary > 60000', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'first result: alice, carol, frank', highlight: [0, 2, 5], columns: ['department'] },
+                   { step: 2, text: 'executing second query: hire_date > 2022-01-01', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'second result: david, frank', highlight: [3, 5], columns: ['department'] },
+                   { step: 4, text: 'combining all results (with duplicates)', highlight: [0, 2, 3, 5], columns: ['department'] },
+                   { step: 5, text: 'union all complete: 5 records (duplicates kept)', highlight: [0, 2, 3, 5], columns: ['department'], data: [
+                       { department: 'engineering' },
+                       { department: 'engineering' },
+                       { department: 'engineering' },
+                       { department: 'sales' },
+                       { department: 'engineering' }
+                   ]}
+               ]
+           },
+           'INTERSECT': {
+               query: 'SELECT department FROM employees WHERE salary > 60000 INTERSECT SELECT department FROM employees WHERE hire_date < "2022-01-01";',
+               steps: [
+                   { step: 0, text: 'executing first query: salary > 60000', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'first result departments: engineering, engineering, engineering', highlight: [0, 2, 5], columns: ['department'] },
+                   { step: 2, text: 'executing second query: hire_date < 2022-01-01', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'second result departments: marketing, engineering, hr', highlight: [1, 2, 4], columns: ['department'] },
+                   { step: 4, text: 'finding common departments...', highlight: [2], columns: ['department'] },
+                   { step: 5, text: 'intersect complete: engineering appears in both', highlight: [2], columns: ['department'], data: [
+                       { department: 'engineering' }
+                   ]}
+               ]
+           },
+           'EXCEPT': {
+               query: 'SELECT department FROM employees WHERE salary > 55000 EXCEPT SELECT department FROM employees WHERE hire_date > "2022-01-01";',
+               steps: [
+                   { step: 0, text: 'executing first query: salary > 55000', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'first result: alice, bob, carol, eva, frank', highlight: [0, 1, 2, 4, 5], columns: ['department'] },
+                   { step: 2, text: 'executing second query: hire_date > 2022-01-01', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'second result: david, frank', highlight: [3, 5], columns: ['department'] },
+                   { step: 4, text: 'removing departments from second set...', highlight: [0, 1, 2, 4], columns: ['department'] },
+                   { step: 5, text: 'except complete: departments only in first set', highlight: [0, 1, 2, 4], columns: ['department'], data: [
+                       { department: 'engineering' },
+                       { department: 'marketing' },
+                       { department: 'hr' }
+                   ]}
+               ]
+           },
+           'SUBQUERY': {
+               query: 'SELECT name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);',
+               steps: [
+                   { step: 0, text: 'executing subquery: calculating average salary', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'subquery processing all salaries...', highlight: [0, 1, 2, 3, 4, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 2, text: 'subquery result: avg(salary) = 68000', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'main query: finding salary > 68000', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 4, text: 'alice_johnson: 75000 > 68000 → true', highlight: [0], columns: ['name', 'salary'] },
+                   { step: 5, text: 'carol_davis: 82000 > 68000 → true', highlight: [0, 2], columns: ['name', 'salary'] },
+                   { step: 6, text: 'frank_miller: 78000 > 68000 → true', highlight: [0, 2, 5], columns: ['name', 'salary'] },
+                   { step: 7, text: 'subquery complete: 3 employees above average', highlight: [0, 2, 5], columns: ['name', 'salary'], data: [
+                       { name: 'alice_johnson', salary: 75000 },
+                       { name: 'carol_davis', salary: 82000 },
+                       { name: 'frank_miller', salary: 78000 }
+                   ]}
+               ]
+           },
+           'EXISTS': {
+               query: 'SELECT name FROM employees e WHERE EXISTS (SELECT 1 FROM departments d WHERE d.name = e.department);',
+               steps: [
+                   { step: 0, text: 'checking exists condition for each employee', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'alice: exists(engineering in departments) → true', highlight: [0], columns: ['name'] },
+                   { step: 2, text: 'bob: exists(marketing in departments) → true', highlight: [0, 1], columns: ['name'] },
+                   { step: 3, text: 'carol: exists(engineering in departments) → true', highlight: [0, 1, 2], columns: ['name'] },
+                   { step: 4, text: 'david: exists(sales in departments) → true', highlight: [0, 1, 2, 3], columns: ['name'] },
+                   { step: 5, text: 'eva: exists(hr in departments) → true', highlight: [0, 1, 2, 3, 4], columns: ['name'] },
+                   { step: 6, text: 'frank: exists(engineering in departments) → true', highlight: [0, 1, 2, 3, 4, 5], columns: ['name'] },
+                   { step: 7, text: 'exists complete: all employees have valid departments', highlight: [0, 1, 2, 3, 4, 5], columns: ['name'], data: [
+                       { name: 'alice_johnson' },
+                       { name: 'bob_smith' },
+                       { name: 'carol_davis' },
+                       { name: 'david_wilson' },
+                       { name: 'eva_brown' },
+                       { name: 'frank_miller' }
+                   ]}
+               ]
+           },
+           'CASE_WHEN': {
+               query: 'SELECT name, CASE WHEN salary > 75000 THEN "high" WHEN salary > 60000 THEN "medium" ELSE "low" END as salary_tier FROM employees;',
+               steps: [
+                   { step: 0, text: 'evaluating case conditions for each employee', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'alice: 75000 > 75000? false, > 60000? true → medium', highlight: [0], columns: ['name', 'salary_tier'] },
+                   { step: 2, text: 'bob: 60000 > 75000? false, > 60000? false → low', highlight: [0, 1], columns: ['name', 'salary_tier'] },
+                   { step: 3, text: 'carol: 82000 > 75000? true → high', highlight: [0, 1, 2], columns: ['name', 'salary_tier'] },
+                   { step: 4, text: 'david: 55000 > 75000? false, > 60000? false → low', highlight: [0, 1, 2, 3], columns: ['name', 'salary_tier'] },
+                   { step: 5, text: 'eva: 58000 > 75000? false, > 60000? false → low', highlight: [0, 1, 2, 3, 4], columns: ['name', 'salary_tier'] },
+                   { step: 6, text: 'frank: 78000 > 75000? true → high', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary_tier'] },
+                   { step: 7, text: 'case when complete: salary tiers assigned', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary_tier'], data: [
+                       { name: 'alice_johnson', salary_tier: 'medium' },
+                       { name: 'bob_smith', salary_tier: 'low' },
+                       { name: 'carol_davis', salary_tier: 'high' },
+                       { name: 'david_wilson', salary_tier: 'low' },
+                       { name: 'eva_brown', salary_tier: 'low' },
+                       { name: 'frank_miller', salary_tier: 'high' }
+                   ]}
+               ]
+           },
+           'WINDOW': {
+               query: 'SELECT name, salary, ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as rank FROM employees;',
+               steps: [
+                   { step: 0, text: 'partitioning by department for window function', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'engineering partition: carol(82k), frank(78k), alice(75k)', highlight: [0, 2, 5], columns: ['name', 'salary', 'rank'] },
+                   { step: 2, text: 'marketing partition: bob(60k)', highlight: [1], columns: ['name', 'salary', 'rank'] },
+                   { step: 3, text: 'sales partition: david(55k)', highlight: [3], columns: ['name', 'salary', 'rank'] },
+                   { step: 4, text: 'hr partition: eva(58k)', highlight: [4], columns: ['name', 'salary', 'rank'] },
+                   { step: 5, text: 'assigning row numbers within each partition...', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary', 'rank'] },
+                   { step: 6, text: 'window function complete: ranks assigned by department', highlight: [0, 1, 2, 3, 4, 5], columns: ['name', 'salary', 'rank'], data: [
+                       { name: 'carol_davis', salary: 82000, rank: 1 },
+                       { name: 'frank_miller', salary: 78000, rank: 2 },
+                       { name: 'alice_johnson', salary: 75000, rank: 3 },
+                       { name: 'bob_smith', salary: 60000, rank: 1 },
+                       { name: 'eva_brown', salary: 58000, rank: 1 },
+                       { name: 'david_wilson', salary: 55000, rank: 1 }
+                   ]}
+               ]
+           },
+           'CTE': {
+               query: 'WITH high_earners AS (SELECT * FROM employees WHERE salary > 70000) SELECT department, COUNT(*) FROM high_earners GROUP BY department;',
+               steps: [
+                   { step: 0, text: 'creating cte: high_earners (salary > 70000)', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'alice_johnson: 75000 > 70000 → included in cte', highlight: [0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 2, text: 'carol_davis: 82000 > 70000 → included in cte', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'frank_miller: 78000 > 70000 → included in cte', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 4, text: 'cte created with 3 high earners', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 5, text: 'main query: grouping cte by department', highlight: [0, 2, 5], columns: ['department', 'count'] },
+                   { step: 6, text: 'cte complete: engineering has 3 high earners', highlight: [0, 2, 5], columns: ['department', 'count'], data: [
+                       { department: 'engineering', count: 3 }
+                   ]}
+               ]
+           },
+           'INSERT': {
+               query: 'INSERT INTO employees (name, department, salary) VALUES ("john_doe", "engineering", 70000);',
+               steps: [
+                   { step: 0, text: 'preparing insert operation...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'validating new record values...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 2, text: 'generating new id: 7', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'inserting john_doe into employees table...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 4, text: 'insert complete: 1 row added', highlight: [6], columns: ['id', 'name', 'department', 'salary', 'hire_date'], data: [
+                       { id: 1, name: 'alice_johnson', department: 'engineering', salary: 75000, hire_date: '2022-01-15' },
+                       { id: 2, name: 'bob_smith', department: 'marketing', salary: 60000, hire_date: '2021-06-10' },
+                       { id: 3, name: 'carol_davis', department: 'engineering', salary: 82000, hire_date: '2020-03-22' },
+                       { id: 4, name: 'david_wilson', department: 'sales', salary: 55000, hire_date: '2023-02-18' },
+                       { id: 5, name: 'eva_brown', department: 'hr', salary: 58000, hire_date: '2021-11-05' },
+                       { id: 6, name: 'frank_miller', department: 'engineering', salary: 78000, hire_date: '2022-09-12' },
+                       { id: 7, name: 'john_doe', department: 'engineering', salary: 70000, hire_date: '2025-07-30' }
+                   ]}
+               ]
+           },
+           'UPDATE': {
+               query: 'UPDATE employees SET salary = salary * 1.1 WHERE department = "engineering";',
+               steps: [
+                   { step: 0, text: 'identifying rows to update...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'alice_johnson: engineering → salary update needed', highlight: [0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 2, text: 'carol_davis: engineering → salary update needed', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'frank_miller: engineering → salary update needed', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 4, text: 'updating alice: 75000 * 1.1 = 82500', highlight: [0], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 5, text: 'updating carol: 82000 * 1.1 = 90200', highlight: [0, 2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 6, text: 'updating frank: 78000 * 1.1 = 85800', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 7, text: 'update complete: 3 engineering salaries increased', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'], data: [
+                       { id: 1, name: 'alice_johnson', department: 'engineering', salary: 82500, hire_date: '2022-01-15' },
+                       { id: 2, name: 'bob_smith', department: 'marketing', salary: 60000, hire_date: '2021-06-10' },
+                       { id: 3, name: 'carol_davis', department: 'engineering', salary: 90200, hire_date: '2020-03-22' },
+                       { id: 4, name: 'david_wilson', department: 'sales', salary: 55000, hire_date: '2023-02-18' },
+                       { id: 5, name: 'eva_brown', department: 'hr', salary: 58000, hire_date: '2021-11-05' },
+                       { id: 6, name: 'frank_miller', department: 'engineering', salary: 85800, hire_date: '2022-09-12' }
+                   ]}
+               ]
+           },
+           'DELETE': {
+               query: 'DELETE FROM employees WHERE hire_date < "2021-01-01";',
+               steps: [
+                   { step: 0, text: 'identifying rows to delete...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'alice_johnson: 2022-01-15 < 2021-01-01 → false', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 2, text: 'bob_smith: 2021-06-10 < 2021-01-01 → false', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'carol_davis: 2020-03-22 < 2021-01-01 → true', highlight: [2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 4, text: 'marking carol_davis for deletion...', highlight: [2], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 5, text: 'removing carol_davis from table...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 6, text: 'delete complete: 1 row removed', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'], data: [
+                       { id: 1, name: 'alice_johnson', department: 'engineering', salary: 75000, hire_date: '2022-01-15' },
+                       { id: 2, name: 'bob_smith', department: 'marketing', salary: 60000, hire_date: '2021-06-10' },
+                       { id: 4, name: 'david_wilson', department: 'sales', salary: 55000, hire_date: '2023-02-18' },
+                       { id: 5, name: 'eva_brown', department: 'hr', salary: 58000, hire_date: '2021-11-05' },
+                       { id: 6, name: 'frank_miller', department: 'engineering', salary: 78000, hire_date: '2022-09-12' }
+                   ]}
+               ]
+           },
+           'AGGREGATE': {
+               query: 'SELECT department, AVG(salary), MAX(salary), MIN(salary), COUNT(*) FROM employees GROUP BY department;',
+               steps: [
+                   { step: 0, text: 'computing aggregate functions by department...', highlight: [], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 1, text: 'processing engineering group...', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 2, text: 'engineering → avg:78333, max:82000, min:75000, count:3', highlight: [0, 2, 5], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 3, text: 'processing other departments...', highlight: [1, 3, 4], columns: ['id', 'name', 'department', 'salary', 'hire_date'] },
+                   { step: 4, text: 'computing final aggregations...', highlight: [0, 1, 2, 3, 4, 5], columns: ['department', 'avg_salary', 'max_salary', 'min_salary', 'count'] },
+                   { step: 5, text: 'aggregate complete: all department statistics calculated', highlight: [0, 1, 2, 3, 4, 5], columns: ['department', 'avg_salary', 'max_salary', 'min_salary', 'count'], data: [
+                       { department: 'engineering', avg_salary: 78333, max_salary: 82000, min_salary: 75000, count: 3 },
+                       { department: 'marketing', avg_salary: 60000, max_salary: 60000, min_salary: 60000, count: 1 },
+                       { department: 'sales', avg_salary: 55000, max_salary: 55000, min_salary: 55000, count: 1 },
+                       { department: 'hr', avg_salary: 58000, max_salary: 58000, min_salary: 58000, count: 1 }
+                   ]}
+               ]
+           }
+       };
+
+       // State
+       let currentOperation = 'SELECT';
+       let currentStep = 0;
+       let isAnimating = false;
+       let animationInterval;
+       let animationSpeed = 1000;
+
+       // DOM elements
+       const operationSelect = document.getElementById('operation');
+       const speedSelect = document.getElementById('speed');
+       const playBtn = document.getElementById('playBtn');
+       const resetBtn = document.getElementById('resetBtn');
+       const queryText = document.getElementById('queryText');
+       const stepCounter = document.getElementById('stepCounter');
+       const stepText = document.getElementById('stepText');
+       const tableHeader = document.getElementById('tableHeader');
+       const tableBody = document.getElementById('tableBody');
+       const status = document.getElementById('status');
+
+       // Event listeners
+       operationSelect.addEventListener('change', (e) => {
+           currentOperation = e.target.value;
+           reset();
+           updateDisplay();
+       });
+
+       speedSelect.addEventListener('change', (e) => {
+
+
+
+         animationSpeed = parseInt(e.target.value);
+       });
+
+       playBtn.addEventListener('click', () => {
+           if (isAnimating) {
+               pause();
+           } else {
+               play();
+           }
+       });
+
+       resetBtn.addEventListener('click', reset);
+
+       // Functions
+       function play() {
+           if (currentStep >= operations[currentOperation].steps.length - 1) {
+               reset();
+           }
+           
+           isAnimating = true;
+           playBtn.textContent = 'pause';
+           playBtn.classList.add('active');
+           status.textContent = 'executing...';
+           
+           animationInterval = setInterval(() => {
+               if (currentStep < operations[currentOperation].steps.length - 1) {
+                   currentStep++;
+                   updateDisplay();
+               } else {
+                   pause();
+                   status.textContent = 'complete';
+               }
+           }, animationSpeed);
+       }
+
+       function pause() {
+           isAnimating = false;
+           clearInterval(animationInterval);
+           playBtn.textContent = 'play';
+           playBtn.classList.remove('active');
+           if (status.textContent === 'executing...') {
+               status.textContent = 'paused';
+           }
+       }
+
+       function reset() {
+           pause();
+           currentStep = 0;
+           status.textContent = 'ready';
+           updateDisplay();
+       }
+
+       function updateDisplay() {
+           const operation = operations[currentOperation];
+           const step = operation.steps[currentStep];
+           
+           // Update query
+           queryText.textContent = operation.query;
+           
+           // Update step
+           stepCounter.textContent = `step ${currentStep + 1}/${operation.steps.length}`;
+           stepText.textContent = step.text;
+           
+           // Update table
+           updateTable(step);
+       }
+
+       function updateTable(step) {
+           // Update header
+           tableHeader.innerHTML = '';
+           step.columns.forEach(col => {
+               const th = document.createElement('th');
+               th.textContent = col;
+               tableHeader.appendChild(th);
+           });
+           
+           // Get data
+           let data = step.data || employees;
+           if (currentOperation === 'ORDER_BY' && currentStep > 1) {
+               data = [...employees].sort((a, b) => b.salary - a.salary);
+           }
+           
+           // Update body
+           tableBody.innerHTML = '';
+           data.forEach((row, index) => {
+               const tr = document.createElement('tr');
+               if (step.highlight.includes(index)) {
+                   tr.classList.add('highlighted');
+               }
+               
+               step.columns.forEach(col => {
+                   const td = document.createElement('td');
+                   let value = row[col];
+                   if (col === 'salary' && typeof value === 'number') {
+                       value = value.toLocaleString();
+                   }
+                   td.textContent = value || '';
+                   tr.appendChild(td);
+               });
+               
+               tableBody.appendChild(tr);
+           });
+       }
+
+       // Initialize
+       updateDisplay();
+   </script>
+</body>
 </html>
+
+
+
+
+                                    
