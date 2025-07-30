@@ -412,6 +412,61 @@
             51% { transform: scaleX(1); transform-origin: right; }
             100% { transform: scaleX(0); transform-origin: right; }
         }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .control-group {
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .tables-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .table-wrapper {
+                min-width: auto;
+                max-width: none;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            .process-box {
+                font-size: 10px;
+                padding: 15px;
+            }
+
+            .query-text {
+                font-size: 12px;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+
+            .legend {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
     </style>
 </head>
 <body>
@@ -686,208 +741,200 @@
         ];
 
         // Complete operations object with ALL SQL syntax
-// Fixed operations with proper step-by-step visualization
-const operations = {
-    'SELECT': {
-        query: 'SELECT empno, ename, sal, deptno FROM emp WHERE sal > 1000 ORDER BY sal DESC;',
-        totalSteps: 16,
-        steps: [
-            {
-                stepNum: 0,
-                text: 'Oracle parser analyzing SELECT statement...',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [],
-                processedRows: [],
-                processBox: 'ORACLE SQL PARSER\nSTATEMENT: SELECT\nWHERE: sal > 1000\nORDER BY: sal DESC\nREADY TO SCAN',
-                processDetail: 'Oracle parser analyzing SELECT statement. Ready to scan employee table row by row.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: [] // NO OUTPUT YET
-            },
-            {
-                stepNum: 1,
-                text: 'Processing SMITH - sal=800, condition check: 800 > 1000? FALSE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [0], // Show SMITH being processed
-                processedRows: [],
-                processBox: 'PROCESSING ROW 1/14\nEMPLOYEE: SMITH\nSALARY: 800\nCHECK: 800 > 1000? FALSE\nREJECTED',
-                processDetail: 'Processing SMITH (empno=7369, sal=800). WHERE condition: 800 > 1000 = FALSE. Row rejected.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: [] // STILL NO OUTPUT - just processing
-            },
-            {
-                stepNum: 2,
-                text: 'Processing ALLEN - sal=1600, condition check: 1600 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [1], // Show ALLEN being processed
-                processedRows: [0], // SMITH is now processed (blue)
-                processBox: 'PROCESSING ROW 2/14\nEMPLOYEE: ALLEN\nSALARY: 1600\nCHECK: 1600 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing ALLEN (empno=7499, sal=1600). WHERE condition: 1600 > 1000 = TRUE. Adding to intermediate result for sorting.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: [] // STILL NO OUTPUT - collecting for sort
-            },
-            {
-                stepNum: 3,
-                text: 'Processing WARD - sal=1250, condition check: 1250 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [2], // Show WARD being processed
-                processedRows: [0, 1], // SMITH and ALLEN processed
-                processBox: 'PROCESSING ROW 3/14\nEMPLOYEE: WARD\nSALARY: 1250\nCHECK: 1250 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing WARD (empno=7521, sal=1250). WHERE condition: 1250 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: [] // STILL NO OUTPUT
-            },
-            // Continue for all 14 employees...
-            {
-                stepNum: 4,
-                text: 'Processing JONES - sal=2975, condition check: 2975 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [3],
-                processedRows: [0, 1, 2],
-                processBox: 'PROCESSING ROW 4/14\nEMPLOYEE: JONES\nSALARY: 2975\nCHECK: 2975 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing JONES (empno=7566, sal=2975). WHERE condition: 2975 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 5,
-                text: 'Processing MARTIN - sal=1250, condition check: 1250 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [4],
-                processedRows: [0, 1, 2, 3],
-                processBox: 'PROCESSING ROW 5/14\nEMPLOYEE: MARTIN\nSALARY: 1250\nCHECK: 1250 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing MARTIN (empno=7654, sal=1250). WHERE condition: 1250 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 6,
-                text: 'Processing BLAKE - sal=2850, condition check: 2850 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [5],
-                processedRows: [0, 1, 2, 3, 4],
-                processBox: 'PROCESSING ROW 6/14\nEMPLOYEE: BLAKE\nSALARY: 2850\nCHECK: 2850 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing BLAKE (empno=7698, sal=2850). WHERE condition: 2850 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 7,
-                text: 'Processing CLARK - sal=2450, condition check: 2450 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [6],
-                processedRows: [0, 1, 2, 3, 4, 5],
-                processBox: 'PROCESSING ROW 7/14\nEMPLOYEE: CLARK\nSALARY: 2450\nCHECK: 2450 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing CLARK (empno=7782, sal=2450). WHERE condition: 2450 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 8,
-                text: 'Processing SCOTT - sal=3000, condition check: 3000 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [7],
-                processedRows: [0, 1, 2, 3, 4, 5, 6],
-                processBox: 'PROCESSING ROW 8/14\nEMPLOYEE: SCOTT\nSALARY: 3000\nCHECK: 3000 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing SCOTT (empno=7788, sal=3000). WHERE condition: 3000 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 9,
-                text: 'Processing KING - sal=5000, condition check: 5000 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [8],
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7],
-                processBox: 'PROCESSING ROW 9/14\nEMPLOYEE: KING\nSALARY: 5000\nCHECK: 5000 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing KING (empno=7839, sal=5000). WHERE condition: 5000 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 10,
-                text: 'Processing TURNER - sal=1500, condition check: 1500 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [9],
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-                processBox: 'PROCESSING ROW 10/14\nEMPLOYEE: TURNER\nSALARY: 1500\nCHECK: 1500 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing TURNER (empno=7844, sal=1500). WHERE condition: 1500 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 11,
-                text: 'Processing ADAMS - sal=1100, condition check: 1100 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [10],
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                processBox: 'PROCESSING ROW 11/14\nEMPLOYEE: ADAMS\nSALARY: 1100\nCHECK: 1100 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing ADAMS (empno=7876, sal=1100). WHERE condition: 1100 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 12,
-                text: 'Processing JAMES - sal=950, condition check: 950 > 1000? FALSE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [11],
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                processBox: 'PROCESSING ROW 12/14\nEMPLOYEE: JAMES\nSALARY: 950\nCHECK: 950 > 1000? FALSE\nREJECTED',
-                processDetail: 'Processing JAMES (empno=7900, sal=950). WHERE condition: 950 > 1000 = FALSE. Row rejected.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 13,
-                text: 'Processing FORD - sal=3000, condition check: 3000 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [12],
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-                processBox: 'PROCESSING ROW 13/14\nEMPLOYEE: FORD\nSALARY: 3000\nCHECK: 3000 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing FORD (empno=7902, sal=3000). WHERE condition: 3000 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 14,
-                text: 'Processing MILLER - sal=1300, condition check: 1300 > 1000? TRUE',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [13],
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                processBox: 'PROCESSING ROW 14/14\nEMPLOYEE: MILLER\nSALARY: 1300\nCHECK: 1300 > 1000? TRUE\nACCEPTED FOR SORT',
-                processDetail: 'Processing MILLER (empno=7934, sal=1300). WHERE condition: 1300 > 1000 = TRUE. Adding to intermediate result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: []
-            },
-            {
-                stepNum: 15,
-                text: 'Table scan complete - NOW SORTING and generating final output',
-                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                currentProcessing: [], // No more processing
-                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], // All processed
-                processBox: 'SCAN COMPLETE\nFILTERED: 12/14 rows qualify\nSORTING: by sal DESC\nGENERATING: final output\nRESULT READY',
-                processDetail: 'Table scan complete! 12 employees qualify (sal > 1000). Now sorting by salary DESC and generating final result.',
-                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                outputData: [ // NOW SHOW THE COMPLETE SORTED OUTPUT
-                    { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
-                    { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
-                    { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 },
-                    { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
-                    { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 },
-                    { empno: 7782, ename: 'CLARK', sal: 2450, deptno: 10 },
-                    { empno: 7499, ename: 'ALLEN', sal: 1600, deptno: 30 },
-                    { empno: 7844, ename: 'TURNER', sal: 1500, deptno: 30 },
-                    { empno: 7934, ename: 'MILLER', sal: 1300, deptno: 10 },
-                    { empno: 7521, ename: 'WARD', sal: 1250, deptno: 30 },
-                    { empno: 7654, ename: 'MARTIN', sal: 1250, deptno: 30 },
-                    { empno: 7876, ename: 'ADAMS', sal: 1100, deptno: 20 }
-                ]
-          
-        
-        
-        
-        
-        
-        }
+        const operations = {
+            'SELECT': {
+                query: 'SELECT empno, ename, sal, deptno FROM emp WHERE sal > 1000 ORDER BY sal DESC;',
+                totalSteps: 16,
+                steps: [
+                    {
+                        stepNum: 0,
+                        text: 'Oracle parser analyzing SELECT statement...',
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        currentProcessing: [],
+                        processedRows: [],
+                        processBox: 'ORACLE SQL PARSER\nSTATEMENT: SELECT\nWHERE: sal > 1000\nORDER BY: sal DESC\nREADY TO SCAN',
+                        processDetail: 'Oracle parser analyzing SELECT statement. Ready to scan employee table row by row.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                        outputData: []
+                    },
+                    {
+                        stepNum: 1,
+                        text: 'Processing SMITH - sal=800, condition check: 800 > 1000? FALSE',
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        currentProcessing: [0],
+                        processedRows: [],
+                        processBox: 'PROCESSING ROW 1/14\nEMPLOYEE: SMITH\nSALARY: 800\nCHECK: 800 > 1000? FALSE\nREJECTED',
+                        processDetail: 'Processing SMITH (empno=7369, sal=800). WHERE condition: 800 > 1000 = FALSE. Row rejected.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                        outputData: []
+                    },
+                    {
+                        stepNum: 2,
+                        text: 'Processing ALLEN - sal=1600, condition check: 1600 > 1000? TRUE',
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        currentProcessing: [1],
+                        processedRows: [0],
+                        processBox: 'PROCESSING ROW 2/14\nEMPLOYEE: ALLEN\nSALARY: 1600\nCHECK: 1600 > 1000? TRUE\nACCEPTED FOR SORT',
+                        processDetail: 'Processing ALLEN (empno=7499, sal=1600). WHERE condition: 1600 > 1000 = TRUE. Adding to intermediate result for sorting.',
+                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                        outputData: []
+                    },
+                    {
+                        stepNum: 3,
+                        text: 'Processing WARD - sal=1250, condition check: 1250 > 1000? TRUE',
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        currentProcessing: [2],
+                        processedRows: [0, 1],
+                        processBox: 'PROCESSING ROW 3/14\nEMPLOYEE: WARD\nSALARY: 1250\nCHECK: 1250 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing WARD (empno=7521, sal=1250). WHERE condition: 1250 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 4,
+                       text: 'Processing JONES - sal=2975, condition check: 2975 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [3],
+                       processedRows: [0, 1, 2],
+                       processBox: 'PROCESSING ROW 4/14\nEMPLOYEE: JONES\nSALARY: 2975\nCHECK: 2975 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing JONES (empno=7566, sal=2975). WHERE condition: 2975 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 5,
+                       text: 'Processing MARTIN - sal=1250, condition check: 1250 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [4],
+                       processedRows: [0, 1, 2, 3],
+                       processBox: 'PROCESSING ROW 5/14\nEMPLOYEE: MARTIN\nSALARY: 1250\nCHECK: 1250 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing MARTIN (empno=7654, sal=1250). WHERE condition: 1250 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 6,
+                       text: 'Processing BLAKE - sal=2850, condition check: 2850 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [5],
+                       processedRows: [0, 1, 2, 3, 4],
+                       processBox: 'PROCESSING ROW 6/14\nEMPLOYEE: BLAKE\nSALARY: 2850\nCHECK: 2850 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing BLAKE (empno=7698, sal=2850). WHERE condition: 2850 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 7,
+                       text: 'Processing CLARK - sal=2450, condition check: 2450 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [6],
+                       processedRows: [0, 1, 2, 3, 4, 5],
+                       processBox: 'PROCESSING ROW 7/14\nEMPLOYEE: CLARK\nSALARY: 2450\nCHECK: 2450 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing CLARK (empno=7782, sal=2450). WHERE condition: 2450 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 8,
+                       text: 'Processing SCOTT - sal=3000, condition check: 3000 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [7],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6],
+                       processBox: 'PROCESSING ROW 8/14\nEMPLOYEE: SCOTT\nSALARY: 3000\nCHECK: 3000 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing SCOTT (empno=7788, sal=3000). WHERE condition: 3000 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 9,
+                       text: 'Processing KING - sal=5000, condition check: 5000 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [8],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7],
+                       processBox: 'PROCESSING ROW 9/14\nEMPLOYEE: KING\nSALARY: 5000\nCHECK: 5000 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing KING (empno=7839, sal=5000). WHERE condition: 5000 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 10,
+                       text: 'Processing TURNER - sal=1500, condition check: 1500 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [9],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                       processBox: 'PROCESSING ROW 10/14\nEMPLOYEE: TURNER\nSALARY: 1500\nCHECK: 1500 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing TURNER (empno=7844, sal=1500). WHERE condition: 1500 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 11,
+                       text: 'Processing ADAMS - sal=1100, condition check: 1100 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [10],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                       processBox: 'PROCESSING ROW 11/14\nEMPLOYEE: ADAMS\nSALARY: 1100\nCHECK: 1100 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing ADAMS (empno=7876, sal=1100). WHERE condition: 1100 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 12,
+                       text: 'Processing JAMES - sal=950, condition check: 950 > 1000? FALSE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [11],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                       processBox: 'PROCESSING ROW 12/14\nEMPLOYEE: JAMES\nSALARY: 950\nCHECK: 950 > 1000? FALSE\nREJECTED',
+                       processDetail: 'Processing JAMES (empno=7900, sal=950). WHERE condition: 950 > 1000 = FALSE. Row rejected.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 13,
+                       text: 'Processing FORD - sal=3000, condition check: 3000 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [12],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                       processBox: 'PROCESSING ROW 13/14\nEMPLOYEE: FORD\nSALARY: 3000\nCHECK: 3000 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing FORD (empno=7902, sal=3000). WHERE condition: 3000 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 14,
+                       text: 'Processing MILLER - sal=1300, condition check: 1300 > 1000? TRUE',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [13],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                       processBox: 'PROCESSING ROW 14/14\nEMPLOYEE: MILLER\nSALARY: 1300\nCHECK: 1300 > 1000? TRUE\nACCEPTED FOR SORT',
+                       processDetail: 'Processing MILLER (empno=7934, sal=1300). WHERE condition: 1300 > 1000 = TRUE. Adding to intermediate result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 15,
+                       text: 'Table scan complete - NOW SORTING and generating final output',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [],
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                       processBox: 'SCAN COMPLETE\nFILTERED: 12/14 rows qualify\nSORTING: by sal DESC\nGENERATING: final output\nRESULT READY',
+                       processDetail: 'Table scan complete! 12 employees qualify (sal > 1000). Now sorting by salary DESC and generating final result.',
+                       outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                       outputData: [
+                           { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
+                           { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
+                           { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 },
+                           { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
+                           { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 },
+                           { empno: 7782, ename: 'CLARK', sal: 2450, deptno: 10 },
+                           { empno: 7499, ename: 'ALLEN', sal: 1600, deptno: 30 },
+                           { empno: 7844, ename: 'TURNER', sal: 1500, deptno: 30 },
+                           { empno: 7934, ename: 'MILLER', sal: 1300, deptno: 10 },
+                           { empno: 7521, ename: 'WARD', sal: 1250, deptno: 30 },
+                           { empno: 7654, ename: 'MARTIN', sal: 1250, deptno: 30 },
+                           { empno: 7876, ename: 'ADAMS', sal: 1100, deptno: 20 }
+                       ]
+                   }
                ]
            },
 
@@ -921,11 +968,78 @@ const operations = {
                        processBox: 'PROCESSING JONES\nSALARY: 2975 > 2000 ✓\nDEPTNO: 20\nSEEKING DEPT 20...\nMATCH: RESEARCH',
                        processDetail: 'Processing JONES (sal=2975, deptno=20). Salary qualifies. Joining with DEPT table: deptno 20 = RESEARCH in DALLAS.',
                        outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                       outputData: [
-                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' }
-                       ]
+                       outputData: []
                    },
-                   // ... more join steps
+                   {
+                       stepNum: 2,
+                       text: 'Processing BLAKE - sal=2850 > 2000, looking for dept 30 match...',
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       currentProcessing: [5],
+                       processedRows: [3],
+                       processBox: 'PROCESSING BLAKE\nSALARY: 2850 > 2000 ✓\nDEPTNO: 30\nSEEKING DEPT 30...\nMATCH: SALES',
+                       processDetail: 'Processing BLAKE (sal=2850, deptno=30). Salary qualifies. Joining with DEPT table: deptno 30 = SALES in CHICAGO.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 3,
+                       text: 'Processing CLARK - sal=2450 > 2000, looking for dept 10 match...',
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       currentProcessing: [6],
+                       processedRows: [3, 5],
+                       processBox: 'PROCESSING CLARK\nSALARY: 2450 > 2000 ✓\nDEPTNO: 10\nSEEKING DEPT 10...\nMATCH: ACCOUNTING',
+                       processDetail: 'Processing CLARK (sal=2450, deptno=10). Salary qualifies. Joining with DEPT table: deptno 10 = ACCOUNTING in NEW YORK.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 4,
+                       text: 'Processing SCOTT - sal=3000 > 2000, looking for dept 20 match...',
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       currentProcessing: [7],
+                       processedRows: [3, 5, 6],
+                       processBox: 'PROCESSING SCOTT\nSALARY: 3000 > 2000 ✓\nDEPTNO: 20\nSEEKING DEPT 20...\nMATCH: RESEARCH',
+                       processDetail: 'Processing SCOTT (sal=3000, deptno=20). Salary qualifies. Joining with DEPT table: deptno 20 = RESEARCH in DALLAS.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 5,
+                       text: 'Processing KING - sal=5000 > 2000, looking for dept 10 match...',
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       currentProcessing: [8],
+                       processedRows: [3, 5, 6, 7],
+                       processBox: 'PROCESSING KING\nSALARY: 5000 > 2000 ✓\nDEPTNO: 10\nSEEKING DEPT 10...\nMATCH: ACCOUNTING',
+                       processDetail: 'Processing KING (sal=5000, deptno=10). Salary qualifies. Joining with DEPT table: deptno 10 = ACCOUNTING in NEW YORK.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 6,
+                       text: 'Processing FORD - sal=3000 > 2000, looking for dept 20 match...',
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       currentProcessing: [12],
+                       processedRows: [3, 5, 6, 7, 8],
+                       processBox: 'PROCESSING FORD\nSALARY: 3000 > 2000 ✓\nDEPTNO: 20\nSEEKING DEPT 20...\nMATCH: RESEARCH',
+                       processDetail: 'Processing FORD (sal=3000, deptno=20). Salary qualifies. Joining with DEPT table: deptno 20 = RESEARCH in DALLAS.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
                    {
                        stepNum: 7,
                        text: 'INNER JOIN complete - 6 high earners matched with departments',
@@ -952,7 +1066,7 @@ const operations = {
 
            'GROUP_BY': {
                query: 'SELECT deptno, COUNT(*) as emp_count, AVG(sal) as avg_sal, MAX(sal) as max_sal FROM emp GROUP BY deptno ORDER BY deptno;',
-               totalSteps: 10,
+               totalSteps: 6,
                steps: [
                    {
                        stepNum: 0,
@@ -985,9 +1099,7 @@ const operations = {
                        processBox: 'GROUP 1: DEPT 10\nCLARK: sal=2450\nKING: sal=5000\nMILLER: sal=1300\nCOUNT=3, AVG=2916.67, MAX=5000',
                        processDetail: 'Processing department 10 group: CLARK (2450), KING (5000), MILLER (1300). Calculating aggregates: COUNT=3, AVG=2916.67, MAX=5000.',
                        outputColumns: ['deptno', 'emp_count', 'avg_sal', 'max_sal'],
-                       outputData: [
-                           { deptno: 10, emp_count: 3, avg_sal: 2916.67, max_sal: 5000 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 3,
@@ -998,10 +1110,7 @@ const operations = {
                        processBox: 'GROUP 2: DEPT 20\nSMITH: sal=800\nJONES: sal=2975\nSCOTT: sal=3000\nADAMS: sal=1100\nFORD: sal=3000\nCOUNT=5, AVG=2175, MAX=3000',
                        processDetail: 'Processing department 20 group: SMITH (800), JONES (2975), SCOTT (3000), ADAMS (1100), FORD (3000). Calculating aggregates: COUNT=5, AVG=2175, MAX=3000.',
                        outputColumns: ['deptno', 'emp_count', 'avg_sal', 'max_sal'],
-                       outputData: [
-                           { deptno: 10, emp_count: 3, avg_sal: 2916.67, max_sal: 5000 },
-                           { deptno: 20, emp_count: 5, avg_sal: 2175, max_sal: 3000 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 4,
@@ -1012,11 +1121,7 @@ const operations = {
                        processBox: 'GROUP 3: DEPT 30\nALLEN: sal=1600\nWARD: sal=1250\nMARTIN: sal=1250\nBLAKE: sal=2850\nTURNER: sal=1500\nJAMES: sal=950\nCOUNT=6, AVG=1566.67, MAX=2850',
                        processDetail: 'Processing department 30 group: ALLEN (1600), WARD (1250), MARTIN (1250), BLAKE (2850), TURNER (1500), JAMES (950). Calculating aggregates: COUNT=6, AVG=1566.67, MAX=2850.',
                        outputColumns: ['deptno', 'emp_count', 'avg_sal', 'max_sal'],
-                       outputData: [
-                           { deptno: 10, emp_count: 3, avg_sal: 2916.67, max_sal: 5000 },
-                           { deptno: 20, emp_count: 5, avg_sal: 2175, max_sal: 3000 },
-                           { deptno: 30, emp_count: 6, avg_sal: 1566.67, max_sal: 2850 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 5,
@@ -1038,7 +1143,7 @@ const operations = {
 
            'ROW_NUMBER': {
                query: 'SELECT ename, sal, deptno, ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal DESC) as dept_rank FROM emp;',
-               totalSteps: 8,
+               totalSteps: 6,
                steps: [
                    {
                        stepNum: 0,
@@ -1071,11 +1176,7 @@ const operations = {
                        processBox: 'DEPT 10 RANKING\nKING: sal=5000 → rank 1\nCLARK: sal=2450 → rank 2\nMILLER: sal=1300 → rank 3\nDEPT 10 COMPLETE',
                        processDetail: 'Processing department 10: KING (5000) gets rank 1, CLARK (2450) gets rank 2, MILLER (1300) gets rank 3.',
                        outputColumns: ['ename', 'sal', 'deptno', 'dept_rank'],
-                       outputData: [
-                           { ename: 'KING', sal: 5000, deptno: 10, dept_rank: 1 },
-                           { ename: 'CLARK', sal: 2450, deptno: 10, dept_rank: 2 },
-                           { ename: 'MILLER', sal: 1300, deptno: 10, dept_rank: 3 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 3,
@@ -1086,16 +1187,7 @@ const operations = {
                        processBox: 'DEPT 20 RANKING\nSCOTT: sal=3000 → rank 1\nFORD: sal=3000 → rank 2\nJONES: sal=2975 → rank 3\nADAMS: sal=1100 → rank 4\nSMITH: sal=800 → rank 5',
                        processDetail: 'Processing department 20: SCOTT and FORD (both 3000) get ranks 1,2, JONES (2975) rank 3, ADAMS (1100) rank 4, SMITH (800) rank 5.',
                        outputColumns: ['ename', 'sal', 'deptno', 'dept_rank'],
-                       outputData: [
-                           { ename: 'KING', sal: 5000, deptno: 10, dept_rank: 1 },
-                           { ename: 'CLARK', sal: 2450, deptno: 10, dept_rank: 2 },
-                           { ename: 'MILLER', sal: 1300, deptno: 10, dept_rank: 3 },
-                           { ename: 'SCOTT', sal: 3000, deptno: 20, dept_rank: 1 },
-                           { ename: 'FORD', sal: 3000, deptno: 20, dept_rank: 2 },
-                           { ename: 'JONES', sal: 2975, deptno: 20, dept_rank: 3 },
-                           { ename: 'ADAMS', sal: 1100, deptno: 20, dept_rank: 4 },
-                           { ename: 'SMITH', sal: 800, deptno: 20, dept_rank: 5 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 4,
@@ -1106,22 +1198,7 @@ const operations = {
                        processBox: 'DEPT 30 RANKING\nBLAKE: sal=2850 → rank 1\nALLEN: sal=1600 → rank 2\nTURNER: sal=1500 → rank 3\nWARD: sal=1250 → rank 4\nMARTIN: sal=1250 → rank 5\nJAMES: sal=950 → rank 6',
                        processDetail: 'Processing department 30: BLAKE (2850) rank 1, ALLEN (1600) rank 2, TURNER (1500) rank 3, WARD and MARTIN (1250) ranks 4,5, JAMES (950) rank 6.',
                        outputColumns: ['ename', 'sal', 'deptno', 'dept_rank'],
-                       outputData: [
-                           { ename: 'KING', sal: 5000, deptno: 10, dept_rank: 1 },
-                           { ename: 'CLARK', sal: 2450, deptno: 10, dept_rank: 2 },
-                           { ename: 'MILLER', sal: 1300, deptno: 10, dept_rank: 3 },
-                           { ename: 'SCOTT', sal: 3000, deptno: 20, dept_rank: 1 },
-                           { ename: 'FORD', sal: 3000, deptno: 20, dept_rank: 2 },
-                           { ename: 'JONES', sal: 2975, deptno: 20, dept_rank: 3 },
-                           { ename: 'ADAMS', sal: 1100, deptno: 20, dept_rank: 4 },
-                           { ename: 'SMITH', sal: 800, deptno: 20, dept_rank: 5 },
-                           { ename: 'BLAKE', sal: 2850, deptno: 30, dept_rank: 1 },
-                           { ename: 'ALLEN', sal: 1600, deptno: 30, dept_rank: 2 },
-                           { ename: 'TURNER', sal: 1500, deptno: 30, dept_rank: 3 },
-                           { ename: 'WARD', sal: 1250, deptno: 30, dept_rank: 4 },
-                           { ename: 'MARTIN', sal: 1250, deptno: 30, dept_rank: 5 },
-                           { ename: 'JAMES', sal: 950, deptno: 30, dept_rank: 6 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 5,
@@ -1154,7 +1231,7 @@ const operations = {
 
            'CONNECT_BY': {
                query: 'SELECT LEVEL, LPAD(ename, LENGTH(ename) + (LEVEL-1)*2, \' \') as hierarchy, empno, mgr, sal FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr;',
-               totalSteps: 10,
+               totalSteps: 8,
                steps: [
                    {
                        stepNum: 0,
@@ -1176,9 +1253,7 @@ const operations = {
                        processBox: 'ROOT IDENTIFICATION\nSCANNING: mgr IS NULL\nFOUND: KING (empno=7839)\nLEVEL 1 ESTABLISHED\nROOT READY',
                        processDetail: 'Found root of hierarchy: KING (empno=7839, mgr=NULL) at LEVEL 1. This is the top of the organizational tree.',
                        outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'sal'],
-                       outputData: [
-                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, sal: 5000 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 2,
@@ -1189,12 +1264,7 @@ const operations = {
                        processBox: 'LEVEL 2 PROCESSING\nPRIOR empno = 7839\nFINDING: mgr = 7839\nFOUND: JONES, BLAKE, CLARK\nMANAGERS LEVEL',
                        processDetail: 'Finding Level 2: employees reporting to KING (mgr=7839). Found JONES, BLAKE, CLARK - all managers.',
                        outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'sal'],
-                       outputData: [
-                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, sal: 5000 },
-                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, sal: 2975 },
-                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, sal: 2850 },
-                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, sal: 2450 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 3,
@@ -1205,14 +1275,7 @@ const operations = {
                        processBox: 'LEVEL 3: JONES BRANCH\nPRIOR empno = 7566\nFINDING: mgr = 7566\nFOUND: SCOTT, FORD\nANALYSTS UNDER JONES',
                        processDetail: 'Processing JONES branch: found SCOTT and FORD (both analysts) reporting to JONES.',
                        outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'sal'],
-                       outputData: [
-                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, sal: 5000 },
-                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, sal: 2975 },
-                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, sal: 3000 },
-                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, sal: 3000 },
-                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, sal: 2850 },
-                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, sal: 2450 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 4,
@@ -1223,16 +1286,7 @@ const operations = {
                        processBox: 'LEVEL 4: ANALYST BRANCHES\nSCOTT branch: ADAMS\nFORD branch: SMITH\nCLERKS UNDER ANALYSTS',
                        processDetail: 'Level 4 processing: ADAMS reports to SCOTT, SMITH reports to FORD. Both are clerks working under analysts.',
                        outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'sal'],
-                       outputData: [
-                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, sal: 5000 },
-                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, sal: 2975 },
-                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, sal: 3000 },
-                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, sal: 1100 },
-                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, sal: 3000 },
-                           { level: 4, hierarchy: '      SMITH', empno: 7369, mgr: 7902, sal: 800 },
-                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, sal: 2850 },
-                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, sal: 2450 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 5,
@@ -1243,21 +1297,7 @@ const operations = {
                        processBox: 'LEVEL 3: BLAKE BRANCH\nPRIOR empno = 7698\nFOUND: ALLEN, WARD, MARTIN, TURNER, JAMES\nSALES TEAM COMPLETE',
                        processDetail: 'Processing BLAKE branch: found 5 sales employees - ALLEN, WARD, MARTIN, TURNER, JAMES all reporting to BLAKE.',
                        outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'sal'],
-                       outputData: [
-                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, sal: 5000 },
-                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, sal: 2975 },
-                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, sal: 3000 },
-                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, sal: 1100 },
-                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, sal: 3000 },
-                           { level: 4, hierarchy: '      SMITH', empno: 7369, mgr: 7902, sal: 800 },
-                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, sal: 2850 },
-                           { level: 3, hierarchy: '    ALLEN', empno: 7499, mgr: 7698, sal: 1600 },
-                           { level: 3, hierarchy: '    WARD', empno: 7521, mgr: 7698, sal: 1250 },
-                           { level: 3, hierarchy: '    MARTIN', empno: 7654, mgr: 7698, sal: 1250 },
-                           { level: 3, hierarchy: '    TURNER', empno: 7844, mgr: 7698, sal: 1500 },
-                           { level: 3, hierarchy: '    JAMES', empno: 7900, mgr: 7698, sal: 950 },
-                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, sal: 2450 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 6,
@@ -1268,22 +1308,7 @@ const operations = {
                        processBox: 'LEVEL 3: CLARK BRANCH\nPRIOR empno = 7782\nFOUND: MILLER\nACCOUNTING CLERK',
                        processDetail: 'Processing CLARK branch: found MILLER, a clerk in ACCOUNTING department reporting to CLARK.',
                        outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'sal'],
-                       outputData: [
-                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, sal: 5000 },
-                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, sal: 2975 },
-                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, sal: 3000 },
-                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, sal: 1100 },
-                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, sal: 3000 },
-                           { level: 4, hierarchy: '      SMITH', empno: 7369, mgr: 7902, sal: 800 },
-                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, sal: 2850 },
-                           { level: 3, hierarchy: '    ALLEN', empno: 7499, mgr: 7698, sal: 1600 },
-                           { level: 3, hierarchy: '    WARD', empno: 7521, mgr: 7698, sal: 1250 },
-                           { level: 3, hierarchy: '    MARTIN', empno: 7654, mgr: 7698, sal: 1250 },
-                           { level: 3, hierarchy: '    TURNER', empno: 7844, mgr: 7698, sal: 1500 },
-                           { level: 3, hierarchy: '    JAMES', empno: 7900, mgr: 7698, sal: 950 },
-                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, sal: 2450 },
-                           { level: 3, hierarchy: '    MILLER', empno: 7934, mgr: 7782, sal: 1300 }
-                       ]
+                       outputData: []
                    },
                    {
                        stepNum: 7,
@@ -1330,10 +1355,53 @@ const operations = {
                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
                        outputData: []
                    },
-                   // Add more steps...
+                   {
+                       stepNum: 1,
+                       text: 'Processing employees - checking job=MANAGER condition...',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [3, 5, 6],
+                       processedRows: [],
+                       processBox: 'MANAGER CHECK\nJONES: job=MANAGER ✓\nBLAKE: job=MANAGER ✓\nCLARK: job=MANAGER ✓\n3 MANAGERS FOUND',
+                       processDetail: 'Scanning for employees with job=MANAGER. Found 3 managers: JONES, BLAKE, CLARK. Now checking salary condition.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 2,
+                       text: 'Checking salary condition for managers...',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [3, 5],
+                       processedRows: [6],
+                       processBox: 'SALARY CHECK\nJONES: sal=2975 > 2500 ✓\nBLAKE: sal=2850 > 2500 ✓\nCLARK: sal=2450 > 2500 ✗\n2 QUALIFY',
+                       processDetail: 'Checking sal > 2500 for managers: JONES (2975) ✓, BLAKE (2850) ✓, CLARK (2450) ✗. Only JONES and BLAKE qualify.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 3,
+                       text: 'Processing JONES - both conditions satisfied',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [3],
+                       processedRows: [5, 6],
+                       processBox: 'PROCESSING JONES\njob=MANAGER ✓\nsal=2975 > 2500 ✓\nBOTH CONDITIONS MET\nADDING TO RESULT',
+                       processDetail: 'JONES meets both conditions: job=MANAGER AND sal > 2500. Adding to result set.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 4,
+                       text: 'Processing BLAKE - both conditions satisfied',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       currentProcessing: [5],
+                       processedRows: [3, 6],
+                       processBox: 'PROCESSING BLAKE\njob=MANAGER ✓\nsal=2850 > 2500 ✓\nBOTH CONDITIONS MET\nADDING TO RESULT',
+                       processDetail: 'BLAKE meets both conditions: job=MANAGER AND sal > 2500. Adding to result set.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: []
+                   },
                    {
                        stepNum: 5,
-                       text: 'WHERE filtering complete - found high-paid managers',
+                       text: 'WHERE filtering complete - found 2 high-paid managers',
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
                        currentProcessing: [],
                        processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
@@ -1363,7 +1431,39 @@ const operations = {
                        outputColumns: ['ename', 'sal', 'hiredate'],
                        outputData: []
                    },
-                   // More steps...
+                   {
+                       stepNum: 1,
+                       text: 'Collecting all employee data for sorting...',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'hiredate'] }],
+                       currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                       processedRows: [],
+                       processBox: 'DATA COLLECTION\n14 EMPLOYEES\nSALARY RANGE: 800-5000\nHIREDATE RANGE: 1980-1987\nREADY FOR SORT',
+                       processDetail: 'Collecting all 14 employees for sorting. Salary range: 800-5000, Hire date range: 1980-1987.',
+                       outputColumns: ['ename', 'sal', 'hiredate'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 2,
+                       text: 'Primary sort by salary DESC - highest earners first',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'hiredate'] }],
+                       currentProcessing: [8, 7, 12, 3, 5],
+                       processedRows: [],
+                       processBox: 'PRIMARY SORT: sal DESC\nKING: 5000 (1st)\nSCOTT/FORD: 3000 (tie)\nJONES: 2975\nBLAKE: 2850\nTOP 5 POSITIONED',
+                       processDetail: 'Primary sort by salary descending. KING leads with 5000, SCOTT and FORD tie at 3000, followed by JONES and BLAKE.',
+                       outputColumns: ['ename', 'sal', 'hiredate'],
+                       outputData: []
+                   },
+                   {
+                       stepNum: 3,
+                       text: 'Secondary sort by hiredate ASC - breaking ties',
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'hiredate'] }],
+                       currentProcessing: [7, 12],
+                       processedRows: [8, 3, 5],
+                       processBox: 'SECONDARY SORT: hiredate ASC\nSCOTT: 19-APR-87\nFORD: 03-DEC-81\nFORD HIRED EARLIER\nFORD RANKS BEFORE SCOTT',
+                       processDetail: 'Breaking salary ties with hire date. FORD (03-DEC-81) was hired before SCOTT (19-APR-87), so FORD ranks higher.',
+                       outputColumns: ['ename', 'sal', 'hiredate'],
+                       outputData: []
+                   },
                    {
                        stepNum: 4,
                        text: 'ORDER BY complete - employees sorted by salary then hire date',
@@ -1377,27 +1477,177 @@ const operations = {
                            { ename: 'KING', sal: 5000, hiredate: '17-NOV-81' },
                            { ename: 'FORD', sal: 3000, hiredate: '03-DEC-81' },
                            { ename: 'SCOTT', sal: 3000, hiredate: '19-APR-87' },
-                           { ename: 'JONES', sal: 2975, hiredate: '02-APR-81' }
-                           // ... more rows
+                           { ename: 'JONES', sal: 2975, hiredate: '02-APR-81' },
+                           { ename: 'BLAKE', sal: 2850, hiredate: '01-MAY-81' },
+                           { ename: 'CLARK', sal: 2450, hiredate: '09-JUN-81' },
+                           { ename: 'ALLEN', sal: 1600, hiredate: '20-FEB-81' },
+                           { ename: 'TURNER', sal: 1500, hiredate: '08-SEP-81' },
+                           { ename: 'MILLER', sal: 1300, hiredate: '23-JAN-82' },
+                           { ename: 'WARD', sal: 1250, hiredate: '22-FEB-81' },
+                           { ename: 'MARTIN', sal: 1250, hiredate: '28-SEP-81' },
+                           { ename: 'ADAMS', sal: 1100, hiredate: '23-MAY-87' },
+                           { ename: 'JAMES', sal: 950, hiredate: '03-DEC-81' },
+                           { ename: 'SMITH', sal: 800, hiredate: '17-DEC-80' }
                        ]
                    }
                ]
            },
 
            // Add minimal implementations for all other operations
-           'LEFT_JOIN': { query: 'SELECT e.ename, d.dname FROM emp e LEFT JOIN dept d ON e.deptno = d.deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'LEFT JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'LEFT JOIN\nCOMING SOON', processDetail: 'LEFT JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] }] },
-           'RIGHT_JOIN': { query: 'SELECT e.ename, d.dname FROM emp e RIGHT JOIN dept d ON e.deptno = d.deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'RIGHT JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'RIGHT JOIN\nCOMING SOON', processDetail: 'RIGHT JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] }] },
-           'FULL_JOIN': { query: 'SELECT e.ename, d.dname FROM emp e FULL OUTER JOIN dept d ON e.deptno = d.deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'FULL OUTER JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'FULL OUTER JOIN\nCOMING SOON', processDetail: 'FULL OUTER JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] }] },
-           'UNION': { query: 'SELECT ename FROM emp WHERE deptno = 10 UNION SELECT ename FROM emp WHERE deptno = 20;', totalSteps: 3, steps: [{ stepNum: 0, text: 'UNION operation placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'UNION\nCOMING SOON', processDetail: 'UNION implementation coming soon...', outputColumns: ['ename'], outputData: [] }] },
-           'SUBQUERY': { query: 'SELECT ename, sal FROM emp WHERE sal > (SELECT AVG(sal) FROM emp);', totalSteps: 3, steps: [{ stepNum: 0, text: 'SUBQUERY placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'SUBQUERY\nCOMING SOON', processDetail: 'SUBQUERY implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }] },
-           'CASE_WHEN': { query: 'SELECT ename, sal, CASE WHEN sal > 3000 THEN \'High\' WHEN sal > 1500 THEN \'Medium\' ELSE \'Low\' END as sal_grade FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'CASE WHEN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'CASE WHEN\nCOMING SOON', processDetail: 'CASE WHEN implementation coming soon...', outputColumns: ['ename', 'sal', 'sal_grade'], outputData: [] }] },
-           
-           // Add all other operations as placeholders to maintain dropdown
-           'DISTINCT': { query: 'SELECT DISTINCT job FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'DISTINCT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['job'] }], currentProcessing: [], processedRows: [], processBox: 'DISTINCT\nCOMING SOON', processDetail: 'DISTINCT implementation coming soon...', outputColumns: ['job'], outputData: [] }] },
-           'HAVING': { query: 'SELECT deptno, COUNT(*) FROM emp GROUP BY deptno HAVING COUNT(*) > 3;', totalSteps: 3, steps: [{ stepNum: 0, text: 'HAVING placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [], processBox: 'HAVING\nCOMING SOON', processDetail: 'HAVING implementation coming soon...', outputColumns: ['deptno', 'count'], outputData: [] }] }
-           
-           // Note: For brevity, I'm showing the pattern. In the full implementation, 
-           // you would add all remaining operations from the original dropdown list with similar placeholder structures.
+           'LEFT_JOIN': { 
+               query: 'SELECT e.ename, d.dname FROM emp e LEFT JOIN dept d ON e.deptno = d.deptno;', 
+               totalSteps: 3, 
+               steps: [
+                   { 
+                       stepNum: 0, 
+                       text: 'LEFT JOIN placeholder...', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], 
+                       currentProcessing: [], 
+                       processedRows: [], 
+                       processBox: 'LEFT JOIN\nCOMING SOON', 
+                       processDetail: 'LEFT JOIN implementation coming soon...', 
+                       outputColumns: ['ename', 'dname'], 
+                       outputData: [] 
+                   },
+                   { 
+                       stepNum: 1, 
+                       text: 'LEFT JOIN processing...', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], 
+                       currentProcessing: [0, 1, 2], 
+                       processedRows: [], 
+                       processBox: 'LEFT JOIN\nPROCESSING...', 
+                       processDetail: 'LEFT JOIN processing in progress...', 
+                       outputColumns: ['ename', 'dname'], 
+                       outputData: [] 
+                   },
+                   { 
+                       stepNum: 2, 
+                       text: 'LEFT JOIN complete', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], 
+                       currentProcessing: [], 
+                       processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 
+                       processBox: 'LEFT JOIN\nCOMPLETE', 
+                       processDetail: 'LEFT JOIN operation complete.', 
+                       outputColumns: ['ename', 'dname'], 
+                       outputData: [
+                           { ename: 'SMITH', dname: 'RESEARCH' },
+                           { ename: 'ALLEN', dname: 'SALES' },
+                           { ename: 'WARD', dname: 'SALES' }
+                       ] 
+                   }
+               ] 
+           },
+           'RIGHT_JOIN': { 
+               query: 'SELECT e.ename, d.dname FROM emp e RIGHT JOIN dept d ON e.deptno = d.deptno;', 
+               totalSteps: 3, 
+               steps: [
+                   { stepNum: 0, text: 'RIGHT JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'RIGHT JOIN\nCOMING SOON', processDetail: 'RIGHT JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] },
+                   { stepNum: 1, text: 'RIGHT JOIN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'RIGHT JOIN\nPROCESSING...', processDetail: 'RIGHT JOIN processing...', outputColumns: ['ename', 'dname'], outputData: [] },
+                   { stepNum: 2, text: 'RIGHT JOIN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'RIGHT JOIN\nCOMPLETE', processDetail: 'RIGHT JOIN complete', outputColumns: ['ename', 'dname'], outputData: [{ ename: 'SMITH', dname: 'RESEARCH' }] }
+               ] 
+           },
+           'FULL_JOIN': { 
+               query: 'SELECT e.ename, d.dname FROM emp e FULL OUTER JOIN dept d ON e.deptno = d.deptno;', 
+               totalSteps: 3, 
+               steps: [
+                   { stepNum: 0, text: 'FULL OUTER JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'FULL OUTER JOIN\nCOMING SOON', processDetail: 'FULL OUTER JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] },
+                   { stepNum: 1, text: 'FULL OUTER JOIN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'FULL OUTER JOIN\nPROCESSING...', processDetail: 'FULL OUTER JOIN processing...', outputColumns: ['ename', 'dname'], outputData: [] },
+                   { stepNum: 2, text: 'FULL OUTER JOIN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'FULL OUTER JOIN\nCOMPLETE', processDetail: 'FULL OUTER JOIN complete', outputColumns: ['ename', 'dname'], outputData: [{ ename: 'SMITH', dname: 'RESEARCH' }] }
+               ] 
+           },
+           'CROSS_JOIN': { query: 'SELECT e.ename, d.dname FROM emp e CROSS JOIN dept d;', totalSteps: 3, steps: [{ stepNum: 0, text: 'CROSS JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'CROSS JOIN\nCOMING SOON', processDetail: 'CROSS JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] }, { stepNum: 1, text: 'CROSS JOIN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'CROSS JOIN\nPROCESSING...', processDetail: 'CROSS JOIN processing...', outputColumns: ['ename', 'dname'], outputData: [] }, { stepNum: 2, text: 'CROSS JOIN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'CROSS JOIN\nCOMPLETE', processDetail: 'CROSS JOIN complete', outputColumns: ['ename', 'dname'], outputData: [{ ename: 'SMITH', dname: 'ACCOUNTING' }] }] },
+           'SELF_JOIN': { query: 'SELECT e1.ename as employee, e2.ename as manager FROM emp e1, emp e2 WHERE e1.mgr = e2.empno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'SELF JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'mgr'] }], currentProcessing: [], processedRows: [], processBox: 'SELF JOIN\nCOMING SOON', processDetail: 'SELF JOIN implementation coming soon...', outputColumns: ['employee', 'manager'], outputData: [] }, { stepNum: 1, text: 'SELF JOIN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'mgr'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'SELF JOIN\nPROCESSING...', processDetail: 'SELF JOIN processing...', outputColumns: ['employee', 'manager'], outputData: [] }, { stepNum: 2, text: 'SELF JOIN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'mgr'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'SELF JOIN\nCOMPLETE', processDetail: 'SELF JOIN complete', outputColumns: ['employee', 'manager'], outputData: [{ employee: 'SMITH', manager: 'FORD' }] }] },
+           'NATURAL_JOIN': { query: 'SELECT ename, dname FROM emp NATURAL JOIN dept;', totalSteps: 3, steps: [{ stepNum: 0, text: 'NATURAL JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'NATURAL JOIN\nCOMING SOON', processDetail: 'NATURAL JOIN implementation coming soon...', outputColumns: ['ename', 'dname'], outputData: [] }, { stepNum: 1, text: 'NATURAL JOIN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'NATURAL JOIN\nPROCESSING...', processDetail: 'NATURAL JOIN processing...', outputColumns: ['ename', 'dname'], outputData: [] }, { stepNum: 2, text: 'NATURAL JOIN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'NATURAL JOIN\nCOMPLETE', processDetail: 'NATURAL JOIN complete', outputColumns: ['ename', 'dname'], outputData: [{ ename: 'SMITH', dname: 'RESEARCH' }] }] },
+
+           'UNION': { query: 'SELECT ename FROM emp WHERE deptno = 10 UNION SELECT ename FROM emp WHERE deptno = 20;', totalSteps: 3, steps: [{ stepNum: 0, text: 'UNION operation placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'UNION\nCOMING SOON', processDetail: 'UNION implementation coming soon...', outputColumns: ['ename'], outputData: [] }, { stepNum: 1, text: 'UNION processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [6, 8, 13], processedRows: [], processBox: 'UNION\nPROCESSING...', processDetail: 'UNION processing...', outputColumns: ['ename'], outputData: [] }, { stepNum: 2, text: 'UNION complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'UNION\nCOMPLETE', processDetail: 'UNION complete', outputColumns: ['ename'], outputData: [{ ename: 'CLARK' }, { ename: 'KING' }, { ename: 'SMITH' }] }] },
+           'UNION_ALL': { query: 'SELECT ename FROM emp WHERE deptno = 10 UNION ALL SELECT ename FROM emp WHERE deptno = 20;', totalSteps: 3, steps: [{ stepNum: 0, text: 'UNION ALL placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'UNION ALL\nCOMING SOON', processDetail: 'UNION ALL implementation coming soon...', outputColumns: ['ename'], outputData: [] }, { stepNum: 1, text: 'UNION ALL processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [6, 8, 13], processedRows: [], processBox: 'UNION ALL\nPROCESSING...', processDetail: 'UNION ALL processing...', outputColumns: ['ename'], outputData: [] }, { stepNum: 2, text: 'UNION ALL complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'UNION ALL\nCOMPLETE', processDetail: 'UNION ALL complete', outputColumns: ['ename'], outputData: [{ ename: 'CLARK' }, { ename: 'KING' }] }] },
+           'INTERSECT': { query: 'SELECT deptno FROM emp INTERSECT SELECT deptno FROM dept;', totalSteps: 3, steps: [{ stepNum: 0, text: 'INTERSECT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [], processBox: 'INTERSECT\nCOMING SOON', processDetail: 'INTERSECT implementation coming soon...', outputColumns: ['deptno'], outputData: [] }, { stepNum: 1, text: 'INTERSECT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'INTERSECT\nPROCESSING...', processDetail: 'INTERSECT processing...', outputColumns: ['deptno'], outputData: [] }, { stepNum: 2, text: 'INTERSECT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'INTERSECT\nCOMPLETE', processDetail: 'INTERSECT complete', outputColumns: ['deptno'], outputData: [{ deptno: 10 }, { deptno: 20 }, { deptno: 30 }] }] },
+           'MINUS': { query: 'SELECT deptno FROM dept MINUS SELECT deptno FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'MINUS placeholder...', inputTables: [{ name: 'DEPT', data: dept, columns: ['deptno'] }], currentProcessing: [], processedRows: [], processBox: 'MINUS\nCOMING SOON', processDetail: 'MINUS implementation coming soon...', outputColumns: ['deptno'], outputData: [] }, { stepNum: 1, text: 'MINUS processing...', inputTables: [{ name: 'DEPT', data: dept, columns: ['deptno'] }], currentProcessing: [0, 1, 2, 3], processedRows: [], processBox: 'MINUS\nPROCESSING...', processDetail: 'MINUS processing...', outputColumns: ['deptno'], outputData: [] }, { stepNum: 2, text: 'MINUS complete', inputTables: [{ name: 'DEPT', data: dept, columns: ['deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3], processBox: 'MINUS\nCOMPLETE', processDetail: 'MINUS complete', outputColumns: ['deptno'], outputData: [{ deptno: 40 }] }] },
+
+           'SUBQUERY': { query: 'SELECT ename, sal FROM emp WHERE sal > (SELECT AVG(sal) FROM emp);', totalSteps: 3, steps: [{ stepNum: 0, text: 'SUBQUERY placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'SUBQUERY\nCOMING SOON', processDetail: 'SUBQUERY implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'SUBQUERY processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'SUBQUERY\nPROCESSING...', processDetail: 'SUBQUERY processing...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'SUBQUERY complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'SUBQUERY\nCOMPLETE', processDetail: 'SUBQUERY complete', outputColumns: ['ename', 'sal'], outputData: [{ ename: 'KING', sal: 5000 }] }] },
+           'EXISTS': { query: 'SELECT ename FROM emp e WHERE EXISTS (SELECT 1 FROM dept d WHERE d.deptno = e.deptno);', totalSteps: 3, steps: [{ stepNum: 0, text: 'EXISTS placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'EXISTS\nCOMING SOON', processDetail: 'EXISTS implementation coming soon...', outputColumns: ['ename'], outputData: [] }, { stepNum: 1, text: 'EXISTS processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'EXISTS\nPROCESSING...', processDetail: 'EXISTS processing...', outputColumns: ['ename'], outputData: [] }, { stepNum: 2, text: 'EXISTS complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'EXISTS\nCOMPLETE', processDetail: 'EXISTS complete', outputColumns: ['ename'], outputData: [{ ename: 'SMITH' }] }] },
+           'NOT_EXISTS': { query: 'SELECT dname FROM dept d WHERE NOT EXISTS (SELECT 1 FROM emp e WHERE e.deptno = d.deptno);', totalSteps: 3, steps: [{ stepNum: 0, text: 'NOT EXISTS placeholder...', inputTables: [{ name: 'DEPT', data: dept, columns: ['dname', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'NOT EXISTS\nCOMING SOON', processDetail: 'NOT EXISTS implementation coming soon...', outputColumns: ['dname'], outputData: [] }, { stepNum: 1, text: 'NOT EXISTS processing...', inputTables: [{ name: 'DEPT', data: dept, columns: ['dname', 'deptno'] }], currentProcessing: [0, 1, 2, 3], processedRows: [], processBox: 'NOT EXISTS\nPROCESSING...', processDetail: 'NOT EXISTS processing...', outputColumns: ['dname'], outputData: [] }, { stepNum: 2, text: 'NOT EXISTS complete', inputTables: [{ name: 'DEPT', data: dept, columns: ['dname', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3], processBox: 'NOT EXISTS\nCOMPLETE', processDetail: 'NOT EXISTS complete', outputColumns: ['dname'], outputData: [{ dname: 'OPERATIONS' }] }] },
+           'IN_SUBQUERY': { query: 'SELECT ename FROM emp WHERE deptno IN (SELECT deptno FROM dept WHERE loc = \'NEW YORK\');', totalSteps: 3, steps: [{ stepNum: 0, text: 'IN subquery placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'IN SUBQUERY\nCOMING SOON', processDetail: 'IN subquery implementation coming soon...', outputColumns: ['ename'], outputData: [] }, { stepNum: 1, text: 'IN subquery processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'IN SUBQUERY\nPROCESSING...', processDetail: 'IN subquery processing...', outputColumns: ['ename'], outputData: [] }, { stepNum: 2, text: 'IN subquery complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'IN SUBQUERY\nCOMPLETE', processDetail: 'IN subquery complete', outputColumns: ['ename'], outputData: [{ ename: 'CLARK' }, { ename: 'KING' }] }] },
+           'ANY_ALL': { query: 'SELECT ename, sal FROM emp WHERE sal > ANY (SELECT sal FROM emp WHERE deptno = 30);', totalSteps: 3, steps: [{ stepNum: 0, text: 'ANY/ALL placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'ANY/ALL\nCOMING SOON', processDetail: 'ANY/ALL implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'ANY/ALL processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'ANY/ALL\nPROCESSING...', processDetail: 'ANY/ALL processing...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'ANY/ALL complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'ANY/ALL\nCOMPLETE', processDetail: 'ANY/ALL complete', outputColumns: ['ename', 'sal'], outputData: [{ ename: 'KING', sal: 5000 }] }] },
+           'CORRELATED': { query: 'SELECT ename, sal FROM emp e1 WHERE sal > (SELECT AVG(sal) FROM emp e2 WHERE e2.deptno = e1.deptno);', totalSteps: 3, steps: [{ stepNum: 0, text: 'CORRELATED subquery placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'CORRELATED\nCOMING SOON', processDetail: 'CORRELATED subquery implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'CORRELATED processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'CORRELATED\nPROCESSING...', processDetail: 'CORRELATED processing...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'CORRELATED complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'CORRELATED\nCOMPLETE', processDetail: 'CORRELATED complete', outputColumns: ['ename', 'sal'], outputData: [{ ename: 'KING', sal: 5000 }] }] },
+
+           // Continue with all other operations...
+           'CASE_WHEN': { query: 'SELECT ename, sal, CASE WHEN sal > 3000 THEN \'High\' WHEN sal > 1500 THEN \'Medium\' ELSE \'Low\' END as sal_grade FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'CASE WHEN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'CASE WHEN\nCOMING SOON', processDetail: 'CASE WHEN implementation coming soon...', outputColumns: ['ename', 'sal', 'sal_grade'], outputData: [] }, { stepNum: 1, text: 'CASE WHEN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'CASE WHEN\nPROCESSING...', processDetail: 'CASE WHEN processing...', outputColumns: ['ename', 'sal', 'sal_grade'], outputData: [] }, { stepNum: 2, text: 'CASE WHEN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'CASE WHEN\nCOMPLETE', processDetail: 'CASE WHEN complete', outputColumns: ['ename', 'sal', 'sal_grade'], outputData: [{ ename: 'KING', sal: 5000, sal_grade: 'High' }] }] },
+
+           // Add all remaining operations as placeholders
+           'DISTINCT': { query: 'SELECT DISTINCT job FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'DISTINCT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['job'] }], currentProcessing: [], processedRows: [], processBox: 'DISTINCT\nCOMING SOON', processDetail: 'DISTINCT implementation coming soon...', outputColumns: ['job'], outputData: [] }, { stepNum: 1, text: 'DISTINCT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['job'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'DISTINCT\nPROCESSING...', processDetail: 'DISTINCT processing...', outputColumns: ['job'], outputData: [] }, { stepNum: 2, text: 'DISTINCT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['job'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'DISTINCT\nCOMPLETE', processDetail: 'DISTINCT complete', outputColumns: ['job'], outputData: [{ job: 'CLERK' }, { job: 'SALESMAN' }, { job: 'MANAGER' }, { job: 'ANALYST' }, { job: 'PRESIDENT' }] }] },
+           'HAVING': { query: 'SELECT deptno, COUNT(*) FROM emp GROUP BY deptno HAVING COUNT(*) > 3;', totalSteps: 3, steps: [{ stepNum: 0, text: 'HAVING placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [], processBox: 'HAVING\nCOMING SOON', processDetail: 'HAVING implementation coming soon...', outputColumns: ['deptno', 'count'], outputData: [] }, { stepNum: 1, text: 'HAVING processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'HAVING\nPROCESSING...', processDetail: 'HAVING processing...', outputColumns: ['deptno', 'count'], outputData: [] }, { stepNum: 2, text: 'HAVING complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'HAVING\nCOMPLETE', processDetail: 'HAVING complete', outputColumns: ['deptno', 'count'], outputData: [{ deptno: 20, count: 5 }, { deptno: 30, count: 6 }] }] },
+
+           // All remaining operations as placeholders
+           'DECODE': { query: 'SELECT ename, DECODE(deptno, 10, \'ACCOUNTING\', 20, \'RESEARCH\', 30, \'SALES\', \'OTHER\') as dept_name FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'DECODE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'DECODE\nCOMING SOON', processDetail: 'DECODE implementation coming soon...', outputColumns: ['ename', 'dept_name'], outputData: [] }, { stepNum: 1, text: 'DECODE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'DECODE\nPROCESSING...', processDetail: 'DECODE processing...', outputColumns: ['ename', 'dept_name'], outputData: [] }, { stepNum: 2, text: 'DECODE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'DECODE\nCOMPLETE', processDetail: 'DECODE complete', outputColumns: ['ename', 'dept_name'], outputData: [{ ename: 'SMITH', dept_name: 'RESEARCH' }] }] },
+           'NVL': { query: 'SELECT ename, sal, NVL(comm, 0) as commission FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'NVL placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }], currentProcessing: [], processedRows: [], processBox: 'NVL/NVL2\nCOMING SOON', processDetail: 'NVL implementation coming soon...', outputColumns: ['ename', 'sal', 'commission'], outputData: [] }, { stepNum: 1, text: 'NVL processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'NVL\nPROCESSING...', processDetail: 'NVL processing...', outputColumns: ['ename', 'sal', 'commission'], outputData: [] }, { stepNum: 2, text: 'NVL complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'NVL\nCOMPLETE', processDetail: 'NVL complete', outputColumns: ['ename', 'sal', 'commission'], outputData: [{ ename: 'SMITH', sal: 800, commission: 0 }] }] },
+           'COALESCE': { query: 'SELECT ename, COALESCE(comm, sal, 0) as value FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'COALESCE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'COALESCE\nCOMING SOON', processDetail: 'COALESCE implementation coming soon...', outputColumns: ['ename', 'value'], outputData: [] }, { stepNum: 1, text: 'COALESCE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'COALESCE\nPROCESSING...', processDetail: 'COALESCE processing...', outputColumns: ['ename', 'value'], outputData: [] }, { stepNum: 2, text: 'COALESCE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'COALESCE\nCOMPLETE', processDetail: 'COALESCE complete', outputColumns: ['ename', 'value'], outputData: [{ ename: 'SMITH', value: 800 }] }] },
+           'NULLIF': { query: 'SELECT ename, NULLIF(comm, 0) as commission FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'NULLIF placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm'] }], currentProcessing: [], processedRows: [], processBox: 'NULLIF\nCOMING SOON', processDetail: 'NULLIF implementation coming soon...', outputColumns: ['ename', 'commission'], outputData: [] }, { stepNum: 1, text: 'NULLIF processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'NULLIF\nPROCESSING...', processDetail: 'NULLIF processing...', outputColumns: ['ename', 'commission'], outputData: [] }, { stepNum: 2, text: 'NULLIF complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'NULLIF\nCOMPLETE', processDetail: 'NULLIF complete', outputColumns: ['ename', 'commission'], outputData: [{ ename: 'ALLEN', commission: 300 }] }] },
+
+           // Window Functions placeholders
+           'RANK': { query: 'SELECT ename, sal, RANK() OVER (ORDER BY sal DESC) as salary_rank FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'RANK placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'RANK()\nCOMING SOON', processDetail: 'RANK implementation coming soon...', outputColumns: ['ename', 'sal', 'salary_rank'], outputData: [] }, { stepNum: 1, text: 'RANK processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'RANK\nPROCESSING...', processDetail: 'RANK processing...', outputColumns: ['ename', 'sal', 'salary_rank'], outputData: [] }, { stepNum: 2, text: 'RANK complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'RANK\nCOMPLETE', processDetail: 'RANK complete', outputColumns: ['ename', 'sal', 'salary_rank'], outputData: [{ ename: 'KING', sal: 5000, salary_rank: 1 }] }] },
+           'DENSE_RANK': { query: 'SELECT ename, sal, DENSE_RANK() OVER (ORDER BY sal DESC) as dense_rank FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'DENSE_RANK placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'DENSE_RANK()\nCOMING SOON', processDetail: 'DENSE_RANK implementation coming soon...', outputColumns: ['ename', 'sal', 'dense_rank'], outputData: [] }, { stepNum: 1, text: 'DENSE_RANK processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'DENSE_RANK\nPROCESSING...', processDetail: 'DENSE_RANK processing...', outputColumns: ['ename', 'sal', 'dense_rank'], outputData: [] }, { stepNum: 2, text: 'DENSE_RANK complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'DENSE_RANK\nCOMPLETE', processDetail: 'DENSE_RANK complete', outputColumns: ['ename', 'sal', 'dense_rank'], outputData: [{ ename: 'KING', sal: 5000, dense_rank: 1 }] }] },
+           'LEAD_LAG': { query: 'SELECT ename, sal, LAG(sal) OVER (ORDER BY sal) as prev_sal, LEAD(sal) OVER (ORDER BY sal) as next_sal FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'LEAD/LAG placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'LEAD/LAG\nCOMING SOON', processDetail: 'LEAD/LAG implementation coming soon...', outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'], outputData: [] }, { stepNum: 1, text: 'LEAD/LAG processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'LEAD/LAG\nPROCESSING...', processDetail: 'LEAD/LAG processing...', outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'], outputData: [] }, { stepNum: 2, text: 'LEAD/LAG complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'LEAD/LAG\nCOMPLETE', processDetail: 'LEAD/LAG complete', outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'], outputData: [{ ename: 'SMITH', sal: 800, prev_sal: null, next_sal: 950 }] }] },
+           'FIRST_VALUE': { query: 'SELECT ename, sal, FIRST_VALUE(ename) OVER (ORDER BY sal DESC) as highest_earner FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'FIRST_VALUE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'FIRST_VALUE\nCOMING SOON', processDetail: 'FIRST_VALUE implementation coming soon...', outputColumns: ['ename', 'sal', 'highest_earner'], outputData: [] }, { stepNum: 1, text: 'FIRST_VALUE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'FIRST_VALUE\nPROCESSING...', processDetail: 'FIRST_VALUE processing...', outputColumns: ['ename', 'sal', 'highest_earner'], outputData: [] }, { stepNum: 2, text: 'FIRST_VALUE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'FIRST_VALUE\nCOMPLETE', processDetail: 'FIRST_VALUE complete', outputColumns: ['ename', 'sal', 'highest_earner'], outputData: [{ ename: 'KING', sal: 5000, highest_earner: 'KING' }] }] },
+           'LAST_VALUE': { query: 'SELECT ename, sal, LAST_VALUE(ename) OVER (ORDER BY sal DESC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as lowest_earner FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'LAST_VALUE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'LAST_VALUE\nCOMING SOON', processDetail: 'LAST_VALUE implementation coming soon...', outputColumns: ['ename', 'sal', 'lowest_earner'], outputData: [] }, { stepNum: 1, text: 'LAST_VALUE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'LAST_VALUE\nPROCESSING...', processDetail: 'LAST_VALUE processing...', outputColumns: ['ename', 'sal', 'lowest_earner'], outputData: [] }, { stepNum: 2, text: 'LAST_VALUE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'LAST_VALUE\nCOMPLETE', processDetail: 'LAST_VALUE complete', outputColumns: ['ename', 'sal', 'lowest_earner'], outputData: [{ ename: 'KING', sal: 5000, lowest_earner: 'SMITH' }] }] },
+           'NTILE': { query: 'SELECT ename, sal, NTILE(4) OVER (ORDER BY sal DESC) as quartile FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'NTILE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'NTILE\nCOMING SOON', processDetail: 'NTILE implementation coming soon...', outputColumns: ['ename', 'sal', 'quartile'], outputData: [] }, { stepNum: 1, text: 'NTILE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'NTILE\nPROCESSING...', processDetail: 'NTILE processing...', outputColumns: ['ename', 'sal', 'quartile'], outputData: [] }, { stepNum: 2, text: 'NTILE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'NTILE\nCOMPLETE', processDetail: 'NTILE complete', outputColumns: ['ename', 'sal', 'quartile'], outputData: [{ ename: 'KING', sal: 5000, quartile: 1 }] }] },
+
+           // Oracle Specific Functions
+           'ROWNUM': { query: 'SELECT ROWNUM, ename, sal FROM emp WHERE ROWNUM <= 5;', totalSteps: 3, steps: [{ stepNum: 0, text: 'ROWNUM placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'ROWNUM\nCOMING SOON', processDetail: 'ROWNUM implementation coming soon...', outputColumns: ['rownum', 'ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'ROWNUM processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2, 3, 4], processedRows: [], processBox: 'ROWNUM\nPROCESSING...', processDetail: 'ROWNUM processing...', outputColumns: ['rownum', 'ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'ROWNUM complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4], processBox: 'ROWNUM\nCOMPLETE', processDetail: 'ROWNUM complete', outputColumns: ['rownum', 'ename', 'sal'], outputData: [{ rownum: 1, ename: 'SMITH', sal: 800 }, { rownum: 2, ename: 'ALLEN', sal: 1600 }, { rownum: 3, ename: 'WARD', sal: 1250 }, { rownum: 4, ename: 'JONES', sal: 2975 }, { rownum: 5, ename: 'MARTIN', sal: 1250 }] }] },
+           'ROWID': { query: 'SELECT ROWID, ename FROM emp WHERE ROWNUM <= 3;', totalSteps: 3, steps: [{ stepNum: 0, text: 'ROWID placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'ROWID\nCOMING SOON', processDetail: 'ROWID implementation coming soon...', outputColumns: ['rowid', 'ename'], outputData: [] }, { stepNum: 1, text: 'ROWID processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'ROWID\nPROCESSING...', processDetail: 'ROWID processing...', outputColumns: ['rowid', 'ename'], outputData: [] }, { stepNum: 2, text: 'ROWID complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2], processBox: 'ROWID\nCOMPLETE', processDetail: 'ROWID complete', outputColumns: ['rowid', 'ename'], outputData: [{ rowid: 'AAAEuZAAHAAAAGZAAA', ename: 'SMITH' }] }] },
+           'START_WITH': { query: 'SELECT ename, empno, mgr FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr;', totalSteps: 3, steps: [{ stepNum: 0, text: 'START WITH placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [], processedRows: [], processBox: 'START WITH\nCOMING SOON', processDetail: 'START WITH implementation coming soon...', outputColumns: ['ename', 'empno', 'mgr'], outputData: [] }, { stepNum: 1, text: 'START WITH processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [8], processedRows: [], processBox: 'START WITH\nPROCESSING...', processDetail: 'START WITH processing...', outputColumns: ['ename', 'empno', 'mgr'], outputData: [] }, { stepNum: 2, text: 'START WITH complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'START WITH\nCOMPLETE', processDetail: 'START WITH complete', outputColumns: ['ename', 'empno', 'mgr'], outputData: [{ ename: 'KING', empno: 7839, mgr: null }] }] },
+           'LEVEL': { query: 'SELECT LEVEL, ename, empno, mgr FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr;', totalSteps: 3, steps: [{ stepNum: 0, text: 'LEVEL placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [], processedRows: [], processBox: 'LEVEL\nCOMING SOON', processDetail: 'LEVEL implementation coming soon...', outputColumns: ['level', 'ename', 'empno', 'mgr'], outputData: [] }, { stepNum: 1, text: 'LEVEL processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [8], processedRows: [], processBox: 'LEVEL\nPROCESSING...', processDetail: 'LEVEL processing...', outputColumns: ['level', 'ename', 'empno', 'mgr'], outputData: [] }, { stepNum: 2, text: 'LEVEL complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'LEVEL\nCOMPLETE', processDetail: 'LEVEL complete', outputColumns: ['level', 'ename', 'empno', 'mgr'], outputData: [{ level: 1, ename: 'KING', empno: 7839, mgr: null }] }] },
+           'SYS_CONNECT_BY_PATH': { query: 'SELECT SYS_CONNECT_BY_PATH(ename, \'/\') as path FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr;', totalSteps: 3, steps: [{ stepNum: 0, text: 'SYS_CONNECT_BY_PATH placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [], processedRows: [], processBox: 'SYS_CONNECT_BY_PATH\nCOMING SOON', processDetail: 'SYS_CONNECT_BY_PATH implementation coming soon...', outputColumns: ['path'], outputData: [] }, { stepNum: 1, text: 'SYS_CONNECT_BY_PATH processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [8], processedRows: [], processBox: 'SYS_CONNECT_BY_PATH\nPROCESSING...', processDetail: 'SYS_CONNECT_BY_PATH processing...', outputColumns: ['path'], outputData: [] }, { stepNum: 2, text: 'SYS_CONNECT_BY_PATH complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'SYS_CONNECT_BY_PATH\nCOMPLETE', processDetail: 'SYS_CONNECT_BY_PATH complete', outputColumns: ['path'], outputData: [{ path: '/KING' }] }] },
+
+           // Continue with remaining operations as placeholders for brevity
+           'CTE': { query: 'WITH high_earners AS (SELECT * FROM emp WHERE sal > 2000) SELECT * FROM high_earners;', totalSteps: 3, steps: [{ stepNum: 0, text: 'CTE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'WITH (CTE)\nCOMING SOON', processDetail: 'CTE implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'CTE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'CTE\nPROCESSING...', processDetail: 'CTE processing...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'CTE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'CTE\nCOMPLETE', processDetail: 'CTE complete', outputColumns: ['ename', 'sal'], outputData: [{ ename: 'KING', sal: 5000 }] }] },
+
+           // Add remaining operations with same pattern
+           'RECURSIVE_CTE': { query: 'WITH RECURSIVE hierarchy AS (SELECT empno, ename, mgr, 1 as level FROM emp WHERE mgr IS NULL UNION ALL SELECT e.empno, e.ename, e.mgr, h.level + 1 FROM emp e JOIN hierarchy h ON e.mgr = h.empno) SELECT * FROM hierarchy;', totalSteps: 3, steps: [{ stepNum: 0, text: 'RECURSIVE CTE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }], currentProcessing: [], processedRows: [], processBox: 'RECURSIVE CTE\nCOMING SOON', processDetail: 'RECURSIVE CTE implementation coming soon...', outputColumns: ['empno', 'ename', 'mgr', 'level'], outputData: [] }, { stepNum: 1, text: 'RECURSIVE CTE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }], currentProcessing: [8], processedRows: [], processBox: 'RECURSIVE CTE\nPROCESSING...', processDetail: 'RECURSIVE CTE processing...', outputColumns: ['empno', 'ename', 'mgr', 'level'], outputData: [] }, { stepNum: 2, text: 'RECURSIVE CTE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'RECURSIVE CTE\nCOMPLETE', processDetail: 'RECURSIVE CTE complete', outputColumns: ['empno', 'ename', 'mgr', 'level'], outputData: [{ empno: 7839, ename: 'KING', mgr: null, level: 1 }] }] },
+
+           // Add all remaining as placeholders with similar structure
+           'PIVOT': { query: 'SELECT * FROM (SELECT deptno, job, sal FROM emp) PIVOT (SUM(sal) FOR job IN (\'CLERK\', \'SALESMAN\', \'MANAGER\'));', totalSteps: 3, steps: [{ stepNum: 0, text: 'PIVOT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'PIVOT\nCOMING SOON', processDetail: 'PIVOT implementation coming soon...', outputColumns: ['deptno', 'clerk', 'salesman', 'manager'], outputData: [] }, { stepNum: 1, text: 'PIVOT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'PIVOT\nPROCESSING...', processDetail: 'PIVOT processing...', outputColumns: ['deptno', 'clerk', 'salesman', 'manager'], outputData: [] }, { stepNum: 2, text: 'PIVOT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'PIVOT\nCOMPLETE', processDetail: 'PIVOT complete', outputColumns: ['deptno', 'clerk', 'salesman', 'manager'], outputData: [{ deptno: 10, clerk: 1300, salesman: null, manager: 2450 }] }] },
+           'UNPIVOT': { query: 'SELECT deptno, job_type, total_sal FROM dept_summary UNPIVOT (total_sal FOR job_type IN (clerk, salesman, manager));', totalSteps: 3, steps: [{ stepNum: 0, text: 'UNPIVOT placeholder...', inputTables: [{ name: 'DEPT_SUMMARY', data: [{ deptno: 10, clerk: 1300, salesman: 0, manager: 2450 }], columns: ['deptno', 'clerk', 'salesman', 'manager'] }], currentProcessing: [], processedRows: [], processBox: 'UNPIVOT\nCOMING SOON', processDetail: 'UNPIVOT implementation coming soon...', outputColumns: ['deptno', 'job_type', 'total_sal'], outputData: [] }, { stepNum: 1, text: 'UNPIVOT processing...', inputTables: [{ name: 'DEPT_SUMMARY', data: [{ deptno: 10, clerk: 1300, salesman: 0, manager: 2450 }], columns: ['deptno', 'clerk', 'salesman', 'manager'] }], currentProcessing: [0], processedRows: [], processBox: 'UNPIVOT\nPROCESSING...', processDetail: 'UNPIVOT processing...', outputColumns: ['deptno', 'job_type', 'total_sal'], outputData: [] }, { stepNum: 2, text: 'UNPIVOT complete', inputTables: [{ name: 'DEPT_SUMMARY', data: [{ deptno: 10, clerk: 1300, salesman: 0, manager: 2450 }], columns: ['deptno', 'clerk', 'salesman', 'manager'] }], currentProcessing: [], processedRows: [0], processBox: 'UNPIVOT\nCOMPLETE', processDetail: 'UNPIVOT complete', outputColumns: ['deptno', 'job_type', 'total_sal'], outputData: [{ deptno: 10, job_type: 'clerk', total_sal: 1300 }] }] },
+           'MODEL': { query: 'SELECT * FROM emp MODEL DIMENSION BY (empno) MEASURES (sal) RULES (sal[7369] = sal[7369] * 1.1);', totalSteps: 3, steps: [{ stepNum: 0, text: 'MODEL placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'MODEL\nCOMING SOON', processDetail: 'MODEL implementation coming soon...', outputColumns: ['empno', 'sal'], outputData: [] }, { stepNum: 1, text: 'MODEL processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'sal'] }], currentProcessing: [0], processedRows: [], processBox: 'MODEL\nPROCESSING...', processDetail: 'MODEL processing...', outputColumns: ['empno', 'sal'], outputData: [] }, { stepNum: 2, text: 'MODEL complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'MODEL\nCOMPLETE', processDetail: 'MODEL complete', outputColumns: ['empno', 'sal'], outputData: [{ empno: 7369, sal: 880 }] }] },
+
+           // Aggregate Functions
+           'COUNT': { query: 'SELECT deptno, COUNT(*) as emp_count FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'COUNT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [], processBox: 'COUNT\nCOMING SOON', processDetail: 'COUNT implementation coming soon...', outputColumns: ['deptno', 'emp_count'], outputData: [] }, { stepNum: 1, text: 'COUNT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'COUNT\nPROCESSING...', processDetail: 'COUNT processing...', outputColumns: ['deptno', 'emp_count'], outputData: [] }, { stepNum: 2, text: 'COUNT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'COUNT\nCOMPLETE', processDetail: 'COUNT complete', outputColumns: ['deptno', 'emp_count'], outputData: [{ deptno: 10, emp_count: 3 }, { deptno: 20, emp_count: 5 }, { deptno: 30, emp_count: 6 }] }] },
+           'SUM': { query: 'SELECT deptno, SUM(sal) as total_sal FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'SUM placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'SUM\nCOMING SOON', processDetail: 'SUM implementation coming soon...', outputColumns: ['deptno', 'total_sal'], outputData: [] }, { stepNum: 1, text: 'SUM processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'SUM\nPROCESSING...', processDetail: 'SUM processing...', outputColumns: ['deptno', 'total_sal'], outputData: [] }, { stepNum: 2, text: 'SUM complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'SUM\nCOMPLETE', processDetail: 'SUM complete', outputColumns: ['deptno', 'total_sal'], outputData: [{ deptno: 10, total_sal: 8750 }, { deptno: 20, total_sal: 10875 }, { deptno: 30, total_sal: 9400 }] }] },
+           'AVG': { query: 'SELECT deptno, AVG(sal) as avg_sal FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'AVG placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'AVG\nCOMING SOON', processDetail: 'AVG implementation coming soon...', outputColumns: ['deptno', 'avg_sal'], outputData: [] }, { stepNum: 1, text: 'AVG processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'AVG\nPROCESSING...', processDetail: 'AVG processing...', outputColumns: ['deptno', 'avg_sal'], outputData: [] }, { stepNum: 2, text: 'AVG complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'AVG\nCOMPLETE', processDetail: 'AVG complete', outputColumns: ['deptno', 'avg_sal'], outputData: [{ deptno: 10, avg_sal: 2916.67 }, { deptno: 20, avg_sal: 2175 }, { deptno: 30, avg_sal: 1566.67 }] }] },
+           'MIN_MAX': { query: 'SELECT deptno, MIN(sal) as min_sal, MAX(sal) as max_sal FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'MIN/MAX placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'MIN/MAX\nCOMING SOON', processDetail: 'MIN/MAX implementation coming soon...', outputColumns: ['deptno', 'min_sal', 'max_sal'], outputData: [] }, { stepNum: 1, text: 'MIN/MAX processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'MIN/MAX\nPROCESSING...', processDetail: 'MIN/MAX processing...', outputColumns: ['deptno', 'min_sal', 'max_sal'], outputData: [] }, { stepNum: 2, text: 'MIN/MAX complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'MIN/MAX\nCOMPLETE', processDetail: 'MIN/MAX complete', outputColumns: ['deptno', 'min_sal', 'max_sal'], outputData: [{ deptno: 10, min_sal: 1300, max_sal: 5000 }] }] },
+           'STDDEV': { query: 'SELECT deptno, STDDEV(sal) as sal_stddev FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'STDDEV placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'STDDEV\nCOMING SOON', processDetail: 'STDDEV implementation coming soon...', outputColumns: ['deptno', 'sal_stddev'], outputData: [] }, { stepNum: 1, text: 'STDDEV processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'STDDEV\nPROCESSING...', processDetail: 'STDDEV processing...', outputColumns: ['deptno', 'sal_stddev'], outputData: [] }, { stepNum: 2, text: 'STDDEV complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'STDDEV\nCOMPLETE', processDetail: 'STDDEV complete', outputColumns: ['deptno', 'sal_stddev'], outputData: [{ deptno: 10, sal_stddev: 1560.07 }] }] },
+           'VARIANCE': { query: 'SELECT deptno, VARIANCE(sal) as sal_variance FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'VARIANCE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'VARIANCE\nCOMING SOON', processDetail: 'VARIANCE implementation coming soon...', outputColumns: ['deptno', 'sal_variance'], outputData: [] }, { stepNum: 1, text: 'VARIANCE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'VARIANCE\nPROCESSING...', processDetail: 'VARIANCE processing...', outputColumns: ['deptno', 'sal_variance'], outputData: [] }, { stepNum: 2, text: 'VARIANCE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'VARIANCE\nCOMPLETE', processDetail: 'VARIANCE complete', outputColumns: ['deptno', 'sal_variance'], outputData: [{ deptno: 10, sal_variance: 2433822.22 }] }] },
+           'LISTAGG': { query: 'SELECT deptno, LISTAGG(ename, \', \') WITHIN GROUP (ORDER BY ename) as employees FROM emp GROUP BY deptno;', totalSteps: 3, steps: [{ stepNum: 0, text: 'LISTAGG placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'ename'] }], currentProcessing: [], processedRows: [], processBox: 'LISTAGG\nCOMING SOON', processDetail: 'LISTAGG implementation coming soon...', outputColumns: ['deptno', 'employees'], outputData: [] }, { stepNum: 1, text: 'LISTAGG processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'LISTAGG\nPROCESSING...', processDetail: 'LISTAGG processing...', outputColumns: ['deptno', 'employees'], outputData: [] }, { stepNum: 2, text: 'LISTAGG complete', inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'LISTAGG\nCOMPLETE', processDetail: 'LISTAGG complete', outputColumns: ['deptno', 'employees'], outputData: [{ deptno: 10, employees: 'CLARK, KING, MILLER' }] }] },
+
+           // DML Operations
+           'INSERT': { query: 'INSERT INTO emp (empno, ename, job, sal, deptno) VALUES (9999, \'NEWGUY\', \'CLERK\', 1000, 10);', totalSteps: 3, steps: [{ stepNum: 0, text: 'INSERT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'INSERT\nCOMING SOON', processDetail: 'INSERT implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'INSERT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'INSERT\nPROCESSING...', processDetail: 'INSERT processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'INSERT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'INSERT\nCOMPLETE', processDetail: 'INSERT complete', outputColumns: ['result'], outputData: [{ result: '1 row inserted' }] }] },
+           'INSERT_SELECT': { query: 'INSERT INTO emp_backup SELECT * FROM emp WHERE deptno = 10;', totalSteps: 3, steps: [{ stepNum: 0, text: 'INSERT SELECT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'INSERT SELECT\nCOMING SOON', processDetail: 'INSERT SELECT implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'INSERT SELECT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [6, 8, 13], processedRows: [], processBox: 'INSERT SELECT\nPROCESSING...', processDetail: 'INSERT SELECT processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'INSERT SELECT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [6, 8, 13], processBox: 'INSERT SELECT\nCOMPLETE', processDetail: 'INSERT SELECT complete', outputColumns: ['result'], outputData: [{ result: '3 rows inserted' }] }] },
+           'UPDATE': { query: 'UPDATE emp SET sal = sal * 1.1 WHERE deptno = 10;', totalSteps: 3, steps: [{ stepNum: 0, text: 'UPDATE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'UPDATE\nCOMING SOON', processDetail: 'UPDATE implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'UPDATE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [6, 8, 13], processedRows: [], processBox: 'UPDATE\nPROCESSING...', processDetail: 'UPDATE processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'UPDATE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [6, 8, 13], processBox: 'UPDATE\nCOMPLETE', processDetail: 'UPDATE complete', outputColumns: ['result'], outputData: [{ result: '3 rows updated' }] }] },
+           'UPDATE_JOIN': { query: 'UPDATE emp SET sal = sal * 1.1 WHERE deptno IN (SELECT deptno FROM dept WHERE loc = \'NEW YORK\');', totalSteps: 3, steps: [{ stepNum: 0, text: 'UPDATE with JOIN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [], processBox: 'UPDATE with JOIN\nCOMING SOON', processDetail: 'UPDATE with JOIN implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'UPDATE with JOIN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [6, 8, 13], processedRows: [], processBox: 'UPDATE JOIN\nPROCESSING...', processDetail: 'UPDATE with JOIN processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'UPDATE with JOIN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }], currentProcessing: [], processedRows: [6, 8, 13], processBox: 'UPDATE JOIN\nCOMPLETE', processDetail: 'UPDATE with JOIN complete', outputColumns: ['result'], outputData: [{ result: '3 rows updated' }] }] },
+           'DELETE': { query: 'DELETE FROM emp WHERE sal < 1000;', totalSteps: 3, steps: [{ stepNum: 0, text: 'DELETE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'DELETE\nCOMING SOON', processDetail: 'DELETE implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'DELETE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [0, 11], processedRows: [], processBox: 'DELETE\nPROCESSING...', processDetail: 'DELETE processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'DELETE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [0, 11], processBox: 'DELETE\nCOMPLETE', processDetail: 'DELETE complete', outputColumns: ['result'], outputData: [{ result: '2 rows deleted' }] }] },
+           'MERGE': { query: 'MERGE INTO emp_target t USING emp_source s ON (t.empno = s.empno) WHEN MATCHED THEN UPDATE SET sal = s.sal WHEN NOT MATCHED THEN INSERT VALUES (s.empno, s.ename, s.sal);', totalSteps: 3, steps: [{ stepNum: 0, text: 'MERGE placeholder...', inputTables: [{ name: 'EMP_TARGET', data: emp.slice(0, 5), columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'MERGE\nCOMING SOON', processDetail: 'MERGE implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'MERGE processing...', inputTables: [{ name: 'EMP_TARGET', data: emp.slice(0, 5), columns: ['empno', 'ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'MERGE\nPROCESSING...', processDetail: 'MERGE processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'MERGE complete', inputTables: [{ name: 'EMP_TARGET', data: emp.slice(0, 5), columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4], processBox: 'MERGE\nCOMPLETE', processDetail: 'MERGE complete', outputColumns: ['result'], outputData: [{ result: '5 rows merged' }] }] },
+           'UPSERT': { query: 'INSERT INTO emp VALUES (7369, \'SMITH\', \'CLERK\', 900, 20) ON DUPLICATE KEY UPDATE sal = 900;', totalSteps: 3, steps: [{ stepNum: 0, text: 'UPSERT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'UPSERT\nCOMING SOON', processDetail: 'UPSERT implementation coming soon...', outputColumns: ['result'], outputData: [] }, { stepNum: 1, text: 'UPSERT processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [0], processedRows: [], processBox: 'UPSERT\nPROCESSING...', processDetail: 'UPSERT processing...', outputColumns: ['result'], outputData: [] }, { stepNum: 2, text: 'UPSERT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [0], processBox: 'UPSERT\nCOMPLETE', processDetail: 'UPSERT complete', outputColumns: ['result'], outputData: [{ result: '1 row updated' }] }] },
+
+           // Date Functions
+           'SYSDATE': { query: 'SELECT ename, hiredate, SYSDATE - hiredate as days_employed FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'SYSDATE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [], processBox: 'SYSDATE\nCOMING SOON', processDetail: 'SYSDATE implementation coming soon...', outputColumns: ['ename', 'hiredate', 'days_employed'], outputData: [] }, { stepNum: 1, text: 'SYSDATE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'SYSDATE\nPROCESSING...', processDetail: 'SYSDATE processing...', outputColumns: ['ename', 'hiredate', 'days_employed'], outputData: [] }, { stepNum: 2, text: 'SYSDATE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'SYSDATE\nCOMPLETE', processDetail: 'SYSDATE complete', outputColumns: ['ename', 'hiredate', 'days_employed'], outputData: [{ ename: 'SMITH', hiredate: '17-DEC-80', days_employed: 16265 }] }] },
+           'DATE_ADD': { query: 'SELECT ename, hiredate, hiredate + 30 as review_date FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'DATE arithmetic placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [], processBox: 'DATE ARITHMETIC\nCOMING SOON', processDetail: 'DATE arithmetic implementation coming soon...', outputColumns: ['ename', 'hiredate', 'review_date'], outputData: [] }, { stepNum: 1, text: 'DATE arithmetic processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'DATE ARITHMETIC\nPROCESSING...', processDetail: 'DATE arithmetic processing...', outputColumns: ['ename', 'hiredate', 'review_date'], outputData: [] }, { stepNum: 2, text: 'DATE arithmetic complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'DATE ARITHMETIC\nCOMPLETE', processDetail: 'DATE arithmetic complete', outputColumns: ['ename', 'hiredate', 'review_date'], outputData: [{ ename: 'SMITH', hiredate: '17-DEC-80', review_date: '16-JAN-81' }] }] },
+           'EXTRACT': { query: 'SELECT ename, hiredate, EXTRACT(YEAR FROM hiredate) as hire_year FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'EXTRACT placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [], processBox: 'EXTRACT\nCOMING SOON', processDetail: 'EXTRACT processing...', outputColumns: ['ename', 'hiredate', 'hire_year'], outputData: [] }, { stepNum: 2, text: 'EXTRACT complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'EXTRACT\nCOMPLETE', processDetail: 'EXTRACT complete', outputColumns: ['ename', 'hiredate', 'hire_year'], outputData: [{ ename: 'SMITH', hiredate: '17-DEC-80', hire_year: 1980 }] }] },
+           'TO_DATE': { query: 'SELECT TO_DATE(\'2025-01-01\', \'YYYY-MM-DD\') as new_year FROM dual;', totalSteps: 3, steps: [{ stepNum: 0, text: 'TO_DATE placeholder...', inputTables: [{ name: 'DUAL', data: [{ dummy: 'X' }], columns: ['dummy'] }], currentProcessing: [], processedRows: [], processBox: 'TO_DATE\nCOMING SOON', processDetail: 'TO_DATE implementation coming soon...', outputColumns: ['new_year'], outputData: [] }, { stepNum: 1, text: 'TO_DATE processing...', inputTables: [{ name: 'DUAL', data: [{ dummy: 'X' }], columns: ['dummy'] }], currentProcessing: [0], processedRows: [], processBox: 'TO_DATE\nPROCESSING...', processDetail: 'TO_DATE processing...', outputColumns: ['new_year'], outputData: [] }, { stepNum: 2, text: 'TO_DATE complete', inputTables: [{ name: 'DUAL', data: [{ dummy: 'X' }], columns: ['dummy'] }], currentProcessing: [], processedRows: [0], processBox: 'TO_DATE\nCOMPLETE', processDetail: 'TO_DATE complete', outputColumns: ['new_year'], outputData: [{ new_year: '01-JAN-25' }] }] },
+           'TO_CHAR': { query: 'SELECT ename, TO_CHAR(hiredate, \'Month DD, YYYY\') as formatted_date FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'TO_CHAR placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [], processBox: 'TO_CHAR\nCOMING SOON', processDetail: 'TO_CHAR implementation coming soon...', outputColumns: ['ename', 'formatted_date'], outputData: [] }, { stepNum: 1, text: 'TO_CHAR processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'TO_CHAR\nPROCESSING...', processDetail: 'TO_CHAR processing...', outputColumns: ['ename', 'formatted_date'], outputData: [] }, { stepNum: 2, text: 'TO_CHAR complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'hiredate'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'TO_CHAR\nCOMPLETE', processDetail: 'TO_CHAR complete', outputColumns: ['ename', 'formatted_date'], outputData: [{ ename: 'SMITH', formatted_date: 'December 17, 1980' }] }] },
+
+           // String Functions
+           'SUBSTR': { query: 'SELECT ename, SUBSTR(ename, 1, 3) as short_name FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'SUBSTR placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'SUBSTR\nCOMING SOON', processDetail: 'SUBSTR implementation coming soon...', outputColumns: ['ename', 'short_name'], outputData: [] }, { stepNum: 1, text: 'SUBSTR processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'SUBSTR\nPROCESSING...', processDetail: 'SUBSTR processing...', outputColumns: ['ename', 'short_name'], outputData: [] }, { stepNum: 2, text: 'SUBSTR complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'SUBSTR\nCOMPLETE', processDetail: 'SUBSTR complete', outputColumns: ['ename', 'short_name'], outputData: [{ ename: 'SMITH', short_name: 'SMI' }] }] },
+           'INSTR': { query: 'SELECT ename, INSTR(ename, \'A\') as position_of_a FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'INSTR placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'INSTR\nCOMING SOON', processDetail: 'INSTR implementation coming soon...', outputColumns: ['ename', 'position_of_a'], outputData: [] }, { stepNum: 1, text: 'INSTR processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'INSTR\nPROCESSING...', processDetail: 'INSTR processing...', outputColumns: ['ename', 'position_of_a'], outputData: [] }, { stepNum: 2, text: 'INSTR complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'INSTR\nCOMPLETE', processDetail: 'INSTR complete', outputColumns: ['ename', 'position_of_a'], outputData: [{ ename: 'ALLEN', position_of_a: 1 }] }] },
+           'LENGTH': { query: 'SELECT ename, LENGTH(ename) as name_length FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'LENGTH placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'LENGTH\nCOMING SOON', processDetail: 'LENGTH implementation coming soon...', outputColumns: ['ename', 'name_length'], outputData: [] }, { stepNum: 1, text: 'LENGTH processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'LENGTH\nPROCESSING...', processDetail: 'LENGTH processing...', outputColumns: ['ename', 'name_length'], outputData: [] }, { stepNum: 2, text: 'LENGTH complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'LENGTH\nCOMPLETE', processDetail: 'LENGTH complete', outputColumns: ['ename', 'name_length'], outputData: [{ ename: 'SMITH', name_length: 5 }] }] },
+           'UPPER_LOWER': { query: 'SELECT ename, UPPER(ename) as upper_name, LOWER(ename) as lower_name FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'UPPER/LOWER placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'UPPER/LOWER\nCOMING SOON', processDetail: 'UPPER/LOWER implementation coming soon...', outputColumns: ['ename', 'upper_name', 'lower_name'], outputData: [] }, { stepNum: 1, text: 'UPPER/LOWER processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'UPPER/LOWER\nPROCESSING...', processDetail: 'UPPER/LOWER processing...', outputColumns: ['ename', 'upper_name', 'lower_name'], outputData: [] }, { stepNum: 2, text: 'UPPER/LOWER complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'UPPER/LOWER\nCOMPLETE', processDetail: 'UPPER/LOWER complete', outputColumns: ['ename', 'upper_name', 'lower_name'], outputData: [{ ename: 'SMITH', upper_name: 'SMITH', lower_name: 'smith' }] }] },
+           'TRIM': { query: 'SELECT TRIM(\' \' FROM \' SMITH \') as trimmed_name FROM dual;', totalSteps: 3, steps: [{ stepNum: 0, text: 'TRIM placeholder...', inputTables: [{ name: 'DUAL', data: [{ dummy: 'X' }], columns: ['dummy'] }], currentProcessing: [], processedRows: [], processBox: 'TRIM\nCOMING SOON', processDetail: 'TRIM implementation coming soon...', outputColumns: ['trimmed_name'], outputData: [] }, { stepNum: 1, text: 'TRIM processing...', inputTables: [{ name: 'DUAL', data: [{ dummy: 'X' }], columns: ['dummy'] }], currentProcessing: [0], processedRows: [], processBox: 'TRIM\nPROCESSING...', processDetail: 'TRIM processing...', outputColumns: ['trimmed_name'], outputData: [] }, { stepNum: 2, text: 'TRIM complete', inputTables: [{ name: 'DUAL', data: [{ dummy: 'X' }], columns: ['dummy'] }], currentProcessing: [], processedRows: [0], processBox: 'TRIM\nCOMPLETE', processDetail: 'TRIM complete', outputColumns: ['trimmed_name'], outputData: [{ trimmed_name: 'SMITH' }] }] },
+           'REPLACE': { query: 'SELECT ename, REPLACE(ename, \'A\', \'@\') as replaced_name FROM emp;', totalSteps: 3, steps: [{ stepNum: 0, text: 'REPLACE placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'REPLACE\nCOMING SOON', processDetail: 'REPLACE implementation coming soon...', outputColumns: ['ename', 'replaced_name'], outputData: [] }, { stepNum: 1, text: 'REPLACE processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'REPLACE\nPROCESSING...', processDetail: 'REPLACE processing...', outputColumns: ['ename', 'replaced_name'], outputData: [] }, { stepNum: 2, text: 'REPLACE complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'REPLACE\nCOMPLETE', processDetail: 'REPLACE complete', outputColumns: ['ename', 'replaced_name'], outputData: [{ ename: 'ALLEN', replaced_name: '@LLEN' }] }] },
+           'REGEXP': { query: 'SELECT ename FROM emp WHERE REGEXP_LIKE(ename, \'^[A-M]\');', totalSteps: 3, steps: [{ stepNum: 0, text: 'REGEXP functions placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [], processBox: 'REGEXP FUNCTIONS\nCOMING SOON', processDetail: 'REGEXP functions implementation coming soon...', outputColumns: ['ename'], outputData: [] }, { stepNum: 1, text: 'REGEXP functions processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'REGEXP\nPROCESSING...', processDetail: 'REGEXP functions processing...', outputColumns: ['ename'], outputData: [] }, { stepNum: 2, text: 'REGEXP functions complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'REGEXP\nCOMPLETE', processDetail: 'REGEXP functions complete', outputColumns: ['ename'], outputData: [{ ename: 'ALLEN' }, { ename: 'ADAMS' }, { ename: 'BLAKE' }] }] },
+
+           // Performance
+           'HINTS': { query: 'SELECT /*+ FIRST_ROWS */ ename, sal FROM emp WHERE sal > 1000;', totalSteps: 3, steps: [{ stepNum: 0, text: 'HINTS placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'HINTS\nCOMING SOON', processDetail: 'HINTS implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'HINTS processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [0, 1, 2], processedRows: [], processBox: 'HINTS\nPROCESSING...', processDetail: 'HINTS processing...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'HINTS complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], processBox: 'HINTS\nCOMPLETE', processDetail: 'HINTS complete', outputColumns: ['ename', 'sal'], outputData: [{ ename: 'KING', sal: 5000 }] }] },
+           'INDEX_SCAN': { query: 'SELECT ename, sal FROM emp WHERE empno = 7839;', totalSteps: 3, steps: [{ stepNum: 0, text: 'INDEX SCAN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'INDEX SCAN\nCOMING SOON', processDetail: 'INDEX SCAN implementation coming soon...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 1, text: 'INDEX SCAN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [8], processedRows: [], processBox: 'INDEX SCAN\nPROCESSING...', processDetail: 'INDEX SCAN processing...', outputColumns: ['ename', 'sal'], outputData: [] }, { stepNum: 2, text: 'INDEX SCAN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }], currentProcessing: [], processedRows: [8], processBox: 'INDEX SCAN\nCOMPLETE', processDetail: 'INDEX SCAN complete', outputColumns: ['ename', 'sal'], outputData: [{ ename: 'KING', sal: 5000 }] }] },
+           'EXPLAIN_PLAN': { query: 'EXPLAIN PLAN FOR SELECT ename, sal FROM emp WHERE sal > 1000;', totalSteps: 3, steps: [{ stepNum: 0, text: 'EXPLAIN PLAN placeholder...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'EXPLAIN PLAN\nCOMING SOON', processDetail: 'EXPLAIN PLAN implementation coming soon...', outputColumns: ['operation', 'object_name', 'cost'], outputData: [] }, { stepNum: 1, text: 'EXPLAIN PLAN processing...', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'EXPLAIN PLAN\nPROCESSING...', processDetail: 'EXPLAIN PLAN processing...', outputColumns: ['operation', 'object_name', 'cost'], outputData: [] }, { stepNum: 2, text: 'EXPLAIN PLAN complete', inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }], currentProcessing: [], processedRows: [], processBox: 'EXPLAIN PLAN\nCOMPLETE', processDetail: 'EXPLAIN PLAN complete', outputColumns: ['operation', 'object_name', 'cost'], outputData: [{ operation: 'TABLE ACCESS FULL', object_name: 'EMP', cost: 3 }] }] }
        };
 
        // Animation state variables
@@ -1725,3 +1975,5 @@ const operations = {
    </script>
 </body>
 </html>
+                           
+                     
