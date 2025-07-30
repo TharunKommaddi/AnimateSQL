@@ -132,7 +132,6 @@
             color: #ff6b35;
             font-size: 13px;
             line-height: 1.6;
-            word-break: break-all;
         }
 
         .step-section {
@@ -162,7 +161,6 @@
             font-size: 12px;
         }
 
-        /* Input Tables Section */
         .input-section {
             background: #111;
             padding: 20px;
@@ -191,8 +189,7 @@
             background: #0a0a0a;
             border: 1px solid #333;
             border-radius: 4px;
-            min-width: 250px;
-            max-width: 400px;
+            min-width: 280px;
             flex: 1;
         }
 
@@ -205,10 +202,6 @@
             letter-spacing: 0.5px;
             text-align: center;
             border-bottom: 1px solid #555;
-        }
-
-        .table-content {
-            overflow-x: auto;
         }
 
         table {
@@ -249,7 +242,6 @@
             color: #ff6b35;
         }
 
-        /* Process Section */
         .process-section {
             background: #1a1a1a;
             padding: 20px;
@@ -277,6 +269,7 @@
             margin-bottom: 15px;
             animation: pulse 2s infinite;
             width: 100%;
+            white-space: pre-line;
         }
 
         .process-detail {
@@ -298,7 +291,6 @@
             animation: flow 2s infinite;
         }
 
-        /* Output Section */
         .output-section {
             background: #111;
             padding: 20px;
@@ -354,7 +346,6 @@
             border-color: #ff6b35;
         }
 
-        /* Animations */
         @keyframes glow {
             0%, 100% { 
                 box-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
@@ -376,7 +367,6 @@
             100% { transform: scaleX(0); transform-origin: right; }
         }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -397,27 +387,6 @@
                 width: 100%;
             }
 
-            .control-group label {
-                min-width: auto;
-            }
-
-            select {
-                min-width: auto;
-                flex: 1;
-                margin-left: 10px;
-            }
-
-            .button-group {
-                display: flex;
-                gap: 10px;
-                justify-content: center;
-                width: 100%;
-            }
-
-            .button-group button {
-                flex: 1;
-            }
-
             .tables-container {
                 flex-direction: column;
                 gap: 15px;
@@ -425,7 +394,6 @@
 
             .table-wrapper {
                 min-width: auto;
-                max-width: none;
             }
 
             table {
@@ -441,10 +409,6 @@
                 font-size: 12px;
             }
 
-            .step-text {
-                font-size: 11px;
-            }
-
             .status-bar {
                 flex-direction: column;
                 gap: 8px;
@@ -454,33 +418,6 @@
             .legend {
                 justify-content: center;
                 flex-wrap: wrap;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 20px;
-            }
-
-            table {
-                font-size: 9px;
-            }
-
-            td, th {
-                padding: 6px 4px;
-            }
-
-            .process-box {
-                font-size: 9px;
-                padding: 12px;
-            }
-
-            .query-text {
-                font-size: 11px;
-            }
-
-            .legend-item {
-                font-size: 9px;
             }
         }
     </style>
@@ -533,7 +470,7 @@
                     </select>
                 </div>
 
-                <div class="button-group">
+                <div class="control-group">
                     <button id="playBtn">play</button>
                     <button id="resetBtn">reset</button>
                 </div>
@@ -551,7 +488,6 @@
                 <div id="stepText" class="step-text">ready to execute query...</div>
             </div>
 
-            <!-- Input Tables Section -->
             <div class="input-section">
                 <div class="section-title">Input Tables</div>
                 <div class="tables-container" id="inputTables">
@@ -559,35 +495,23 @@
                 </div>
             </div>
 
-            <!-- Process Section -->
             <div class="process-section">
                 <div class="section-title">Process Area</div>
                 <div class="process-area">
-                    <div class="process-box" id="processBox">
-                        INITIALIZING QUERY EXECUTION...
-                    </div>
+                    <div class="process-box" id="processBox">INITIALIZING QUERY EXECUTION...</div>
                     <div class="connection-line"></div>
-                    <div class="process-detail" id="processDetail">
-                        Query engine starting up. Parsing SQL statement and preparing execution plan.
-                    </div>
+                    <div class="process-detail" id="processDetail">Query engine starting up. Parsing SQL statement and preparing execution plan.</div>
                 </div>
             </div>
 
-            <!-- Output Section -->
             <div class="output-section">
                 <div class="section-title">Output Result</div>
                 <div class="table-wrapper output-table">
                     <div class="table-header" id="outputHeader">QUERY RESULT</div>
-                    <div class="table-content">
-                        <table id="outputTable">
-                            <thead id="outputTableHead">
-                                <!-- Dynamic content -->
-                            </thead>
-                            <tbody id="outputTableBody">
-                                <!-- Dynamic content -->
-                            </tbody>
-                        </table>
-                    </div>
+                    <table id="outputTable">
+                        <thead id="outputTableHead"></thead>
+                        <tbody id="outputTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -629,7 +553,7 @@
             { deptno: 40, dname: 'OPERATIONS', loc: 'BOSTON' }
         ];
 
-        // Oracle SQL Operations with proper structure
+        // Oracle SQL Operations
         const operations = {
             'SELECT': {
                 query: 'SELECT ename, sal FROM emp;',
@@ -796,36 +720,36 @@
                                 { ename: 'JONES' }, { ename: 'BLAKE' }
                             ], columns: ['ename'] },
                             { name: 'QUERY 2 RESULT', data: [
-                               { ename: 'SMITH' }, { ename: 'JONES' }
-                           ], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [0, 1],
-                       processBox: 'QUERY 2 EXECUTION\nFILTER: deptno = 20\nRESULT SET 2',
-                       processDetail: 'Second query executing: SELECT ename FROM emp WHERE deptno = 20. Found SMITH and JONES in department 20.',
-                       outputColumns: ['ename'],
-                       outputData: []
-                   },
-                   { 
-                       step: 2, 
-                       text: 'combining result sets with union operation...', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [
-                               { ename: 'SMITH' }, { ename: 'JONES' }
-                           ], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [0, 1],
-                       processBox: 'UNION OPERATION\nCOMBINING SETS\nREMOVING DUPLICATES',
-                       processDetail: 'Performing UNION: combining both result sets. JONES appears in both sets - removing duplicate.',
-                       outputColumns: ['ename'],
-                       outputData: [{ ename: 'JONES' }, { ename: 'BLAKE' }, { ename: 'SMITH' }]
-                   },
-                   { 
-                       step: 3, 
+                                { ename: 'SMITH' }, { ename: 'JONES' }
+                            ], columns: ['ename'] }
+                        ],
+                        highlight: [0, 1], 
+                        highlightSecond: [0, 1],
+                        processBox: 'QUERY 2 EXECUTION\nFILTER: deptno = 20\nRESULT SET 2',
+                        processDetail: 'Second query executing: SELECT ename FROM emp WHERE deptno = 20. Found SMITH and JONES in department 20.',
+                        outputColumns: ['ename'],
+                        outputData: []
+                    },
+                    { 
+                        step: 2, 
+                        text: 'combining result sets with union operation...', 
+                        inputTables: [
+                            { name: 'QUERY 1 RESULT', data: [
+                                { ename: 'JONES' }, { ename: 'BLAKE' }
+                            ], columns: ['ename'] },
+                            { name: 'QUERY 2 RESULT', data: [
+                                { ename: 'SMITH' }, { ename: 'JONES' }
+                            ], columns: ['ename'] }
+                        ],
+                        highlight: [0, 1], 
+                        highlightSecond: [0, 1],
+                        processBox: 'UNION OPERATION\nCOMBINING SETS\nREMOVING DUPLICATES',
+                        processDetail: 'Performing UNION: combining both result sets. JONES appears in both sets - removing duplicate.',
+                        outputColumns: ['ename'],
+                        outputData: [{ ename: 'JONES' }, { ename: 'BLAKE' }, { ename: 'SMITH' }]
+                    },
+                    { 
+                        step: 3, 
                        text: 'union complete - duplicates removed, final result ready', 
                        inputTables: [
                            { name: 'QUERY 1 RESULT', data: [
@@ -841,6 +765,56 @@
                        processDetail: 'UNION operation complete. Combined 4 total rows, removed 1 duplicate (JONES), final result has 3 unique employees.',
                        outputColumns: ['ename'],
                        outputData: [{ ename: 'JONES' }, { ename: 'BLAKE' }, { ename: 'SMITH' }]
+                   }
+               ]
+           },
+           'WHERE': {
+               query: 'SELECT * FROM emp WHERE deptno = 30;',
+               steps: [
+                   { 
+                       step: 0, 
+                       text: 'parsing where clause and preparing filter condition...', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       highlight: [], 
+                       processBox: 'WHERE CLAUSE\nFILTER: deptno = 30\nPREDICATE EVALUATION',
+                       processDetail: 'Oracle optimizer analyzing WHERE clause. Setting up filter predicate: deptno = 30. Preparing to scan EMP table with filter.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   { 
+                       step: 1, 
+                       text: 'evaluating SMITH: deptno(20) = 30? → FALSE', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       highlight: [0], 
+                       processBox: 'FILTER EVALUATION\nSMITH.deptno = 20\n20 = 30? FALSE',
+                       processDetail: 'Testing first row: SMITH has deptno=20. Condition 20=30 evaluates to FALSE. Row rejected.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: []
+                   },
+                   { 
+                       step: 2, 
+                       text: 'evaluating ALLEN: deptno(30) = 30? → TRUE', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       highlight: [1], 
+                       processBox: 'FILTER EVALUATION\nALLEN.deptno = 30\n30 = 30? TRUE',
+                       processDetail: 'Testing ALLEN: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted into result set.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: [{ empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 }]
+                   },
+                   { 
+                       step: 3, 
+                       text: 'processing remaining rows - finding all deptno=30 employees', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                       highlight: [1, 2, 4, 5], 
+                       processBox: 'SCAN COMPLETE\nFILTER APPLIED\nMATCHES FOUND: 4',
+                       processDetail: 'Completed table scan. Found all employees in department 30: ALLEN, WARD, MARTIN, BLAKE.',
+                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: [
+                           { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
+                           { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 },
+                           { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', sal: 1250, deptno: 30 },
+                           { empno: 7698, ename: 'BLAKE', job: 'MANAGER', sal: 2850, deptno: 30 }
+                       ]
                    }
                ]
            },
@@ -892,58 +866,6 @@
                            { ename: 'ALLEN', sal: 1600, rn: 2 },
                            { ename: 'WARD', sal: 1250, rn: 3 },
                            { ename: 'MARTIN', sal: 1250, rn: 4 }
-                       ]
-                   }
-               ]
-           },
-           'CTE': {
-               query: 'WITH high_earners AS (\n  SELECT * FROM emp WHERE sal > 2000\n)\nSELECT deptno, COUNT(*) FROM high_earners GROUP BY deptno;',
-               steps: [
-                   { 
-                       step: 0, 
-                       text: 'creating common table expression: high_earners...', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
-                       highlight: [], 
-                       processBox: 'WITH CLAUSE\nCTE: high_earners\nFILTER: sal > 2000',
-                       processDetail: 'Creating CTE named high_earners. Filtering EMP table for employees with salary > 2000.',
-                       outputColumns: ['deptno', 'count'],
-                       outputData: []
-                   },
-                   { 
-                       step: 1, 
-                       text: 'filtering employees: JONES(2975) and BLAKE(2850) qualify', 
-                       inputTables: [
-                           { name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'HIGH_EARNERS (CTE)', data: [
-                               { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
-                               { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 }
-                           ], columns: ['empno', 'ename', 'sal', 'deptno'] }
-                       ],
-                       highlight: [3, 5], 
-                       highlightSecond: [0, 1],
-                       processBox: 'CTE POPULATION\nJONES: 2975 > 2000 ✓\nBLAKE: 2850 > 2000 ✓\nCTE READY',
-                       processDetail: 'CTE high_earners populated with JONES and BLAKE. Other employees filtered out (salary ≤ 2000).',
-                       outputColumns: ['deptno', 'count'],
-                       outputData: []
-                   },
-                   { 
-                       step: 2, 
-                       text: 'executing main query: grouping high_earners by deptno', 
-                       inputTables: [
-                           { name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                           { name: 'HIGH_EARNERS (CTE)', data: [
-                               { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
-                               { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 }
-                           ], columns: ['empno', 'ename', 'sal', 'deptno'] }
-                       ],
-                       highlight: [3, 5], 
-                       highlightSecond: [0, 1],
-                       processBox: 'MAIN QUERY\nGROUP BY deptno\nCOUNT(*) per group\nFROM high_earners',
-                       processDetail: 'Main query executing on CTE. Grouping by deptno: Group 20 has 1 high earner (JONES), Group 30 has 1 high earner (BLAKE).',
-                       outputColumns: ['deptno', 'count'],
-                       outputData: [
-                           { deptno: 20, count: 1 },
-                           { deptno: 30, count: 1 }
                        ]
                    }
                ]
@@ -1047,7 +969,7 @@
            stepText.textContent = step.text;
            
            // Update process area
-           processBox.innerHTML = step.processBox.replace(/\n/g, '<br>');
+           processBox.textContent = step.processBox;
            processDetail.textContent = step.processDetail;
            
            // Update input tables
@@ -1069,9 +991,6 @@
                    tableHeader.className = 'table-header';
                    tableHeader.textContent = tableConfig.name;
                    tableWrapper.appendChild(tableHeader);
-                   
-                   const tableContent = document.createElement('div');
-                   tableContent.className = 'table-content';
                    
                    const table = document.createElement('table');
                    
@@ -1112,8 +1031,7 @@
                    });
                    table.appendChild(tbody);
                    
-                   tableContent.appendChild(table);
-                   tableWrapper.appendChild(tableContent);
+                   tableWrapper.appendChild(table);
                    inputTables.appendChild(tableWrapper);
                });
            }
