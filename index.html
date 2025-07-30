@@ -1073,4 +1073,546 @@
                        text: 'processing department 30 partition - SALES employees (part 1)', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                        highlight: [1, 2, 4, 5, 9, 11], 
-                      
+                      processBox: 'DEPT 30 PARTITION\nBLAKE: 2850 → dept_rank 1\nALLEN: 1600 → dept_rank 2\nTURNER: 1500 → dept_rank 3\nWARD: 1250 → dept_rank 4\nMARTIN: 1250 → dept_rank 5\nJAMES: 950 → dept_rank 6',
+                       processDetail: 'Processing department 30 (SALES): BLAKE leads at 2850, ALLEN at 1600, TURNER at 1500, WARD and MARTIN tie at 1250 (ranks 4,5), JAMES at 950.',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
+                       outputData: [
+                           { ename: 'KING', sal: 5000, deptno: 10, salary_rank: 1, overall_rank: 1 },
+                           { ename: 'SCOTT', sal: 3000, deptno: 20, salary_rank: 1, overall_rank: 2 },
+                           { ename: 'FORD', sal: 3000, deptno: 20, salary_rank: 2, overall_rank: 3 },
+                           { ename: 'JONES', sal: 2975, deptno: 20, salary_rank: 3, overall_rank: 4 },
+                           { ename: 'BLAKE', sal: 2850, deptno: 30, salary_rank: 1, overall_rank: 5 },
+                           { ename: 'CLARK', sal: 2450, deptno: 10, salary_rank: 2, overall_rank: 6 },
+                           { ename: 'ALLEN', sal: 1600, deptno: 30, salary_rank: 2, overall_rank: 7 },
+                           { ename: 'TURNER', sal: 1500, deptno: 30, salary_rank: 3, overall_rank: 8 },
+                           { ename: 'MILLER', sal: 1300, deptno: 10, salary_rank: 3, overall_rank: 9 },
+                           { ename: 'WARD', sal: 1250, deptno: 30, salary_rank: 4, overall_rank: 10 },
+                           { ename: 'MARTIN', sal: 1250, deptno: 30, salary_rank: 5, overall_rank: 11 },
+                           { ename: 'ADAMS', sal: 1100, deptno: 20, salary_rank: 4, overall_rank: 12 },
+                           { ename: 'JAMES', sal: 950, deptno: 30, salary_rank: 6, overall_rank: 13 },
+                           { ename: 'SMITH', sal: 800, deptno: 20, salary_rank: 5, overall_rank: 14 }
+                       ]
+                   },
+                   { 
+                       stepNum: 6,
+                       text: 'window function complete - dual ranking system established', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                       highlight: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 
+                       processBox: 'WINDOW COMPLETE\nDUAL RANKINGS ASSIGNED\nDEPT RANKS: 1-6 per dept\nOVERALL RANKS: 1-14\nROW_NUMBER() COMPLETE',
+                       processDetail: 'Window function processing complete. All 14 employees have dual rankings: salary_rank within department (1-6) and overall_rank across company (1-14). ROW_NUMBER() functions executed successfully.',
+                       outputColumns: ['ename', 'sal', 'deptno', 'salary_rank', 'overall_rank'],
+                       outputData: [
+                           { ename: 'KING', sal: 5000, deptno: 10, salary_rank: 1, overall_rank: 1 },
+                           { ename: 'SCOTT', sal: 3000, deptno: 20, salary_rank: 1, overall_rank: 2 },
+                           { ename: 'FORD', sal: 3000, deptno: 20, salary_rank: 2, overall_rank: 3 },
+                           { ename: 'JONES', sal: 2975, deptno: 20, salary_rank: 3, overall_rank: 4 },
+                           { ename: 'BLAKE', sal: 2850, deptno: 30, salary_rank: 1, overall_rank: 5 },
+                           { ename: 'CLARK', sal: 2450, deptno: 10, salary_rank: 2, overall_rank: 6 },
+                           { ename: 'ALLEN', sal: 1600, deptno: 30, salary_rank: 2, overall_rank: 7 },
+                           { ename: 'TURNER', sal: 1500, deptno: 30, salary_rank: 3, overall_rank: 8 },
+                           { ename: 'MILLER', sal: 1300, deptno: 10, salary_rank: 3, overall_rank: 9 },
+                           { ename: 'WARD', sal: 1250, deptno: 30, salary_rank: 4, overall_rank: 10 },
+                           { ename: 'MARTIN', sal: 1250, deptno: 30, salary_rank: 5, overall_rank: 11 },
+                           { ename: 'ADAMS', sal: 1100, deptno: 20, salary_rank: 4, overall_rank: 12 },
+                           { ename: 'JAMES', sal: 950, deptno: 30, salary_rank: 6, overall_rank: 13 },
+                           { ename: 'SMITH', sal: 800, deptno: 20, salary_rank: 5, overall_rank: 14 }
+                       ]
+                   }
+               ]
+           },
+
+           'CONNECT_BY': {
+               query: 'SELECT LEVEL, LPAD(ename, LENGTH(ename) + (LEVEL-1)*2, \' \') as hierarchy,\n       empno, mgr, job, sal\nFROM emp\nSTART WITH mgr IS NULL\nCONNECT BY PRIOR empno = mgr\nORDER SIBLINGS BY sal DESC;',
+               totalSteps: 15,
+               steps: [
+                   { 
+                       stepNum: 0,
+                       text: 'parsing hierarchical query with CONNECT BY clause...', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [], 
+                       processBox: 'HIERARCHICAL QUERY\nSTART WITH: mgr IS NULL\nCONNECT BY: PRIOR empno = mgr\nORDER SIBLINGS: sal DESC\nTREE TRAVERSAL: TOP-DOWN',
+                       processDetail: 'Parsing Oracle hierarchical query. START WITH finds root (mgr IS NULL), CONNECT BY builds tree (PRIOR empno = mgr), ORDER SIBLINGS sorts children by salary.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 1,
+                       text: 'finding root node - employees with no manager (mgr IS NULL)', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [8], 
+                       processBox: 'ROOT IDENTIFICATION\nSCANNING: mgr IS NULL\nFOUND: KING (empno=7839)\nROOT ESTABLISHED\nLEVEL 1 READY',
+                       processDetail: 'Scanning for root nodes where mgr IS NULL. Found KING (empno=7839, mgr=NULL) as the root of organizational hierarchy. LEVEL 1 established.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 }
+                       ]
+                   },
+                   { 
+                       stepNum: 2,
+                       text: 'level 2 - finding direct reports to KING (empno=7839)', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [3, 5, 6], 
+                       processBox: 'LEVEL 2 PROCESSING\nPRIOR empno = 7839\nFINDING: mgr = 7839\nFOUND: JONES, BLAKE, CLARK\nMANAGERS UNDER KING',
+                       processDetail: 'Finding Level 2: employees where mgr = 7839 (KING). Found JONES (2975), BLAKE (2850), CLARK (2450). All are managers reporting to KING.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 }
+                       ]
+                   },
+                   { 
+                       stepNum: 3,
+                       text: 'level 3 - finding reports to JONES (7566) in RESEARCH dept', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [7, 12], 
+                       processBox: 'LEVEL 3: JONES BRANCH\nPRIOR empno = 7566\nFINDING: mgr = 7566\nFOUND: SCOTT, FORD\nANALYSTS UNDER JONES',
+                       processDetail: 'Processing JONES branch: finding employees where mgr = 7566. Found SCOTT (3000) and FORD (3000), both ANALYSTS in RESEARCH department.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 }
+                       ]
+                   },
+                   { 
+                       stepNum: 4,
+                       text: 'level 4 - finding reports to SCOTT (7788) - ADAMS found', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [10], 
+                       processBox: 'LEVEL 4: SCOTT BRANCH\nPRIOR empno = 7788\nFINDING: mgr = 7788\nFOUND: ADAMS\nCLERK UNDER SCOTT',
+                       processDetail: 'Processing SCOTT branch: finding employees where mgr = 7788. Found ADAMS (1100), a CLERK reporting to SCOTT the ANALYST.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, job: 'CLERK', sal: 1100 },
+                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 }
+                       ]
+                   },
+                   { 
+                       stepNum: 5,
+                       text: 'processing BLAKE branch - finding SALES team reports', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [1, 2, 4, 9, 11], 
+                       processBox: 'LEVEL 3: BLAKE BRANCH\nPRIOR empno = 7698\nFINDING: mgr = 7698\nFOUND: ALLEN, WARD, MARTIN, TURNER, JAMES\nSALES TEAM',
+                       processDetail: 'Processing BLAKE branch: finding employees where mgr = 7698. Found 5 SALES employees: ALLEN (1600), WARD (1250), MARTIN (1250), TURNER (1500), JAMES (950).',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, job: 'CLERK', sal: 1100 },
+                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 3, hierarchy: '    ALLEN', empno: 7499, mgr: 7698, job: 'SALESMAN', sal: 1600 },
+                           { level: 3, hierarchy: '    TURNER', empno: 7844, mgr: 7698, job: 'SALESMAN', sal: 1500 },
+                           { level: 3, hierarchy: '    WARD', empno: 7521, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    MARTIN', empno: 7654, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    JAMES', empno: 7900, mgr: 7698, job: 'CLERK', sal: 950 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 }
+                       ]
+                   },
+                   { 
+                       stepNum: 6,
+                       text: 'processing CLARK branch - finding ACCOUNTING team', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [13], 
+                       processBox: 'LEVEL 3: CLARK BRANCH\nPRIOR empno = 7782\nFINDING: mgr = 7782\nFOUND: MILLER\nACCOUNTING CLERK',
+                       processDetail: 'Processing CLARK branch: finding employees where mgr = 7782. Found MILLER (1300), a CLERK in ACCOUNTING department reporting to CLARK.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, job: 'CLERK', sal: 1100 },
+                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 3, hierarchy: '    ALLEN', empno: 7499, mgr: 7698, job: 'SALESMAN', sal: 1600 },
+                           { level: 3, hierarchy: '    TURNER', empno: 7844, mgr: 7698, job: 'SALESMAN', sal: 1500 },
+                           { level: 3, hierarchy: '    WARD', empno: 7521, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    MARTIN', empno: 7654, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    JAMES', empno: 7900, mgr: 7698, job: 'CLERK', sal: 950 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 },
+                           { level: 3, hierarchy: '    MILLER', empno: 7934, mgr: 7782, job: 'CLERK', sal: 1300 }
+                       ]
+                   },
+                   { 
+                       stepNum: 7,
+                       text: 'processing remaining employee - SMITH has mgr but different hierarchy', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [0, 12], 
+                       processBox: 'REMAINING PROCESSING\nSMITH: mgr = 7902 (FORD)\nFORD BRANCH PROCESSING\nLEVEL 4: SMITH UNDER FORD\nHIERARCHY COMPLETE',
+                       processDetail: 'Processing remaining employee: SMITH (mgr=7902) reports to FORD. Adding SMITH as Level 4 under FORD in the RESEARCH hierarchy branch.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, job: 'CLERK', sal: 1100 },
+                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      SMITH', empno: 7369, mgr: 7902, job: 'CLERK', sal: 800 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 3, hierarchy: '    ALLEN', empno: 7499, mgr: 7698, job: 'SALESMAN', sal: 1600 },
+                           { level: 3, hierarchy: '    TURNER', empno: 7844, mgr: 7698, job: 'SALESMAN', sal: 1500 },
+                           { level: 3, hierarchy: '    WARD', empno: 7521, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    MARTIN', empno: 7654, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    JAMES', empno: 7900, mgr: 7698, job: 'CLERK', sal: 950 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 },
+                           { level: 3, hierarchy: '    MILLER', empno: 7934, mgr: 7782, job: 'CLERK', sal: 1300 }
+                       ]
+                   },
+                   { 
+                       stepNum: 8,
+                       text: 'hierarchical query complete - organizational tree built', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr', 'job', 'sal'] }],
+                       highlight: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 
+                       processBox: 'CONNECT BY COMPLETE\nLEVELS: 1-4\nROOT: KING (PRESIDENT)\nMANAGERS: 3\nEMPLOYEES: 14\nTREE TRAVERSAL DONE',
+                       processDetail: 'CONNECT BY hierarchical query complete. Built 4-level organizational tree: KING at top, 3 managers (JONES, BLAKE, CLARK), analysts and salesmen at level 3, clerks at level 4. All 14 employees positioned.',
+                       outputColumns: ['level', 'hierarchy', 'empno', 'mgr', 'job', 'sal'],
+                       outputData: [
+                           { level: 1, hierarchy: 'KING', empno: 7839, mgr: null, job: 'PRESIDENT', sal: 5000 },
+                           { level: 2, hierarchy: '  JONES', empno: 7566, mgr: 7839, job: 'MANAGER', sal: 2975 },
+                           { level: 3, hierarchy: '    SCOTT', empno: 7788, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      ADAMS', empno: 7876, mgr: 7788, job: 'CLERK', sal: 1100 },
+                           { level: 3, hierarchy: '    FORD', empno: 7902, mgr: 7566, job: 'ANALYST', sal: 3000 },
+                           { level: 4, hierarchy: '      SMITH', empno: 7369, mgr: 7902, job: 'CLERK', sal: 800 },
+                           { level: 2, hierarchy: '  BLAKE', empno: 7698, mgr: 7839, job: 'MANAGER', sal: 2850 },
+                           { level: 3, hierarchy: '    ALLEN', empno: 7499, mgr: 7698, job: 'SALESMAN', sal: 1600 },
+                           { level: 3, hierarchy: '    TURNER', empno: 7844, mgr: 7698, job: 'SALESMAN', sal: 1500 },
+                           { level: 3, hierarchy: '    WARD', empno: 7521, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    MARTIN', empno: 7654, mgr: 7698, job: 'SALESMAN', sal: 1250 },
+                           { level: 3, hierarchy: '    JAMES', empno: 7900, mgr: 7698, job: 'CLERK', sal: 950 },
+                           { level: 2, hierarchy: '  CLARK', empno: 7782, mgr: 7839, job: 'MANAGER', sal: 2450 },
+                           { level: 3, hierarchy: '    MILLER', empno: 7934, mgr: 7782, job: 'CLERK', sal: 1300 }
+                       ]
+                   }
+               ]
+           }
+       };
+
+       // Animation state variables
+       let currentOperation = 'SELECT';
+       let currentStep = 0;
+       let isAnimating = false;
+       let animationInterval = null;
+       let animationSpeed = 1000;
+
+       // DOM element references
+       const operationSelect = document.getElementById('operation');
+       const complexitySelect = document.getElementById('complexity');
+       const speedSelect = document.getElementById('speed');
+       const playBtn = document.getElementById('playBtn');
+       const pauseBtn = document.getElementById('pauseBtn');
+       const resetBtn = document.getElementById('resetBtn');
+       const nextBtn = document.getElementById('nextBtn');
+       const queryText = document.getElementById('queryText');
+       const stepCounter = document.getElementById('stepCounter');
+       const stepText = document.getElementById('stepText');
+       const inputTables = document.getElementById('inputTables');
+       const processBox = document.getElementById('processBox');
+       const processDetail = document.getElementById('processDetail');
+       const outputHeader = document.getElementById('outputHeader');
+       const outputTableHead = document.getElementById('outputTableHead');
+       const outputTableBody = document.getElementById('outputTableBody');
+       const status = document.getElementById('status');
+
+       // Event listeners
+       operationSelect.addEventListener('change', handleOperationChange);
+       complexitySelect.addEventListener('change', handleComplexityChange);
+       speedSelect.addEventListener('change', handleSpeedChange);
+       playBtn.addEventListener('click', handlePlay);
+       pauseBtn.addEventListener('click', handlePause);
+       resetBtn.addEventListener('click', handleReset);
+       nextBtn.addEventListener('click', handleNext);
+
+       // Event handler functions
+       function handleOperationChange(e) {
+           currentOperation = e.target.value;
+           handleReset();
+       }
+
+       function handleComplexityChange(e) {
+           // Complexity could affect animation detail level
+           const complexity = e.target.value;
+           // Future: adjust step granularity based on complexity
+       }
+
+       function handleSpeedChange(e) {
+           animationSpeed = parseInt(e.target.value);
+       }
+
+       function handlePlay() {
+           startAnimation();
+       }
+
+       function handlePause() {
+           pauseAnimation();
+       }
+
+       function handleReset() {
+           pauseAnimation();
+           currentStep = 0;
+           updateDisplay();
+           updateStatus('ready for comprehensive oracle sql execution');
+       }
+
+       function handleNext() {
+           if (!isAnimating) {
+               stepForward();
+           }
+       }
+
+       // Animation control functions
+       function startAnimation() {
+           const operation = operations[currentOperation];
+           if (!operation) return;
+
+           if (currentStep >= operation.totalSteps - 1) {
+               handleReset();
+               return;
+           }
+           
+           isAnimating = true;
+           updateButtons();
+           updateStatus('executing comprehensive oracle sql operation...');
+           
+           animationInterval = setInterval(() => {
+               const operation = operations[currentOperation];
+               if (currentStep < operation.totalSteps - 1) {
+                   currentStep++;
+                   updateDisplay();
+               } else {
+                   pauseAnimation();
+                   updateStatus('oracle sql operation complete - all steps executed');
+               }
+           }, animationSpeed);
+       }
+
+       function pauseAnimation() {
+           isAnimating = false;
+           if (animationInterval) {
+               clearInterval(animationInterval);
+               animationInterval = null;
+           }
+           updateButtons();
+           if (status.textContent.includes('executing')) {
+               updateStatus('oracle sql execution paused');
+           }
+       }
+
+       function stepForward() {
+           const operation = operations[currentOperation];
+           if (!operation) return;
+
+           if (currentStep < operation.totalSteps - 1) {
+               currentStep++;
+               updateDisplay();
+           }
+           
+           if (currentStep >= operation.totalSteps - 1) {
+               updateStatus('oracle sql operation complete - all steps executed');
+           }
+       }
+
+       function updateButtons() {
+           playBtn.classList.toggle('active', isAnimating);
+           playBtn.textContent = isAnimating ? 'playing...' : 'play';
+           pauseBtn.style.opacity = isAnimating ? '1' : '0.5';
+           nextBtn.style.opacity = isAnimating ? '0.5' : '1';
+       }
+
+       function updateStatus(statusText) {
+           status.textContent = statusText;
+       }
+
+       // Display update function
+       function updateDisplay() {
+           const operation = operations[currentOperation];
+           if (!operation || !operation.steps[currentStep]) return;
+           
+           const step = operation.steps[currentStep];
+           
+           // Update query text with line breaks
+           queryText.innerHTML = operation.query.replace(/\n/g, '<br>');
+           
+           // Update step counter and text
+           stepCounter.textContent = `step ${currentStep + 1}/${operation.totalSteps}`;
+           stepText.textContent = step.text;
+           
+           // Update process area
+           processBox.textContent = step.processBox;
+           processDetail.textContent = step.processDetail;
+           
+           // Update input tables
+           renderInputTables(step);
+           
+           // Update output table
+           renderOutputTable(step);
+       }
+
+       // Input tables rendering function
+       function renderInputTables(step) {
+           inputTables.innerHTML = '';
+           
+           if (!step.inputTables || step.inputTables.length === 0) return;
+           
+           step.inputTables.forEach((tableConfig, tableIndex) => {
+               const tableWrapper = document.createElement('div');
+               tableWrapper.className = 'table-wrapper';
+               
+               // Table header
+               const tableHeader = document.createElement('div');
+               tableHeader.className = 'table-header';
+               tableHeader.textContent = tableConfig.name;
+               tableWrapper.appendChild(tableHeader);
+               
+               // Table
+               const table = document.createElement('table');
+               
+               // Table head
+               const thead = document.createElement('thead');
+               const headerRow = document.createElement('tr');
+               tableConfig.columns.forEach(col => {
+                   const th = document.createElement('th');
+                   th.textContent = col;
+                   headerRow.appendChild(th);
+               });
+               thead.appendChild(headerRow);
+               table.appendChild(thead);
+               
+               // Table body
+               const tbody = document.createElement('tbody');
+               tableConfig.data.forEach((row, rowIndex) => {
+                   const tr = document.createElement('tr');
+                   
+                   // Apply highlighting based on table index and step data
+                   if (tableIndex === 0 && step.highlight && step.highlight.includes(rowIndex)) {
+                       tr.classList.add('highlighted');
+                   }
+                   if (tableIndex === 1 && step.highlightSecond && step.highlightSecond.includes(rowIndex)) {
+                       tr.classList.add('matching');
+                   }
+                   if (tableIndex === 2 && step.highlightThird && step.highlightThird.includes(rowIndex)) {
+                       tr.classList.add('processing');
+                   }
+                   
+                   // Create table cells
+                   tableConfig.columns.forEach(col => {
+                       const td = document.createElement('td');
+                       let value = row[col];
+                       
+                       // Format values appropriately
+                       if (value === null || value === undefined) {
+                           value = 'NULL';
+                       } else if (typeof value === 'number') {
+                           value = value.toLocaleString();
+                       } else if (typeof value === 'string' && value === '') {
+                           value = '';
+                       }
+                       
+                       td.textContent = value;
+                       tr.appendChild(td);
+                   });
+                   
+                   tbody.appendChild(tr);
+               });
+               table.appendChild(tbody);
+               
+               tableWrapper.appendChild(table);
+               inputTables.appendChild(tableWrapper);
+           });
+       }
+
+       // Output table rendering function
+       function renderOutputTable(step) {
+           outputHeader.textContent = 'ORACLE QUERY RESULT';
+           outputTableHead.innerHTML = '';
+           outputTableBody.innerHTML = '';
+           
+           if (step.outputData && step.outputData.length > 0) {
+               // Create table header
+               const headerRow = document.createElement('tr');
+               const columns = step.outputColumns || Object.keys(step.outputData[0]);
+               
+               columns.forEach(col => {
+                   const th = document.createElement('th');
+                   th.textContent = col.toUpperCase();
+                   headerRow.appendChild(th);
+               });
+               outputTableHead.appendChild(headerRow);
+               
+               // Create table body with progressive row highlighting
+               step.outputData.forEach((row, rowIndex) => {
+                   const tr = document.createElement('tr');
+                   
+                   // Add slight delay highlighting for newly added rows
+                   if (rowIndex === step.outputData.length - 1 && step.outputData.length > 1) {
+                       tr.classList.add('highlighted');
+                       setTimeout(() => {
+                           tr.classList.remove('highlighted');
+                       }, 1000);
+                   }
+                   
+                   columns.forEach(col => {
+                       const td = document.createElement('td');
+                       let value = row[col];
+                       
+                       // Format values
+                       if (value === null || value === undefined) {
+                           value = '';
+                       } else if (typeof value === 'number') {
+                           value = value.toLocaleString();
+                       }
+                       
+                       td.textContent = value;
+                       tr.appendChild(td);
+                   });
+                   
+                   outputTableBody.appendChild(tr);
+               });
+           } else {
+               // Show empty state with helpful message
+               const emptyRow = document.createElement('tr');
+               const emptyCell = document.createElement('td');
+               emptyCell.textContent = 'Oracle SQL execution in progress - results will appear here...';
+               emptyCell.style.color = '#666';
+               emptyCell.style.fontStyle = 'italic';
+               emptyCell.style.textAlign = 'center';
+               emptyCell.style.padding = '30px';
+               emptyCell.colSpan = 20; // Span multiple columns
+               emptyRow.appendChild(emptyCell);
+               outputTableBody.appendChild(emptyRow);
+           }
+       }
+
+       // Initialize the application
+       function initializeApp() {
+           // Set default operation if it exists
+           if (operations[currentOperation]) {
+               updateDisplay();
+               updateStatus('ready for comprehensive oracle sql execution');
+               updateButtons();
+           }
+       }
+
+       // Start the application when DOM is loaded
+       document.addEventListener('DOMContentLoaded', initializeApp);
+       
+       // Also initialize immediately in case DOM is already loaded
+       if (document.readyState === 'loading') {
+           // DOM is still loading, wait for DOMContentLoaded
+       } else {
+           // DOM is already loaded
+           initializeApp();
+       }
+   </script>
+</body>
+</html>
