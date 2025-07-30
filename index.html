@@ -553,48 +553,52 @@
             { deptno: 40, dname: 'OPERATIONS', loc: 'BOSTON' }
         ];
 
-        // Oracle SQL Operations
+        // Complete Oracle SQL Operations with proper step-by-step flow
         const operations = {
             'SELECT': {
                 query: 'SELECT ename, sal FROM emp;',
+                totalSteps: 6,
                 steps: [
                     { 
-                        step: 0, 
-                        text: 'parsing sql statement and building execution plan...', 
+                        stepNum: 0,
+                        text: 'initializing select operation - parsing query...', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                         highlight: [], 
-                        processBox: 'SELECT OPERATION\nPROJECTION: ename, sal\nTABLE SCAN: emp',
-                        processDetail: 'Oracle parser validates syntax and creates execution plan. Preparing to scan EMP table and project only ENAME and SAL columns.',
+                        processBox: 'SELECT OPERATION\nPARSING QUERY\nINITIALIZING...',
+                        processDetail: 'Oracle parser analyzing SQL statement. Identifying columns to project: ENAME, SAL. Preparing table scan on EMP.',
                         outputColumns: ['ename', 'sal'],
                         outputData: []
                     },
                     { 
-                        step: 1, 
-                        text: 'table scan - reading row 1: SMITH', 
+                        stepNum: 1,
+                        text: 'table scan started - reading first row: SMITH', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                         highlight: [0], 
-                        processBox: 'TABLE SCAN\nREADING BLOCK\nEXTRACTING COLUMNS',
-                        processDetail: 'Reading first row from EMP table. Extracting ENAME=SMITH and SAL=800. Adding to result set.',
+                        processBox: 'TABLE SCAN\nREADING ROW 1\nSMITH - EXTRACTING',
+                        processDetail: 'Reading first row from EMP table. Extracting ENAME=SMITH and SAL=800. Adding to result buffer.',
                         outputColumns: ['ename', 'sal'],
                         outputData: [{ ename: 'SMITH', sal: 800 }]
                     },
                     { 
-                        step: 2, 
+                        stepNum: 2,
                         text: 'continuing scan - reading row 2: ALLEN', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                         highlight: [0, 1], 
-                        processBox: 'TABLE SCAN\nREADING BLOCK\nEXTRACTING COLUMNS',
-                        processDetail: 'Reading second row. Extracting ENAME=ALLEN and SAL=1600. Adding to result set.',
+                        processBox: 'TABLE SCAN\nREADING ROW 2\nALLEN - EXTRACTING',
+                        processDetail: 'Reading second row. Extracting ENAME=ALLEN and SAL=1600. Adding to result buffer.',
                         outputColumns: ['ename', 'sal'],
-                        outputData: [{ ename: 'SMITH', sal: 800 }, { ename: 'ALLEN', sal: 1600 }]
+                        outputData: [
+                            { ename: 'SMITH', sal: 800 }, 
+                            { ename: 'ALLEN', sal: 1600 }
+                        ]
                     },
                     { 
-                        step: 3, 
-                        text: 'processing remaining rows...', 
+                        stepNum: 3,
+                        text: 'scan progress - rows 3 and 4: WARD, JONES', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                         highlight: [0, 1, 2, 3], 
-                        processBox: 'TABLE SCAN\nPROCESSING ROWS\n4 OF 6 COMPLETE',
-                        processDetail: 'Continuing table scan. Processing WARD and JONES records.',
+                        processBox: 'TABLE SCAN\nREADING ROWS 3-4\nWARD, JONES',
+                        processDetail: 'Processing rows 3-4. Extracting WARD(1250) and JONES(2975). Adding to result buffer.',
                         outputColumns: ['ename', 'sal'],
                         outputData: [
                             { ename: 'SMITH', sal: 800 }, 
@@ -604,12 +608,29 @@
                         ]
                     },
                     { 
-                        step: 4, 
-                        text: 'scan complete - all 6 rows processed', 
+                        stepNum: 4,
+                        text: 'processing final rows: MARTIN, BLAKE', 
                         inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                         highlight: [0, 1, 2, 3, 4, 5], 
-                        processBox: 'SCAN COMPLETE\nROWS PROCESSED: 6\nCOLUMNS PROJECTED: 2',
-                        processDetail: 'Table scan complete. All 6 rows processed. Final result set contains ENAME and SAL columns only.',
+                        processBox: 'TABLE SCAN\nREADING ROWS 5-6\nMARTIN, BLAKE',
+                        processDetail: 'Processing final rows. Extracting MARTIN(1250) and BLAKE(2850). Adding to result buffer.',
+                        outputColumns: ['ename', 'sal'],
+                        outputData: [
+                            { ename: 'SMITH', sal: 800 }, 
+                            { ename: 'ALLEN', sal: 1600 },
+                            { ename: 'WARD', sal: 1250 },
+                            { ename: 'JONES', sal: 2975 },
+                            { ename: 'MARTIN', sal: 1250 },
+                            { ename: 'BLAKE', sal: 2850 }
+                        ]
+                    },
+                    { 
+                        stepNum: 5,
+                        text: 'select operation complete - 6 rows returned', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                        highlight: [0, 1, 2, 3, 4, 5], 
+                        processBox: 'OPERATION COMPLETE\nROWS SCANNED: 6\nROWS RETURNED: 6\nCOLUMNS: 2',
+                        processDetail: 'SELECT operation complete. Full table scan processed 6 rows. Projected 2 columns (ENAME, SAL) for all rows.',
                         outputColumns: ['ename', 'sal'],
                         outputData: [
                             { ename: 'SMITH', sal: 800 }, 
@@ -622,192 +643,102 @@
                     }
                 ]
             },
-            'INNER_JOIN': {
-                query: 'SELECT e.ename, e.sal, d.dname, d.loc\nFROM emp e INNER JOIN dept d ON e.deptno = d.deptno;',
+            'WHERE': {
+                query: 'SELECT * FROM emp WHERE deptno = 30;',
+                totalSteps: 8,
                 steps: [
                     { 
-                        step: 0, 
-                        text: 'preparing inner join - analyzing tables and join condition...', 
-                        inputTables: [
-                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                            { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                        ],
+                        stepNum: 0,
+                        text: 'parsing where clause - setting up filter predicate...', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
                         highlight: [], 
-                        highlightSecond: [],
-                        processBox: 'INNER JOIN\nJOIN CONDITION:\ne.deptno = d.deptno\nNESTED LOOP',
-                        processDetail: 'Oracle optimizer choosing nested loop join algorithm. For each EMP row, will search DEPT table for matching deptno.',
-                        outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                        processBox: 'WHERE CLAUSE\nPREDICATE: deptno = 30\nINITIALIZING FILTER',
+                        processDetail: 'Parsing WHERE clause. Setting up filter predicate: deptno = 30. Preparing filtered table scan.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
                         outputData: []
                     },
                     { 
-                        step: 1, 
-                        text: 'processing SMITH(deptno=20) - searching dept table...', 
-                        inputTables: [
-                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                            { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                        ],
+                        stepNum: 1,
+                        text: 'evaluating row 1: SMITH - deptno(20) = 30? FALSE', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
                         highlight: [0], 
-                        highlightSecond: [1],
-                        processBox: 'JOIN PROCESSING\nSMITH.deptno = 20\nSEARCHING DEPT...\nMATCH: RESEARCH',
-                        processDetail: 'Processing SMITH with deptno=20. Searching DEPT table... Found match: deptno=20 → RESEARCH, DALLAS.',
-                        outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                        outputData: [{ ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' }]
-                    },
-                    { 
-                        step: 2, 
-                        text: 'processing ALLEN(deptno=30) - found match with SALES', 
-                        inputTables: [
-                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                            { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                        ],
-                        highlight: [0, 1], 
-                        highlightSecond: [1, 2],
-                        processBox: 'JOIN PROCESSING\nALLEN.deptno = 30\nMATCH: SALES',
-                        processDetail: 'Processing ALLEN with deptno=30. Found match in DEPT: deptno=30 → SALES, CHICAGO.',
-                        outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                        outputData: [
-                            { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
-                            { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' }
-                        ]
-                    },
-                    { 
-                        step: 3, 
-                        text: 'processing remaining employees - all finding matches', 
-                        inputTables: [
-                            { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
-                            { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
-                        ],
-                        highlight: [0, 1, 2, 3, 4, 5], 
-                        highlightSecond: [1, 2],
-                        processBox: 'JOIN COMPLETE\nROWS MATCHED: 6\nNULL REJECTS: 0\nFINAL RESULT: 6',
-                        processDetail: 'Inner join complete. All EMP rows found matching DEPT records. Final result: 6 employees with department details.',
-                        outputColumns: ['ename', 'sal', 'dname', 'loc'],
-                        outputData: [
-                            { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
-                            { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
-                            { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                            { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' },
-                            { ename: 'MARTIN', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
-                            { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO' }
-                        ]
-                    }
-                ]
-            },
-            'UNION': {
-                query: 'SELECT ename FROM emp WHERE sal > 2000\nUNION\nSELECT ename FROM emp WHERE deptno = 20;',
-                steps: [
-                    { 
-                        step: 0, 
-                        text: 'executing first query: employees with salary > 2000...', 
-                        inputTables: [
-                            { name: 'QUERY 1 RESULT', data: [
-                                { ename: 'JONES' }, { ename: 'BLAKE' }
-                            ], columns: ['ename'] },
-                            { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
-                        ],
-                        highlight: [0, 1], 
-                        highlightSecond: [],
-                        processBox: 'QUERY 1 EXECUTION\nFILTER: sal > 2000\nRESULT SET 1',
-                        processDetail: 'First query executing: SELECT ename FROM emp WHERE sal > 2000. Found JONES(2975) and BLAKE(2850).',
-                        outputColumns: ['ename'],
+                        processBox: 'FILTER EVALUATION\nSMITH: deptno = 20\n20 = 30? FALSE\nREJECTED',
+                        processDetail: 'Evaluating SMITH: deptno=20. Condition 20=30 evaluates to FALSE. Row rejected, not added to result.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
                         outputData: []
                     },
                     { 
-                        step: 1, 
-                        text: 'executing second query: employees in department 20...', 
-                        inputTables: [
-                            { name: 'QUERY 1 RESULT', data: [
-                                { ename: 'JONES' }, { ename: 'BLAKE' }
-                            ], columns: ['ename'] },
-                            { name: 'QUERY 2 RESULT', data: [
-                                { ename: 'SMITH' }, { ename: 'JONES' }
-                            ], columns: ['ename'] }
-                        ],
-                        highlight: [0, 1], 
-                        highlightSecond: [0, 1],
-                        processBox: 'QUERY 2 EXECUTION\nFILTER: deptno = 20\nRESULT SET 2',
-                        processDetail: 'Second query executing: SELECT ename FROM emp WHERE deptno = 20. Found SMITH and JONES in department 20.',
-                        outputColumns: ['ename'],
-                        outputData: []
+                        stepNum: 2,
+                        text: 'evaluating row 2: ALLEN - deptno(30) = 30? TRUE', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        highlight: [1], 
+                        processBox: 'FILTER EVALUATION\nALLEN: deptno = 30\n30 = 30? TRUE\nACCEPTED',
+                        processDetail: 'Evaluating ALLEN: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        outputData: [{ empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 }]
                     },
                     { 
-                        step: 2, 
-                        text: 'combining result sets with union operation...', 
-                        inputTables: [
-                            { name: 'QUERY 1 RESULT', data: [
-                                { ename: 'JONES' }, { ename: 'BLAKE' }
-                            ], columns: ['ename'] },
-                            { name: 'QUERY 2 RESULT', data: [
-                                { ename: 'SMITH' }, { ename: 'JONES' }
-                            ], columns: ['ename'] }
-                        ],
-                        highlight: [0, 1], 
-                        highlightSecond: [0, 1],
-                        processBox: 'UNION OPERATION\nCOMBINING SETS\nREMOVING DUPLICATES',
-                        processDetail: 'Performing UNION: combining both result sets. JONES appears in both sets - removing duplicate.',
-                        outputColumns: ['ename'],
-                        outputData: [{ ename: 'JONES' }, { ename: 'BLAKE' }, { ename: 'SMITH' }]
+                        stepNum: 3,
+                        text: 'evaluating row 3: WARD - deptno(30) = 30? TRUE', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        highlight: [2], 
+                        processBox: 'FILTER EVALUATION\nWARD: deptno = 30\n30 = 30? TRUE\nACCEPTED',
+                        processDetail: 'Evaluating WARD: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        outputData: [
+                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
+                            { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 }
+                        ]
                     },
                     { 
-                        step: 3, 
-                       text: 'union complete - duplicates removed, final result ready', 
-                       inputTables: [
-                           { name: 'QUERY 1 RESULT', data: [
-                               { ename: 'JONES' }, { ename: 'BLAKE' }
-                           ], columns: ['ename'] },
-                           { name: 'QUERY 2 RESULT', data: [
-                               { ename: 'SMITH' }, { ename: 'JONES' }
-                           ], columns: ['ename'] }
-                       ],
-                       highlight: [0, 1], 
-                       highlightSecond: [0, 1],
-                       processBox: 'UNION COMPLETE\nSET 1: 2 rows\nSET 2: 2 rows\nDUPLICATE: JONES\nFINAL: 3 rows',
-                       processDetail: 'UNION operation complete. Combined 4 total rows, removed 1 duplicate (JONES), final result has 3 unique employees.',
-                       outputColumns: ['ename'],
-                       outputData: [{ ename: 'JONES' }, { ename: 'BLAKE' }, { ename: 'SMITH' }]
-                   }
-               ]
-           },
-           'WHERE': {
-               query: 'SELECT * FROM emp WHERE deptno = 30;',
-               steps: [
-                   { 
-                       step: 0, 
-                       text: 'parsing where clause and preparing filter condition...', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                       highlight: [], 
-                       processBox: 'WHERE CLAUSE\nFILTER: deptno = 30\nPREDICATE EVALUATION',
-                       processDetail: 'Oracle optimizer analyzing WHERE clause. Setting up filter predicate: deptno = 30. Preparing to scan EMP table with filter.',
-                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                       outputData: []
+                        stepNum: 4,
+                        text: 'evaluating row 4: JONES - deptno(20) = 30? FALSE', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        highlight: [3], 
+                        processBox: 'FILTER EVALUATION\nJONES: deptno = 20\n20 = 30? FALSE\nREJECTED',
+                        processDetail: 'Evaluating JONES: deptno=20. Condition 20=30 evaluates to FALSE. Row rejected, not added to result.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        outputData: [
+                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
+                            { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 }
+                        ]
+                    },
+                    { 
+                        stepNum: 5,
+                        text: 'evaluating row 5: MARTIN - deptno(30) = 30? TRUE', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        highlight: [4], 
+                        processBox: 'FILTER EVALUATION\nMARTIN: deptno = 30\n30 = 30? TRUE\nACCEPTED',
+                        processDetail: 'Evaluating MARTIN: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                        outputData: [
+                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
+                            { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 },
+                            { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', sal: 1250, deptno: 30 }
+                        ]
+                    },
+                    { 
+                        stepNum: 6,
+                        text: 'evaluating row 6: BLAKE - deptno(30) = 30? TRUE', 
+                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                        highlight: [5], 
+                        processBox: 'FILTER EVALUATION\nBLAKE: deptno = 30\n30 = 30? TRUE\nACCEPTED',
+                        processDetail: 'Evaluating BLAKE: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted, added to result.',
+                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
+                       outputData: [
+                           { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
+                           { empno: 7521, ename: 'WARD', job: 'SALESMAN', sal: 1250, deptno: 30 },
+                           { empno: 7654, ename: 'MARTIN', job: 'SALESMAN', sal: 1250, deptno: 30 },
+                           { empno: 7698, ename: 'BLAKE', job: 'MANAGER', sal: 2850, deptno: 30 }
+                       ]
                    },
                    { 
-                       step: 1, 
-                       text: 'evaluating SMITH: deptno(20) = 30? → FALSE', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                       highlight: [0], 
-                       processBox: 'FILTER EVALUATION\nSMITH.deptno = 20\n20 = 30? FALSE',
-                       processDetail: 'Testing first row: SMITH has deptno=20. Condition 20=30 evaluates to FALSE. Row rejected.',
-                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                       outputData: []
-                   },
-                   { 
-                       step: 2, 
-                       text: 'evaluating ALLEN: deptno(30) = 30? → TRUE', 
-                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                       highlight: [1], 
-                       processBox: 'FILTER EVALUATION\nALLEN.deptno = 30\n30 = 30? TRUE',
-                       processDetail: 'Testing ALLEN: deptno=30. Condition 30=30 evaluates to TRUE. Row accepted into result set.',
-                       outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
-                       outputData: [{ empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 }]
-                   },
-                   { 
-                       step: 3, 
-                       text: 'processing remaining rows - finding all deptno=30 employees', 
+                       stepNum: 7,
+                       text: 'where operation complete - 4 rows match condition', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
                        highlight: [1, 2, 4, 5], 
-                       processBox: 'SCAN COMPLETE\nFILTER APPLIED\nMATCHES FOUND: 4',
-                       processDetail: 'Completed table scan. Found all employees in department 30: ALLEN, WARD, MARTIN, BLAKE.',
+                       processBox: 'WHERE COMPLETE\nROWS SCANNED: 6\nROWS MATCHED: 4\nFILTER APPLIED',
+                       processDetail: 'WHERE operation complete. Scanned 6 rows, 4 matched condition (deptno=30). Final result contains all employees in department 30.',
                        outputColumns: ['empno', 'ename', 'job', 'sal', 'deptno'],
                        outputData: [
                            { empno: 7499, ename: 'ALLEN', job: 'SALESMAN', sal: 1600, deptno: 30 },
@@ -818,46 +749,328 @@
                    }
                ]
            },
-           'WINDOW': {
-               query: 'SELECT ename, sal, ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal DESC) as rn\nFROM emp;',
+           'INNER_JOIN': {
+               query: 'SELECT e.ename, e.sal, d.dname, d.loc\nFROM emp e INNER JOIN dept d ON e.deptno = d.deptno;',
+               totalSteps: 8,
                steps: [
                    { 
-                       step: 0, 
+                       stepNum: 0,
+                       text: 'preparing inner join - analyzing join condition...', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [], 
+                       highlightSecond: [],
+                       processBox: 'INNER JOIN SETUP\nCONDITION: e.deptno = d.deptno\nALGORITHM: NESTED LOOP',
+                       processDetail: 'Setting up INNER JOIN operation. Join condition: e.deptno = d.deptno. Using nested loop algorithm.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 1,
+                       text: 'processing SMITH (deptno=20) - searching dept table...', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [0], 
+                       highlightSecond: [],
+                       processBox: 'JOIN PROCESSING\nSMITH: deptno = 20\nSEARCHING DEPT TABLE\nLOOKING FOR MATCH...',
+                       processDetail: 'Processing SMITH with deptno=20. Searching DEPT table for matching deptno=20...',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 2,
+                       text: 'match found: SMITH joins with RESEARCH department', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [0], 
+                       highlightSecond: [1],
+                       processBox: 'JOIN MATCH FOUND\nSMITH (20) → RESEARCH (20)\nADDING TO RESULT',
+                       processDetail: 'Match found! SMITH (deptno=20) joins with RESEARCH department (deptno=20). Adding to result set.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: [{ ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' }]
+                   },
+                   { 
+                       stepNum: 3,
+                       text: 'processing ALLEN (deptno=30) - searching for match...', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [1], 
+                       highlightSecond: [2],
+                       processBox: 'JOIN PROCESSING\nALLEN: deptno = 30\nMATCH: SALES (30)\nADDING TO RESULT',
+                       processDetail: 'Processing ALLEN (deptno=30). Found match with SALES department (deptno=30). Adding to result.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: [
+                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
+                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' }
+                       ]
+                   },
+                   { 
+                       stepNum: 4,
+                       text: 'processing WARD and JONES - finding matches...', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [2, 3], 
+                       highlightSecond: [1, 2],
+                       processBox: 'JOIN PROCESSING\nWARD (30) → SALES\nJONES (20) → RESEARCH\nBOTH MATCHED',
+                       processDetail: 'Processing WARD (deptno=30) → SALES and JONES (deptno=20) → RESEARCH. Both find matches.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: [
+                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
+                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' }
+                       ]
+                   },
+                   { 
+                       stepNum: 5,
+                       text: 'processing MARTIN and BLAKE - final matches...', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [4, 5], 
+                       highlightSecond: [2],
+                       processBox: 'JOIN PROCESSING\nMARTIN (30) → SALES\nBLAKE (30) → SALES\nBOTH MATCHED',
+                       processDetail: 'Processing final employees: MARTIN (30) → SALES and BLAKE (30) → SALES. Both find matches.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: [
+                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
+                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' },
+                           { ename: 'MARTIN', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO' }
+                       ]
+                   },
+                   { 
+                       stepNum: 6,
+                       text: 'inner join complete - all employees matched', 
+                       inputTables: [
+                           { name: 'EMP (e)', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] },
+                           { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname', 'loc'] }
+                       ],
+                       highlight: [0, 1, 2, 3, 4, 5], 
+                       highlightSecond: [1, 2],
+                       processBox: 'INNER JOIN COMPLETE\nEMP ROWS: 6\nMATCHES: 6\nRESULT ROWS: 6',
+                       processDetail: 'INNER JOIN operation complete. All 6 employees found matching departments. Final result contains employee and department details.',
+                       outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                       outputData: [
+                           { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
+                           { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'WARD', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'JONES', sal: 2975, dname: 'RESEARCH', loc: 'DALLAS' },
+                           { ename: 'MARTIN', sal: 1250, dname: 'SALES', loc: 'CHICAGO' },
+                           { ename: 'BLAKE', sal: 2850, dname: 'SALES', loc: 'CHICAGO' }
+                       ]
+                   }
+               ]
+           },
+           'UNION': {
+               query: 'SELECT ename FROM emp WHERE sal > 2000\nUNION\nSELECT ename FROM emp WHERE deptno = 20;',
+               totalSteps: 7,
+               steps: [
+                   { 
+                       stepNum: 0,
+                       text: 'preparing union operation - will execute two queries...', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
+                       ],
+                       highlight: [], 
+                       highlightSecond: [],
+                       processBox: 'UNION OPERATION\nTWO QUERIES TO EXECUTE\nTHEN COMBINE RESULTS',
+                       processDetail: 'Setting up UNION operation. Will execute Query 1 (sal > 2000) and Query 2 (deptno = 20), then combine results removing duplicates.',
+                       outputColumns: ['ename'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 1,
+                       text: 'executing query 1: SELECT ename WHERE sal > 2000...', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
+                       ],
+                       highlight: [], 
+                       highlightSecond: [],
+                       processBox: 'EXECUTING QUERY 1\nFILTER: sal > 2000\nSCANNING EMP TABLE...',
+                       processDetail: 'Executing first query: SELECT ename FROM emp WHERE sal > 2000. Scanning EMP table for high salary employees...',
+                       outputColumns: ['ename'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 2,
+                       text: 'query 1 complete - found JONES and BLAKE', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [
+                               { ename: 'JONES' }, { ename: 'BLAKE' }
+                           ], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
+                       ],
+                       highlight: [0, 1], 
+                       highlightSecond: [],
+                       processBox: 'QUERY 1 COMPLETE\nFOUND: JONES (2975)\nFOUND: BLAKE (2850)\nRESULT SET 1 READY',
+                       processDetail: 'Query 1 complete. Found 2 employees with salary > 2000: JONES (2975) and BLAKE (2850). Result set 1 ready.',
+                       outputColumns: ['ename'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 3,
+                       text: 'executing query 2: SELECT ename WHERE deptno = 20...', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [
+                               { ename: 'JONES' }, { ename: 'BLAKE' }
+                           ], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [], columns: ['ename'] }
+                       ],
+                       highlight: [0, 1], 
+                       highlightSecond: [],
+                       processBox: 'EXECUTING QUERY 2\nFILTER: deptno = 20\nSCANNING EMP TABLE...',
+                       processDetail: 'Executing second query: SELECT ename FROM emp WHERE deptno = 20. Scanning EMP table for department 20 employees...',
+                       outputColumns: ['ename'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 4,
+                       text: 'query 2 complete - found SMITH and JONES', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [
+                               { ename: 'JONES' }, { ename: 'BLAKE' }
+                           ], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [
+                               { ename: 'SMITH' }, { ename: 'JONES' }
+                           ], columns: ['ename'] }
+                       ],
+                       highlight: [0, 1], 
+                       highlightSecond: [0, 1],
+                       processBox: 'QUERY 2 COMPLETE\nFOUND: SMITH (dept 20)\nFOUND: JONES (dept 20)\nRESULT SET 2 READY',
+                       processDetail: 'Query 2 complete. Found 2 employees in department 20: SMITH and JONES. Result set 2 ready.',
+                       outputColumns: ['ename'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 5,
+                       text: 'combining result sets - removing duplicate JONES...', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [
+                               { ename: 'JONES' }, { ename: 'BLAKE' }
+                           ], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [
+                               { ename: 'SMITH' }, { ename: 'JONES' }
+                           ], columns: ['ename'] }
+                       ],
+                       highlight: [0, 1], 
+                       highlightSecond: [0, 1],
+                       processBox: 'UNION PROCESSING\nCOMBINING RESULTS\nDUPLICATE FOUND: JONES\nREMOVING DUPLICATE',
+                       processDetail: 'Combining result sets. Found duplicate: JONES appears in both sets. UNION removes duplicates automatically.',
+                       outputColumns: ['ename'],
+                       outputData: [
+                           { ename: 'JONES' }, 
+                           { ename: 'BLAKE' }, 
+                           { ename: 'SMITH' }
+                       ]
+                   },
+                   { 
+                       stepNum: 6,
+                       text: 'union complete - 3 unique employees returned', 
+                       inputTables: [
+                           { name: 'QUERY 1 RESULT', data: [
+                               { ename: 'JONES' }, { ename: 'BLAKE' }
+                           ], columns: ['ename'] },
+                           { name: 'QUERY 2 RESULT', data: [
+                               { ename: 'SMITH' }, { ename: 'JONES' }
+                           ], columns: ['ename'] }
+                       ],
+                       highlight: [0, 1], 
+                       highlightSecond: [0, 1],
+                       processBox: 'UNION COMPLETE\nQUERY 1: 2 rows\nQUERY 2: 2 rows\nDUPLICATE: 1\nFINAL: 3 rows',
+                       processDetail: 'UNION operation complete. Combined 4 total rows from both queries, removed 1 duplicate (JONES). Final result: 3 unique employees.',
+                       outputColumns: ['ename'],
+                       outputData: [
+                           { ename: 'JONES' }, 
+                           { ename: 'BLAKE' }, 
+                           { ename: 'SMITH' }
+                       ]
+                   }
+               ]
+           },
+           'WINDOW': {
+               query: 'SELECT ename, sal, ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal DESC) as rn\nFROM emp;',
+               totalSteps: 6,
+               steps: [
+                   { 
+                       stepNum: 0,
                        text: 'parsing window function - setting up partitions...', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                        highlight: [], 
-                       processBox: 'WINDOW FUNCTION\nPARTITION BY: deptno\nORDER BY: sal DESC\nROW_NUMBER()',
-                       processDetail: 'Setting up window function. Creating partitions by DEPTNO, ordering by salary descending within each partition.',
+                       processBox: 'WINDOW FUNCTION\nPARTITION BY: deptno\nORDER BY: sal DESC\nFUNCTION: ROW_NUMBER()',
+                       processDetail: 'Setting up window function. Will partition data by DEPTNO, order by SAL DESC within each partition, then assign ROW_NUMBER.',
                        outputColumns: ['ename', 'sal', 'rn'],
                        outputData: []
                    },
                    { 
-                       step: 1, 
-                       text: 'creating partition for deptno=20: SMITH, JONES', 
+                       stepNum: 1,
+                       text: 'identifying partitions - found dept 20 and dept 30...', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                       highlight: [0, 1, 2, 3, 4, 5], 
+                       processBox: 'PARTITION ANALYSIS\nPARTITION 20: SMITH, JONES\nPARTITION 30: ALLEN, WARD, MARTIN, BLAKE\nCREATING GROUPS...',
+                       processDetail: 'Analyzing data for partitions. Found 2 partitions: Dept 20 (SMITH, JONES) and Dept 30 (ALLEN, WARD, MARTIN, BLAKE).',
+                       outputColumns: ['ename', 'sal', 'rn'],
+                       outputData: []
+                   },
+                   { 
+                       stepNum: 2,
+                       text: 'sorting partition 20 by salary DESC: JONES first, SMITH second', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                        highlight: [0, 3], 
-                       processBox: 'PARTITION 20\nJONES: sal=2975\nSMITH: sal=800\nORDERING...',
-                       processDetail: 'Partition 20: JONES(2975) and SMITH(800). Ordering by salary DESC: JONES first, SMITH second.',
+                       processBox: 'PARTITION 20 SORT\nJONES: sal = 2975 (1st)\nSMITH: sal = 800 (2nd)\nORDERING COMPLETE',
+                       processDetail: 'Sorting partition 20 by salary DESC. JONES (2975) ranks first, SMITH (800) ranks second.',
                        outputColumns: ['ename', 'sal', 'rn'],
                        outputData: []
                    },
                    { 
-                       step: 2, 
-                       text: 'creating partition for deptno=30: ALLEN, WARD, MARTIN, BLAKE', 
+                       stepNum: 3,
+                       text: 'sorting partition 30 by salary DESC...', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                        highlight: [1, 2, 4, 5], 
-                       processBox: 'PARTITION 30\nBLAKE: sal=2850\nALLEN: sal=1600\nWARD/MARTIN: sal=1250',
-                       processDetail: 'Partition 30: BLAKE(2850), ALLEN(1600), WARD(1250), MARTIN(1250). Ordering by salary DESC.',
+                       processBox: 'PARTITION 30 SORT\nBLAKE: 2850 (1st)\nALLEN: 1600 (2nd)\nWARD: 1250 (3rd)\nMARTIN: 1250 (4th)',
+                       processDetail: 'Sorting partition 30 by salary DESC. Order: BLAKE (2850), ALLEN (1600), WARD (1250), MARTIN (1250).',
                        outputColumns: ['ename', 'sal', 'rn'],
                        outputData: []
                    },
                    { 
-                       step: 3, 
+                       stepNum: 4,
                        text: 'assigning row numbers within each partition...', 
                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
                        highlight: [0, 1, 2, 3, 4, 5], 
-                       processBox: 'ROW NUMBERING\nPARTITION 20: 1,2\nPARTITION 30: 1,2,3,4\nCOMPLETE',
-                       processDetail: 'Assigning ROW_NUMBER within partitions. Partition 20: JONES=1, SMITH=2. Partition 30: BLAKE=1, ALLEN=2, WARD=3, MARTIN=4.',
+                       processBox: 'ROW NUMBER ASSIGNMENT\nPART 20: JONES=1, SMITH=2\nPART 30: BLAKE=1, ALLEN=2\n         WARD=3, MARTIN=4',
+                       processDetail: 'Assigning ROW_NUMBER within each partition. Partition 20: JONES=1, SMITH=2. Partition 30: BLAKE=1, ALLEN=2, WARD=3, MARTIN=4.',
+                       outputColumns: ['ename', 'sal', 'rn'],
+                       outputData: [
+                           { ename: 'JONES', sal: 2975, rn: 1 },
+                           { ename: 'SMITH', sal: 800, rn: 2 },
+                           { ename: 'BLAKE', sal: 2850, rn: 1 },
+                           { ename: 'ALLEN', sal: 1600, rn: 2 },
+                           { ename: 'WARD', sal: 1250, rn: 3 },
+                           { ename: 'MARTIN', sal: 1250, rn: 4 }
+                       ]
+                   },
+                   { 
+                       stepNum: 5,
+                       text: 'window function complete - row numbers assigned', 
+                       inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+                       highlight: [0, 1, 2, 3, 4, 5], 
+                       processBox: 'WINDOW COMPLETE\nPARTITIONS: 2\nROWS PROCESSED: 6\nROW NUMBERS ASSIGNED',
+                       processDetail: 'Window function complete. Processed 2 partitions, assigned row numbers to all 6 employees based on salary rank within their department.',
                        outputColumns: ['ename', 'sal', 'rn'],
                        outputData: [
                            { ename: 'JONES', sal: 2975, rn: 1 },
@@ -872,14 +1085,14 @@
            }
        };
 
-       // State
+       // Animation state variables
        let currentOperation = 'SELECT';
        let currentStep = 0;
        let isAnimating = false;
-       let animationInterval;
+       let animationInterval = null;
        let animationSpeed = 1000;
 
-       // DOM elements
+       // DOM element references
        const operationSelect = document.getElementById('operation');
        const speedSelect = document.getElementById('speed');
        const playBtn = document.getElementById('playBtn');
@@ -896,76 +1109,100 @@
        const status = document.getElementById('status');
 
        // Event listeners
-       operationSelect.addEventListener('change', (e) => {
+       operationSelect.addEventListener('change', handleOperationChange);
+       speedSelect.addEventListener('change', handleSpeedChange);
+       playBtn.addEventListener('click', handlePlayPause);
+       resetBtn.addEventListener('click', handleReset);
+
+       // Event handler functions
+       function handleOperationChange(e) {
            currentOperation = e.target.value;
-           reset();
-           updateDisplay();
-       });
+           handleReset();
+       }
 
-       speedSelect.addEventListener('change', (e) => {
+       function handleSpeedChange(e) {
            animationSpeed = parseInt(e.target.value);
-       });
+       }
 
-       playBtn.addEventListener('click', () => {
+       function handlePlayPause() {
            if (isAnimating) {
-               pause();
+               pauseAnimation();
            } else {
-               play();
+               startAnimation();
            }
-       });
+       }
 
-       resetBtn.addEventListener('click', reset);
+       function handleReset() {
+           pauseAnimation();
+           currentStep = 0;
+           updateDisplay();
+           updateStatus('ready');
+       }
 
-       // Functions
-       function play() {
-           if (currentStep >= operations[currentOperation].steps.length - 1) {
-               reset();
+       // Animation control functions
+       function startAnimation() {
+           const operation = operations[currentOperation];
+           if (!operation) return;
+
+           // If we're at the end, reset first
+           if (currentStep >= operation.totalSteps - 1) {
+               handleReset();
+               return;
            }
            
            isAnimating = true;
-           playBtn.textContent = 'pause';
-           playBtn.classList.add('active');
-           status.textContent = 'executing...';
+           updatePlayButton();
+           updateStatus('executing...');
            
            animationInterval = setInterval(() => {
-               if (currentStep < operations[currentOperation].steps.length - 1) {
+               const operation = operations[currentOperation];
+               if (currentStep < operation.totalSteps - 1) {
                    currentStep++;
                    updateDisplay();
                } else {
-                   pause();
-                   status.textContent = 'complete';
+                   pauseAnimation();
+                   updateStatus('complete');
                }
            }, animationSpeed);
        }
 
-       function pause() {
+       function pauseAnimation() {
            isAnimating = false;
-           clearInterval(animationInterval);
-           playBtn.textContent = 'play';
-           playBtn.classList.remove('active');
+           if (animationInterval) {
+               clearInterval(animationInterval);
+               animationInterval = null;
+           }
+           updatePlayButton();
            if (status.textContent === 'executing...') {
-               status.textContent = 'paused';
+               updateStatus('paused');
            }
        }
 
-       function reset() {
-           pause();
-           currentStep = 0;
-           status.textContent = 'ready';
-           updateDisplay();
+       function updatePlayButton() {
+           playBtn.textContent = isAnimating ? 'pause' : 'play';
+           if (isAnimating) {
+               playBtn.classList.add('active');
+           } else {
+               playBtn.classList.remove('active');
+           }
        }
 
+       function updateStatus(statusText) {
+           status.textContent = statusText;
+       }
+
+       // Display update function
        function updateDisplay() {
            const operation = operations[currentOperation];
-           if (!operation) return;
+           if (!operation || !operation.steps[currentStep]) return;
            
            const step = operation.steps[currentStep];
            
-           // Update query
+           // Update query text
            queryText.innerHTML = operation.query.replace(/\n/g, '<br>');
            
-           // Update step
-           stepCounter.textContent = `step ${currentStep + 1}/${operation.steps.length}`;
+           // Update step counter and text
+           stepCounter.textContent = `step ${currentStep + 1}/${operation.totalSteps}`;
            stepText.textContent = step.text;
            
            // Update process area
@@ -973,79 +1210,92 @@
            processDetail.textContent = step.processDetail;
            
            // Update input tables
-           updateInputTables(step);
+           renderInputTables(step);
            
-           // Update output
-           updateOutput(step);
+           // Update output table
+           renderOutputTable(step);
        }
 
-       function updateInputTables(step) {
+       // Input tables rendering function
+       function renderInputTables(step) {
            inputTables.innerHTML = '';
            
-           if (step.inputTables) {
-               step.inputTables.forEach((tableConfig, tableIndex) => {
-                   const tableWrapper = document.createElement('div');
-                   tableWrapper.className = 'table-wrapper';
-                   
-                   const tableHeader = document.createElement('div');
-                   tableHeader.className = 'table-header';
-                   tableHeader.textContent = tableConfig.name;
-                   tableWrapper.appendChild(tableHeader);
-                   
-                   const table = document.createElement('table');
-                   
-                   // Create header
-                   const thead = document.createElement('thead');
-                   const headerRow = document.createElement('tr');
-                   tableConfig.columns.forEach(col => {
-                       const th = document.createElement('th');
-                       th.textContent = col;
-                       headerRow.appendChild(th);
-                   });
-                   thead.appendChild(headerRow);
-                   table.appendChild(thead);
-                   
-                   // Create body
-                   const tbody = document.createElement('tbody');
-                   tableConfig.data.forEach((row, index) => {
-                       const tr = document.createElement('tr');
-                       
-                       // Apply highlighting
-                       if (tableIndex === 0 && step.highlight && step.highlight.includes(index)) {
-                           tr.classList.add('highlighted');
-                       }
-                       if (tableIndex === 1 && step.highlightSecond && step.highlightSecond.includes(index)) {
-                           tr.classList.add('matching');
-                       }
-                       
-                       tableConfig.columns.forEach(col => {
-                           const td = document.createElement('td');
-                           let value = row[col];
-                           if (value === null) value = 'NULL';
-                           if (typeof value === 'number') value = value.toLocaleString();
-                           td.textContent = value || '';
-                           tr.appendChild(td);
-                       });
-                       
-                       tbody.appendChild(tr);
-                   });
-                   table.appendChild(tbody);
-                   
-                   tableWrapper.appendChild(table);
-                   inputTables.appendChild(tableWrapper);
+           if (!step.inputTables || step.inputTables.length === 0) return;
+           
+           step.inputTables.forEach((tableConfig, tableIndex) => {
+               const tableWrapper = document.createElement('div');
+               tableWrapper.className = 'table-wrapper';
+               
+               // Table header
+               const tableHeader = document.createElement('div');
+               tableHeader.className = 'table-header';
+               tableHeader.textContent = tableConfig.name;
+               tableWrapper.appendChild(tableHeader);
+               
+               // Table
+               const table = document.createElement('table');
+               
+               // Table head
+               const thead = document.createElement('thead');
+               const headerRow = document.createElement('tr');
+               tableConfig.columns.forEach(col => {
+                   const th = document.createElement('th');
+                   th.textContent = col;
+                   headerRow.appendChild(th);
                });
-           }
+               thead.appendChild(headerRow);
+               table.appendChild(thead);
+               
+               // Table body
+               const tbody = document.createElement('tbody');
+               tableConfig.data.forEach((row, rowIndex) => {
+                   const tr = document.createElement('tr');
+                   
+                   // Apply highlighting based on table index
+                   // Apply highlighting based on table index
+                   if (tableIndex === 0 && step.highlight && step.highlight.includes(rowIndex)) {
+                       tr.classList.add('highlighted');
+                   }
+                   if (tableIndex === 1 && step.highlightSecond && step.highlightSecond.includes(rowIndex)) {
+                       tr.classList.add('matching');
+                   }
+                   
+                   // Create table cells
+                   tableConfig.columns.forEach(col => {
+                       const td = document.createElement('td');
+                       let value = row[col];
+                       
+                       // Format values
+                       if (value === null || value === undefined) {
+                           value = 'NULL';
+                       } else if (typeof value === 'number') {
+                           value = value.toLocaleString();
+                       }
+                       
+                       td.textContent = value;
+                       tr.appendChild(td);
+                   });
+                   
+                   tbody.appendChild(tr);
+               });
+               table.appendChild(tbody);
+               
+               tableWrapper.appendChild(table);
+               inputTables.appendChild(tableWrapper);
+           });
        }
 
-       function updateOutput(step) {
+       // Output table rendering function
+       function renderOutputTable(step) {
            outputHeader.textContent = 'QUERY RESULT';
            outputTableHead.innerHTML = '';
            outputTableBody.innerHTML = '';
            
            if (step.outputData && step.outputData.length > 0) {
-               // Create header
+               // Create table header
                const headerRow = document.createElement('tr');
                const columns = step.outputColumns || Object.keys(step.outputData[0]);
+               
                columns.forEach(col => {
                    const th = document.createElement('th');
                    th.textContent = col.toUpperCase();
@@ -1053,21 +1303,29 @@
                });
                outputTableHead.appendChild(headerRow);
                
-               // Create body
-               step.outputData.forEach((row, index) => {
+               // Create table body
+               step.outputData.forEach((row, rowIndex) => {
                    const tr = document.createElement('tr');
+                   
                    columns.forEach(col => {
                        const td = document.createElement('td');
                        let value = row[col];
-                       if (value === null || value === undefined) value = '';
-                       if (typeof value === 'number') value = value.toLocaleString();
+                       
+                       // Format values
+                       if (value === null || value === undefined) {
+                           value = '';
+                       } else if (typeof value === 'number') {
+                           value = value.toLocaleString();
+                       }
+                       
                        td.textContent = value;
                        tr.appendChild(td);
                    });
+                   
                    outputTableBody.appendChild(tr);
                });
            } else {
-               // Empty state
+               // Show empty state
                const emptyRow = document.createElement('tr');
                const emptyCell = document.createElement('td');
                emptyCell.textContent = 'No results yet...';
@@ -1075,13 +1333,28 @@
                emptyCell.style.fontStyle = 'italic';
                emptyCell.style.textAlign = 'center';
                emptyCell.style.padding = '20px';
+               emptyCell.colSpan = 10; // Span multiple columns
                emptyRow.appendChild(emptyCell);
                outputTableBody.appendChild(emptyRow);
            }
        }
 
-       // Initialize
-       updateDisplay();
+       // Initialize the application
+       function initializeApp() {
+           updateDisplay();
+           updateStatus('ready');
+       }
+
+       // Start the application when DOM is loaded
+       document.addEventListener('DOMContentLoaded', initializeApp);
+       
+       // Also initialize immediately in case DOM is already loaded
+       if (document.readyState === 'loading') {
+           // DOM is still loading
+       } else {
+           // DOM is already loaded
+           initializeApp();
+       }
    </script>
 </body>
 </html>
