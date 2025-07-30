@@ -686,69 +686,208 @@
         ];
 
         // Complete operations object with ALL SQL syntax
-        const operations = {
-            'SELECT': {
-                query: 'SELECT empno, ename, sal, deptno FROM emp WHERE sal > 1000 ORDER BY sal DESC;',
-                totalSteps: 16,
-                steps: [
-                    {
-                        stepNum: 0,
-                        text: 'Oracle parser analyzing SELECT statement...',
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        currentProcessing: [],
-                        processedRows: [],
-                        processBox: 'ORACLE SQL PARSER\nSTATEMENT: SELECT\nWHERE: sal > 1000\nORDER BY: sal DESC\nREADY TO SCAN',
-                        processDetail: 'Oracle parser analyzing SELECT statement with WHERE clause and ORDER BY. Ready to scan employee table row by row.',
-                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                        outputData: []
-                    },
-                    {
-                        stepNum: 1,
-                        text: 'Processing SMITH - sal=800, condition check: 800 > 1000? FALSE',
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        currentProcessing: [0],
-                        processedRows: [],
-                        processBox: 'PROCESSING ROW 1/14\nEMPLOYEE: SMITH\nSALARY: 800\nCHECK: 800 > 1000? FALSE\nREJECTED',
-                        processDetail: 'Processing SMITH (empno=7369, sal=800). WHERE condition: 800 > 1000 = FALSE. Row rejected.',
-                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                        outputData: []
-                    },
-                    {
-                        stepNum: 2,
-                        text: 'Processing ALLEN - sal=1600, condition check: 1600 > 1000? TRUE',
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        currentProcessing: [1],
-                        processedRows: [0],
-                        processBox: 'PROCESSING ROW 2/14\nEMPLOYEE: ALLEN\nSALARY: 1600\nCHECK: 1600 > 1000? TRUE\nACCEPTED FOR SORT',
-                        processDetail: 'Processing ALLEN (empno=7499, sal=1600). WHERE condition: 1600 > 1000 = TRUE. Adding to intermediate result for sorting.',
-                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                        outputData: []
-                    },
-                    // Continue with remaining employees...
-                    {
-                        stepNum: 15,
-                        text: 'Table scan complete - sorting by salary DESC and projecting final result',
-                        inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
-                        currentProcessing: [],
-                        processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-                        processBox: 'OPERATION COMPLETE\nFILTERED: 12/14 rows\nSORTED: sal DESC\nPROJECTED: 4 columns\nRESULT READY',
-                        processDetail: 'SELECT operation complete. Applied WHERE filter, sorted by salary descending, projected selected columns.',
-                        outputColumns: ['empno', 'ename', 'sal', 'deptno'],
-                        outputData: [
-                            { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
-                            { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
-                            { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 },
-                            { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
-                           { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 },
-                           { empno: 7782, ename: 'CLARK', sal: 2450, deptno: 10 },
-                           { empno: 7499, ename: 'ALLEN', sal: 1600, deptno: 30 },
-                           { empno: 7844, ename: 'TURNER', sal: 1500, deptno: 30 },
-                           { empno: 7934, ename: 'MILLER', sal: 1300, deptno: 10 },
-                           { empno: 7521, ename: 'WARD', sal: 1250, deptno: 30 },
-                           { empno: 7654, ename: 'MARTIN', sal: 1250, deptno: 30 },
-                           { empno: 7876, ename: 'ADAMS', sal: 1100, deptno: 20 }
-                       ]
-                   }
+// Fixed operations with proper step-by-step visualization
+const operations = {
+    'SELECT': {
+        query: 'SELECT empno, ename, sal, deptno FROM emp WHERE sal > 1000 ORDER BY sal DESC;',
+        totalSteps: 16,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing SELECT statement...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'ORACLE SQL PARSER\nSTATEMENT: SELECT\nWHERE: sal > 1000\nORDER BY: sal DESC\nREADY TO SCAN',
+                processDetail: 'Oracle parser analyzing SELECT statement. Ready to scan employee table row by row.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: [] // NO OUTPUT YET
+            },
+            {
+                stepNum: 1,
+                text: 'Processing SMITH - sal=800, condition check: 800 > 1000? FALSE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [0], // Show SMITH being processed
+                processedRows: [],
+                processBox: 'PROCESSING ROW 1/14\nEMPLOYEE: SMITH\nSALARY: 800\nCHECK: 800 > 1000? FALSE\nREJECTED',
+                processDetail: 'Processing SMITH (empno=7369, sal=800). WHERE condition: 800 > 1000 = FALSE. Row rejected.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: [] // STILL NO OUTPUT - just processing
+            },
+            {
+                stepNum: 2,
+                text: 'Processing ALLEN - sal=1600, condition check: 1600 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [1], // Show ALLEN being processed
+                processedRows: [0], // SMITH is now processed (blue)
+                processBox: 'PROCESSING ROW 2/14\nEMPLOYEE: ALLEN\nSALARY: 1600\nCHECK: 1600 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing ALLEN (empno=7499, sal=1600). WHERE condition: 1600 > 1000 = TRUE. Adding to intermediate result for sorting.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: [] // STILL NO OUTPUT - collecting for sort
+            },
+            {
+                stepNum: 3,
+                text: 'Processing WARD - sal=1250, condition check: 1250 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [2], // Show WARD being processed
+                processedRows: [0, 1], // SMITH and ALLEN processed
+                processBox: 'PROCESSING ROW 3/14\nEMPLOYEE: WARD\nSALARY: 1250\nCHECK: 1250 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing WARD (empno=7521, sal=1250). WHERE condition: 1250 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: [] // STILL NO OUTPUT
+            },
+            // Continue for all 14 employees...
+            {
+                stepNum: 4,
+                text: 'Processing JONES - sal=2975, condition check: 2975 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [3],
+                processedRows: [0, 1, 2],
+                processBox: 'PROCESSING ROW 4/14\nEMPLOYEE: JONES\nSALARY: 2975\nCHECK: 2975 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing JONES (empno=7566, sal=2975). WHERE condition: 2975 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 5,
+                text: 'Processing MARTIN - sal=1250, condition check: 1250 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [4],
+                processedRows: [0, 1, 2, 3],
+                processBox: 'PROCESSING ROW 5/14\nEMPLOYEE: MARTIN\nSALARY: 1250\nCHECK: 1250 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing MARTIN (empno=7654, sal=1250). WHERE condition: 1250 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 6,
+                text: 'Processing BLAKE - sal=2850, condition check: 2850 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [5],
+                processedRows: [0, 1, 2, 3, 4],
+                processBox: 'PROCESSING ROW 6/14\nEMPLOYEE: BLAKE\nSALARY: 2850\nCHECK: 2850 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing BLAKE (empno=7698, sal=2850). WHERE condition: 2850 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 7,
+                text: 'Processing CLARK - sal=2450, condition check: 2450 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [6],
+                processedRows: [0, 1, 2, 3, 4, 5],
+                processBox: 'PROCESSING ROW 7/14\nEMPLOYEE: CLARK\nSALARY: 2450\nCHECK: 2450 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing CLARK (empno=7782, sal=2450). WHERE condition: 2450 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 8,
+                text: 'Processing SCOTT - sal=3000, condition check: 3000 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [7],
+                processedRows: [0, 1, 2, 3, 4, 5, 6],
+                processBox: 'PROCESSING ROW 8/14\nEMPLOYEE: SCOTT\nSALARY: 3000\nCHECK: 3000 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing SCOTT (empno=7788, sal=3000). WHERE condition: 3000 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 9,
+                text: 'Processing KING - sal=5000, condition check: 5000 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [8],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7],
+                processBox: 'PROCESSING ROW 9/14\nEMPLOYEE: KING\nSALARY: 5000\nCHECK: 5000 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing KING (empno=7839, sal=5000). WHERE condition: 5000 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 10,
+                text: 'Processing TURNER - sal=1500, condition check: 1500 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [9],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                processBox: 'PROCESSING ROW 10/14\nEMPLOYEE: TURNER\nSALARY: 1500\nCHECK: 1500 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing TURNER (empno=7844, sal=1500). WHERE condition: 1500 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 11,
+                text: 'Processing ADAMS - sal=1100, condition check: 1100 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [10],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                processBox: 'PROCESSING ROW 11/14\nEMPLOYEE: ADAMS\nSALARY: 1100\nCHECK: 1100 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing ADAMS (empno=7876, sal=1100). WHERE condition: 1100 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 12,
+                text: 'Processing JAMES - sal=950, condition check: 950 > 1000? FALSE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [11],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                processBox: 'PROCESSING ROW 12/14\nEMPLOYEE: JAMES\nSALARY: 950\nCHECK: 950 > 1000? FALSE\nREJECTED',
+                processDetail: 'Processing JAMES (empno=7900, sal=950). WHERE condition: 950 > 1000 = FALSE. Row rejected.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 13,
+                text: 'Processing FORD - sal=3000, condition check: 3000 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [12],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                processBox: 'PROCESSING ROW 13/14\nEMPLOYEE: FORD\nSALARY: 3000\nCHECK: 3000 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing FORD (empno=7902, sal=3000). WHERE condition: 3000 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 14,
+                text: 'Processing MILLER - sal=1300, condition check: 1300 > 1000? TRUE',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [13],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                processBox: 'PROCESSING ROW 14/14\nEMPLOYEE: MILLER\nSALARY: 1300\nCHECK: 1300 > 1000? TRUE\nACCEPTED FOR SORT',
+                processDetail: 'Processing MILLER (empno=7934, sal=1300). WHERE condition: 1300 > 1000 = TRUE. Adding to intermediate result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: []
+            },
+            {
+                stepNum: 15,
+                text: 'Table scan complete - NOW SORTING and generating final output',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+                currentProcessing: [], // No more processing
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], // All processed
+                processBox: 'SCAN COMPLETE\nFILTERED: 12/14 rows qualify\nSORTING: by sal DESC\nGENERATING: final output\nRESULT READY',
+                processDetail: 'Table scan complete! 12 employees qualify (sal > 1000). Now sorting by salary DESC and generating final result.',
+                outputColumns: ['empno', 'ename', 'sal', 'deptno'],
+                outputData: [ // NOW SHOW THE COMPLETE SORTED OUTPUT
+                    { empno: 7839, ename: 'KING', sal: 5000, deptno: 10 },
+                    { empno: 7788, ename: 'SCOTT', sal: 3000, deptno: 20 },
+                    { empno: 7902, ename: 'FORD', sal: 3000, deptno: 20 },
+                    { empno: 7566, ename: 'JONES', sal: 2975, deptno: 20 },
+                    { empno: 7698, ename: 'BLAKE', sal: 2850, deptno: 30 },
+                    { empno: 7782, ename: 'CLARK', sal: 2450, deptno: 10 },
+                    { empno: 7499, ename: 'ALLEN', sal: 1600, deptno: 30 },
+                    { empno: 7844, ename: 'TURNER', sal: 1500, deptno: 30 },
+                    { empno: 7934, ename: 'MILLER', sal: 1300, deptno: 10 },
+                    { empno: 7521, ename: 'WARD', sal: 1250, deptno: 30 },
+                    { empno: 7654, ename: 'MARTIN', sal: 1250, deptno: 30 },
+                    { empno: 7876, ename: 'ADAMS', sal: 1100, deptno: 20 }
+                ]
+          
+        
+        
+        
+        
+        
+        }
                ]
            },
 
