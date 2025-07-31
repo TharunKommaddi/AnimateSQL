@@ -1529,6 +1529,235 @@
               ]
           },
 
+
+          'RIGHT_JOIN': {
+        query: 'SELECT e.ename, e.sal, d.dname, d.loc FROM emp e RIGHT JOIN dept d ON e.deptno = d.deptno;',
+        totalSteps: 3,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing RIGHT JOIN operation...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'RIGHT JOIN\nPRESERVES: right table (DEPT)\nJOIN: ON e.deptno = d.deptno\nNULLS: for unmatched left rows',
+                processDetail: 'RIGHT JOIN preserves all DEPT rows, shows NULL for unmatched employees.',
+                outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                outputData: []
+            },
+            {
+                stepNum: 1,
+                text: 'RIGHT JOIN processing...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+                currentProcessing: [0, 1, 2],
+                processedRows: [],
+                processBox: 'RIGHT JOIN\nPROCESSING...',
+                processDetail: 'RIGHT JOIN processing...',
+                outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                outputData: []
+            },
+            {
+                stepNum: 2,
+                text: 'RIGHT JOIN complete',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                processBox: 'RIGHT JOIN\nCOMPLETE',
+                processDetail: 'RIGHT JOIN complete. All departments shown, with NULL for OPERATIONS dept (no employees).',
+                outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                outputData: [
+                    { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
+                    { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK' },
+                    { ename: 'ALLEN', sal: 1600, dname: 'SALES', loc: 'CHICAGO' },
+                    { ename: null, sal: null, dname: 'OPERATIONS', loc: 'BOSTON' }
+                ]
+            }
+        ]
+    },
+
+    'FULL_JOIN': {
+        query: 'SELECT e.ename, e.sal, d.dname, d.loc FROM emp e FULL OUTER JOIN dept d ON e.deptno = d.deptno;',
+        totalSteps: 3,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing FULL OUTER JOIN...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'FULL OUTER JOIN\nPRESERVES: both tables\nNULLS: for unmatched rows\nCOMBINES: LEFT + RIGHT',
+                processDetail: 'FULL OUTER JOIN shows all employees and all departments.',
+                outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                outputData: []
+            },
+            {
+                stepNum: 1,
+                text: 'FULL OUTER JOIN processing...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+                currentProcessing: [0, 1, 2],
+                processedRows: [],
+                processBox: 'FULL OUTER JOIN\nPROCESSING...',
+                processDetail: 'FULL OUTER JOIN processing...',
+                outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                outputData: []
+            },
+            {
+                stepNum: 2,
+                text: 'FULL OUTER JOIN complete',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                processBox: 'FULL OUTER JOIN\nCOMPLETE',
+                processDetail: 'FULL OUTER JOIN complete. All data from both tables preserved.',
+                outputColumns: ['ename', 'sal', 'dname', 'loc'],
+                outputData: [
+                    { ename: 'SMITH', sal: 800, dname: 'RESEARCH', loc: 'DALLAS' },
+                    { ename: 'KING', sal: 5000, dname: 'ACCOUNTING', loc: 'NEW YORK' },
+                    { ename: null, sal: null, dname: 'OPERATIONS', loc: 'BOSTON' }
+                ]
+            }
+        ]
+    },
+
+    'CROSS_JOIN': {
+        query: 'SELECT e.ename, d.dname FROM emp e CROSS JOIN dept d WHERE e.empno <= 7500;',
+        totalSteps: 3,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing CROSS JOIN (Cartesian product)...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'CROSS JOIN\nCARTESIAN PRODUCT\nEVERY emp × EVERY dept\nNO JOIN CONDITION',
+                processDetail: 'CROSS JOIN creates Cartesian product - every employee paired with every department.',
+                outputColumns: ['ename', 'dname'],
+                outputData: []
+            },
+            {
+                stepNum: 1,
+                text: 'CROSS JOIN processing...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }],
+                currentProcessing: [0, 1, 2],
+                processedRows: [],
+                processBox: 'CROSS JOIN\nPROCESSING...',
+                processDetail: 'CROSS JOIN processing...',
+                outputColumns: ['ename', 'dname'],
+                outputData: []
+            },
+            {
+                stepNum: 2,
+                text: 'CROSS JOIN complete',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename'] }],
+                currentProcessing: [],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                processBox: 'CROSS JOIN\nCOMPLETE',
+                processDetail: 'CROSS JOIN complete. Each employee paired with each department.',
+                outputColumns: ['ename', 'dname'],
+                outputData: [
+                    { ename: 'SMITH', dname: 'ACCOUNTING' },
+                    { ename: 'SMITH', dname: 'RESEARCH' },
+                    { ename: 'ALLEN', dname: 'SALES' },
+                    { ename: 'ALLEN', dname: 'OPERATIONS' }
+                ]
+            }
+        ]
+    },
+
+    'SELF_JOIN': {
+        query: 'SELECT e1.ename as employee, e2.ename as manager FROM emp e1, emp e2 WHERE e1.mgr = e2.empno;',
+        totalSteps: 3,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing SELF JOIN (employee-manager relationship)...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'mgr'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'SELF JOIN\nTABLE: emp (as e1, e2)\nCONDITION: e1.mgr = e2.empno\nSHOWS: employee-manager pairs',
+                processDetail: 'SELF JOIN shows employee-manager relationships within the same table.',
+                outputColumns: ['employee', 'manager'],
+                outputData: []
+            },
+            {
+                stepNum: 1,
+                text: 'SELF JOIN processing...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'mgr'] }],
+                currentProcessing: [0, 1, 2],
+                processedRows: [],
+                processBox: 'SELF JOIN\nPROCESSING...',
+                processDetail: 'SELF JOIN processing...',
+                outputColumns: ['employee', 'manager'],
+                outputData: []
+            },
+            {
+                stepNum: 2,
+                text: 'SELF JOIN complete',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'mgr'] }],
+                currentProcessing: [],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                processBox: 'SELF JOIN\nCOMPLETE',
+                processDetail: 'SELF JOIN complete. Employee-manager relationships established.',
+                outputColumns: ['employee', 'manager'],
+                outputData: [
+                    { employee: 'SMITH', manager: 'FORD' },
+                    { employee: 'ALLEN', manager: 'BLAKE' },
+                    { employee: 'JONES', manager: 'KING' }
+                ]
+            }
+        ]
+    },
+
+    'NATURAL_JOIN': {
+        query: 'SELECT ename, dname FROM emp NATURAL JOIN dept;',
+        totalSteps: 3,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing NATURAL JOIN...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'NATURAL JOIN\nAUTO-DETECTS: common columns\nFOUND: deptno\nJOINS: ON deptno equality',
+                processDetail: 'NATURAL JOIN automatically joins on common column names (deptno).',
+                outputColumns: ['ename', 'dname'],
+                outputData: []
+            },
+            {
+                stepNum: 1,
+                text: 'NATURAL JOIN processing...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+                currentProcessing: [0, 1, 2],
+                processedRows: [],
+                processBox: 'NATURAL JOIN\nPROCESSING...',
+                processDetail: 'NATURAL JOIN processing...',
+                outputColumns: ['ename', 'dname'],
+                outputData: []
+            },
+            {
+                stepNum: 2,
+                text: 'NATURAL JOIN complete',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                processBox: 'NATURAL JOIN\nCOMPLETE',
+                processDetail: 'NATURAL JOIN complete. Employees matched with departments on deptno.',
+                outputColumns: ['ename', 'dname'],
+                outputData: [
+                    { ename: 'SMITH', dname: 'RESEARCH' },
+                    { ename: 'KING', dname: 'ACCOUNTING' },
+                    { ename: 'ALLEN', dname: 'SALES' }
+                ]
+            }
+        ]
+    },
+
+          
+
+
+
+          
+
           'GROUP_BY': {
               query: 'SELECT deptno, COUNT(*) as emp_count, AVG(sal) as avg_sal, MAX(sal) as max_sal FROM emp GROUP BY deptno ORDER BY deptno;',
               totalSteps: 6,
@@ -2083,6 +2312,2248 @@
                   }
               ]
           },
+
+          'UNION_ALL': {
+        query: 'SELECT ename FROM emp WHERE deptno = 10 UNION ALL SELECT ename FROM emp WHERE deptno = 20;',
+        totalSteps: 3,
+        steps: [
+            {
+                stepNum: 0,
+                text: 'Oracle parser analyzing UNION ALL operation...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [],
+                processBox: 'UNION ALL PARSER\nQUERY 1: dept 10 employees\nQUERY 2: dept 20 employees\nKEEPS: all duplicates\nNO DISTINCT PROCESSING',
+                processDetail: 'UNION ALL combines results keeping all duplicates (unlike UNION which removes duplicates).',
+                outputColumns: ['ename'],
+                outputData: []
+            },
+            {
+                stepNum: 1,
+                text: 'UNION ALL processing both queries...',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+                currentProcessing: [6, 8, 13, 0, 3, 7, 10, 12],
+                processedRows: [],
+                processBox: 'UNION ALL PROCESSING\nQUERY 1: CLARK, KING, MILLER\nQUERY 2: SMITH, JONES, SCOTT, ADAMS, FORD\nCOMBINING: all rows\nNO DUPLICATE CHECK',
+                processDetail: 'Processing both queries and combining all results without checking for duplicates.',
+                outputColumns: ['ename'],
+                outputData: [
+                    { ename: 'CLARK' },
+                    { ename: 'KING' },
+                    { ename: 'MILLER' },
+                    { ename: 'SMITH' },
+                    { ename: 'JONES' },
+                    { ename: 'SCOTT' },
+                    { ename: 'ADAMS' },
+                    { ename: 'FORD' }
+                ]
+            },
+            {
+                stepNum: 2,
+                text: 'UNION ALL complete - all rows preserved',
+                inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+                currentProcessing: [],
+                processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+                processBox: 'UNION ALL COMPLETE\nQUERY 1: 3 rows\nQUERY 2: 5 rows\nTOTAL: 8 rows\nDUPLICATES: preserved\nFASTER: than UNION',
+                processDetail: 'UNION ALL complete. All 8 rows preserved, faster than UNION since no duplicate checking required.',
+                outputColumns: ['ename'],
+                outputData: [
+                    { ename: 'CLARK' },
+                    { ename: 'KING' },
+                    { ename: 'MILLER' },
+                    { ename: 'SMITH' },
+                    { ename: 'JONES' },
+                    { ename: 'SCOTT' },
+                    { ename: 'ADAMS' },
+                    { ename: 'FORD' }
+                ]
+            }
+        ]
+    },
+
+
+          
+
+   'INTERSECT': {
+       query: 'SELECT deptno FROM emp INTERSECT SELECT deptno FROM dept;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing INTERSECT operation...',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno'] }
+               ],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'INTERSECT PARSER\nQUERY 1: deptno from EMP\nQUERY 2: deptno from DEPT\nOPERATION: find common values\nRESULT: departments with employees',
+               processDetail: 'INTERSECT finds common values that exist in both query results.',
+               outputColumns: ['deptno'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Executing first query - departments from EMP table...',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno'] }
+               ],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [],
+               processBox: 'QUERY 1: EMP DEPARTMENTS\nSCANNING ALL EMPLOYEES\nFOUND DEPARTMENTS: 10, 20, 30\nUNIQUE VALUES: 3\nFIRST SET READY',
+               processDetail: 'Scanning all employees to find which departments they belong to. Found departments 10, 20, 30.',
+               outputColumns: ['deptno'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Executing second query - departments from DEPT table...',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno'] }
+               ],
+               currentProcessing: [0, 1, 2, 3],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'QUERY 2: DEPT DEPARTMENTS\nSCANNING ALL DEPARTMENTS\nFOUND DEPARTMENTS: 10, 20, 30, 40\nUNIQUE VALUES: 4\nSECOND SET READY',
+               processDetail: 'Scanning all departments in DEPT table. Found departments 10, 20, 30, 40.',
+               outputColumns: ['deptno'],
+               outputData: []
+           },
+           {
+               stepNum: 3,
+               text: 'INTERSECT complete - common departments found',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno'] }
+               ],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'INTERSECT COMPLETE\nSET 1 (EMP): 10, 20, 30\nSET 2 (DEPT): 10, 20, 30, 40\nCOMMON VALUES: 10, 20, 30\nDEPT 40: no employees',
+               processDetail: 'INTERSECT complete. Found 3 common departments that exist in both tables and have employees.',
+               outputColumns: ['deptno'],
+               outputData: [
+                   { deptno: 10 },
+                   { deptno: 20 },
+                   { deptno: 30 }
+               ]
+           }
+       ]
+   },
+
+   'MINUS': {
+       query: 'SELECT deptno FROM dept MINUS SELECT deptno FROM emp;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing MINUS operation...',
+               inputTables: [
+                   { name: 'DEPT', data: dept, columns: ['deptno'] },
+                   { name: 'EMP', data: emp, columns: ['deptno'] }
+               ],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'MINUS PARSER\nQUERY 1: deptno from DEPT\nQUERY 2: deptno from EMP\nOPERATION: SET1 - SET2\nRESULT: departments without employees',
+               processDetail: 'MINUS returns values from first query that are not in second query.',
+               outputColumns: ['deptno'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Executing first query - all departments...',
+               inputTables: [
+                   { name: 'DEPT', data: dept, columns: ['deptno'] },
+                   { name: 'EMP', data: emp, columns: ['deptno'] }
+               ],
+               currentProcessing: [0, 1, 2, 3],
+               processedRows: [],
+               processBox: 'QUERY 1: ALL DEPARTMENTS\nACCOUNTING: deptno=10\nRESEARCH: deptno=20\nSALES: deptno=30\nOPERATIONS: deptno=40\nFIRST SET: 4 departments',
+               processDetail: 'Getting all departments from DEPT table: 10, 20, 30, 40.',
+               outputColumns: ['deptno'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Executing second query - departments with employees...',
+               inputTables: [
+                   { name: 'DEPT', data: dept, columns: ['deptno'] },
+                   { name: 'EMP', data: emp, columns: ['deptno'] }
+               ],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [0, 1, 2, 3],
+               processBox: 'QUERY 2: DEPARTMENTS WITH EMPLOYEES\nEMPLOYEES IN DEPT 10: 3\nEMPLOYEES IN DEPT 20: 5\nEMPLOYEES IN DEPT 30: 6\nSECOND SET: 10, 20, 30',
+               processDetail: 'Finding which departments have employees: 10, 20, 30.',
+               outputColumns: ['deptno'],
+               outputData: []
+           },
+           {
+               stepNum: 3,
+               text: 'MINUS complete - departments without employees found',
+               inputTables: [
+                   { name: 'DEPT', data: dept, columns: ['deptno'] },
+                   { name: 'EMP', data: emp, columns: ['deptno'] }
+               ],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'MINUS COMPLETE\nALL DEPARTMENTS: 10, 20, 30, 40\nWITH EMPLOYEES: 10, 20, 30\nMINUS RESULT: 40\nOPERATIONS: no employees',
+               processDetail: 'MINUS complete. Department 40 (OPERATIONS) exists but has no employees.',
+               outputColumns: ['deptno'],
+               outputData: [
+                   { deptno: 40 }
+               ]
+           }
+       ]
+   },
+
+   'EXISTS': {
+       query: 'SELECT ename FROM emp e WHERE EXISTS (SELECT 1 FROM dept d WHERE d.deptno = e.deptno AND d.loc = \'NEW YORK\');',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing EXISTS subquery...',
+               inputTables: [
+                   { name: 'EMP (e)', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'EXISTS PARSER\nMAIN QUERY: SELECT ename FROM emp\nSUBQUERY: dept in NEW YORK\nCONDITION: EXISTS correlation\nTEST: for each employee',
+               processDetail: 'EXISTS tests whether the correlated subquery returns any rows for each employee.',
+               outputColumns: ['ename'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Identifying NEW YORK departments...',
+               inputTables: [
+                   { name: 'EMP (e)', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [0],
+               processedRows: [],
+               processBox: 'NEW YORK DEPARTMENTS\nACCOUNTING: deptno=10, loc=NEW YORK ✓\nRESEARCH: deptno=20, loc=DALLAS ✗\nSALES: deptno=30, loc=CHICAGO ✗\nOPERATIONS: deptno=40, loc=BOSTON ✗\nONLY DEPT 10 QUALIFIES',
+               processDetail: 'Subquery identifies that only department 10 (ACCOUNTING) is located in NEW YORK.',
+               outputColumns: ['ename'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Testing EXISTS for each employee - DEPT 10 employees...',
+               inputTables: [
+                   { name: 'EMP (e)', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [6, 8, 13],
+               processedRows: [],
+               processBox: 'TESTING DEPT 10 EMPLOYEES\nCLARK: deptno=10 → EXISTS(dept 10 in NY) ✓\nKING: deptno=10 → EXISTS(dept 10 in NY) ✓\nMILLER: deptno=10 → EXISTS(dept 10 in NY) ✓\nALL PASS EXISTS TEST',
+               processDetail: 'Testing employees in department 10. All pass EXISTS test since their department is in NEW YORK.',
+               outputColumns: ['ename'],
+               outputData: [
+                   { ename: 'CLARK' },
+                   { ename: 'KING' },
+                   { ename: 'MILLER' }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Testing EXISTS for other department employees...',
+               inputTables: [
+                   { name: 'EMP (e)', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 7, 9, 10, 11, 12],
+               processedRows: [6, 8, 13],
+               processBox: 'TESTING OTHER EMPLOYEES\nDEPT 20 employees: EXISTS(dept 20 in NY) ✗\nDEPT 30 employees: EXISTS(dept 30 in NY) ✗\nNO NEW YORK DEPARTMENTS\nFAIL EXISTS TEST',
+               processDetail: 'Testing employees in departments 20 and 30. All fail EXISTS test since their departments are not in NEW YORK.',
+               outputColumns: ['ename'],
+               outputData: [
+                   { ename: 'CLARK' },
+                   { ename: 'KING' },
+                   { ename: 'MILLER' }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'EXISTS operation complete - NEW YORK employees found',
+               inputTables: [
+                   { name: 'EMP (e)', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'EXISTS COMPLETE\nTOTAL EMPLOYEES: 14\nNEW YORK EMPLOYEES: 3\nQUALIFYING DEPT: 10 (ACCOUNTING)\nSUBQUERY: correlated successfully',
+               processDetail: 'EXISTS operation complete. Found 3 employees who work in NEW YORK (department 10).',
+               outputColumns: ['ename'],
+               outputData: [
+                   { ename: 'CLARK' },
+                   { ename: 'KING' },
+                   { ename: 'MILLER' }
+               ]
+           }
+       ]
+   },
+
+   'NOT_EXISTS': {
+       query: 'SELECT dname FROM dept d WHERE NOT EXISTS (SELECT 1 FROM emp e WHERE e.deptno = d.deptno);',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing NOT EXISTS subquery...',
+               inputTables: [
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname'] },
+                   { name: 'EMP (e)', data: emp, columns: ['empno', 'deptno'] }
+               ],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'NOT EXISTS PARSER\nMAIN QUERY: SELECT dname FROM dept\nSUBQUERY: employees in department\nCONDITION: NOT EXISTS correlation\nFINDS: departments without employees',
+               processDetail: 'NOT EXISTS finds departments where the correlated subquery returns no rows (no employees).',
+               outputColumns: ['dname'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Testing NOT EXISTS for ACCOUNTING department...',
+               inputTables: [
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname'] },
+                   { name: 'EMP (e)', data: emp, columns: ['empno', 'deptno'] }
+               ],
+               currentProcessing: [0],
+               processedRows: [],
+               processBox: 'TESTING ACCOUNTING (10)\nSUBQUERY: employees in dept 10\nFOUND: CLARK, KING, MILLER\nEXISTS: TRUE\nNOT EXISTS: FALSE\nREJECTED',
+               processDetail: 'Testing ACCOUNTING department. Found employees, so NOT EXISTS is FALSE.',
+               outputColumns: ['dname'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Testing NOT EXISTS for RESEARCH and SALES departments...',
+               inputTables: [
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname'] },
+                   { name: 'EMP (e)', data: emp, columns: ['empno', 'deptno'] }
+               ],
+               currentProcessing: [1, 2],
+               processedRows: [0],
+               processBox: 'TESTING RESEARCH (20) & SALES (30)\nRESEARCH: has 5 employees → NOT EXISTS: FALSE\nSALES: has 6 employees → NOT EXISTS: FALSE\nBOTH REJECTED\nHAVE EMPLOYEES',
+               processDetail: 'Testing RESEARCH and SALES departments. Both have employees, so NOT EXISTS is FALSE for both.',
+               outputColumns: ['dname'],
+               outputData: []
+           },
+           {
+               stepNum: 3,
+               text: 'NOT EXISTS complete - OPERATIONS department has no employees',
+               inputTables: [
+                   { name: 'DEPT (d)', data: dept, columns: ['deptno', 'dname'] },
+                   { name: 'EMP (e)', data: emp, columns: ['empno', 'deptno'] }
+               ],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3],
+               processBox: 'NOT EXISTS COMPLETE\nTESTING OPERATIONS (40)\nSUBQUERY: employees in dept 40\nFOUND: none\nEXISTS: FALSE\nNOT EXISTS: TRUE\nACCEPTED',
+               processDetail: 'NOT EXISTS complete. Only OPERATIONS department has no employees, so it satisfies NOT EXISTS condition.',
+               outputColumns: ['dname'],
+               outputData: [
+                   { dname: 'OPERATIONS' }
+               ]
+           }
+       ]
+   },
+
+   'IN_SUBQUERY': {
+       query: 'SELECT ename FROM emp WHERE deptno IN (SELECT deptno FROM dept WHERE loc = \'NEW YORK\');',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing IN subquery...',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'IN SUBQUERY PARSER\nMAIN QUERY: SELECT ename FROM emp\nSUBQUERY: deptno WHERE loc=NEW YORK\nOPERATION: deptno IN (subquery result)\nTWO-PHASE EXECUTION',
+               processDetail: 'IN subquery first executes subquery to get list of values, then checks main query against that list.',
+               outputColumns: ['ename'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Phase 1: Executing subquery to find NEW YORK departments...',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [0, 1, 2, 3],
+               processedRows: [],
+               processBox: 'SUBQUERY EXECUTION\nACCOUNTING: loc=NEW YORK → deptno=10 ✓\nRESEARCH: loc=DALLAS → excluded ✗\nSALES: loc=CHICAGO → excluded ✗\nOPERATIONS: loc=BOSTON → excluded ✗\nSUBQUERY RESULT: (10)',
+               processDetail: 'Subquery execution: only ACCOUNTING department (10) is in NEW YORK.',
+               outputColumns: ['ename'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Phase 2: Checking employees against IN list (10)...',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [6, 8, 13],
+               processedRows: [],
+               processBox: 'IN LIST CHECK\nCLARK: deptno=10 IN (10) ✓\nKING: deptno=10 IN (10) ✓\nMILLER: deptno=10 IN (10) ✓\nALL DEPT 10 EMPLOYEES QUALIFY',
+               processDetail: 'Checking employees: CLARK, KING, MILLER all have deptno=10 which is IN the subquery result.',
+               outputColumns: ['ename'],
+               outputData: [
+                   { ename: 'CLARK' },
+                   { ename: 'KING' },
+                   { ename: 'MILLER' }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'IN subquery complete - NEW YORK department employees found',
+               inputTables: [
+                   { name: 'EMP', data: emp, columns: ['ename', 'deptno'] },
+                   { name: 'DEPT', data: dept, columns: ['deptno', 'loc'] }
+               ],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'IN SUBQUERY COMPLETE\nSUBQUERY RESULT: (10)\nTOTAL EMPLOYEES: 14\nQUALIFYING: 3 (in dept 10)\nNEW YORK WORKERS FOUND',
+               processDetail: 'IN subquery complete. Found 3 employees working in NEW YORK departments.',
+               outputColumns: ['ename'],
+               outputData: [
+                   { ename: 'CLARK' },
+                   { ename: 'KING' },
+                   { ename: 'MILLER' }
+               ]
+           }
+       ]
+   },
+
+   'ANY_ALL': {
+       query: 'SELECT ename, sal FROM emp WHERE sal > ANY (SELECT sal FROM emp WHERE deptno = 30);',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing ANY subquery...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'ANY SUBQUERY PARSER\nMAIN QUERY: sal comparison\nSUBQUERY: sal from dept 30\nCONDITION: sal > ANY (subquery)\nMEANS: greater than minimum',
+               processDetail: 'ANY means the condition is true if it\'s true for ANY value in the subquery result.',
+               outputColumns: ['ename', 'sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Phase 1: Executing subquery to get DEPT 30 salaries...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [1, 2, 4, 5, 9, 11],
+               processedRows: [],
+               processBox: 'SUBQUERY: DEPT 30 SALARIES\nALLEN: sal=1600\nWARD: sal=1250\nMARTIN: sal=1250\nBLAKE: sal=2850\nTURNER: sal=1500\nJAMES: sal=950\nSUBQUERY RESULT: (1600,1250,1250,2850,1500,950)',
+               processDetail: 'Subquery execution: getting all salaries from department 30 employees.',
+               outputColumns: ['ename', 'sal'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'ANY evaluation: sal > ANY means sal > 950 (minimum)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [1, 2, 4, 5, 9, 11],
+               processBox: 'ANY EVALUATION\nSUBQUERY VALUES: (1600,1250,1250,2850,1500,950)\nMINIMUM VALUE: 950\nsal > ANY ≡ sal > 950\nCONDITION SIMPLIFIED',
+               processDetail: 'ANY evaluation: sal > ANY (subquery) is equivalent to sal > 950 (the minimum value).',
+               outputColumns: ['ename', 'sal'],
+               outputData: []
+           },
+           {
+               stepNum: 3,
+               text: 'Testing all employees against sal > 950...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [],
+               processBox: 'TESTING sal > 950\nSMITH: 800 > 950? ✗\nALLEN: 1600 > 950? ✓\nWARD: 1250 > 950? ✓\nJONES: 2975 > 950? ✓\n... (most qualify)\nJAMES: 950 > 950? ✗',
+               processDetail: 'Testing all employees against the ANY condition (sal > 950). Most employees qualify except SMITH and JAMES.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'ALLEN', sal: 1600 },
+                   { ename: 'WARD', sal: 1250 },
+                   { ename: 'JONES', sal: 2975 },
+                   { ename: 'MARTIN', sal: 1250 },
+                   { ename: 'BLAKE', sal: 2850 },
+                   { ename: 'CLARK', sal: 2450 },
+                   { ename: 'SCOTT', sal: 3000 },
+                   { ename: 'KING', sal: 5000 },
+                   { ename: 'TURNER', sal: 1500 },
+                   { ename: 'ADAMS', sal: 1100 },
+                   { ename: 'FORD', sal: 3000 },
+                   { ename: 'MILLER', sal: 1300 }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'ANY subquery complete - employees earning more than any DEPT 30 employee',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'ANY SUBQUERY COMPLETE\nSUBQUERY MINIMUM: 950 (JAMES)\nQUALIFYING: sal > 950\nTOTAL QUALIFYING: 12 employees\nEXCLUDED: SMITH(800), JAMES(950)',
+               processDetail: 'ANY subquery complete. Found 12 employees earning more than ANY employee in department 30.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'ALLEN', sal: 1600 },
+                   { ename: 'WARD', sal: 1250 },
+                   { ename: 'JONES', sal: 2975 },
+                   { ename: 'MARTIN', sal: 1250 },
+                   { ename: 'BLAKE', sal: 2850 },
+                   { ename: 'CLARK', sal: 2450 },
+                   { ename: 'SCOTT', sal: 3000 },
+                   { ename: 'KING', sal: 5000 },
+                   { ename: 'TURNER', sal: 1500 },
+                   { ename: 'ADAMS', sal: 1100 },
+                   { ename: 'FORD', sal: 3000 },
+                   { ename: 'MILLER', sal: 1300 }
+               ]
+           }
+       ]
+   },
+
+   'CORRELATED': {
+       query: 'SELECT ename, sal FROM emp e1 WHERE sal > (SELECT AVG(sal) FROM emp e2 WHERE e2.deptno = e1.deptno);',
+       totalSteps: 6,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing CORRELATED subquery...',
+               inputTables: [{ name: 'EMP (e1, e2)', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'CORRELATED SUBQUERY PARSER\nMAIN QUERY: SELECT ename, sal\nSUBQUERY: AVG(sal) by department\nCORRELATION: e2.deptno = e1.deptno\nEXECUTES: once per outer row',
+               processDetail: 'Correlated subquery executes once for each outer row, using values from the outer query.',
+               outputColumns: ['ename', 'sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Processing DEPT 10 employees against their department average...',
+               inputTables: [{ name: 'EMP (e1, e2)', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [6, 8, 13],
+               processedRows: [],
+               processBox: 'DEPT 10 CORRELATION\nSUBQUERY: AVG(sal) WHERE deptno=10\nCALCULATING: (2450+5000+1300)/3 = 2916.67\nCLARK: 2450 > 2916.67? ✗\nKING: 5000 > 2916.67? ✓\nMILLER: 1300 > 2916.67? ✗',
+               processDetail: 'For department 10 employees, subquery calculates their department average (2916.67). Only KING exceeds it.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'KING', sal: 5000 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Processing DEPT 20 employees against their department average...',
+               inputTables: [{ name: 'EMP (e1, e2)', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [0, 3, 7, 10, 12],
+               processedRows: [6, 8, 13],
+               processBox: 'DEPT 20 CORRELATION\nSUBQUERY: AVG(sal) WHERE deptno=20\nCALCULATING: (800+2975+3000+1100+3000)/5 = 2175\nSMITH: 800 > 2175? ✗\nJONES: 2975 > 2175? ✓\nSCOTT: 3000 > 2175? ✓\nADAMS: 1100 > 2175? ✗\nFORD: 3000 > 2175? ✓',
+               processDetail: 'For department 20 employees, subquery calculates their department average (2175). JONES, SCOTT, FORD exceed it.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'KING', sal: 5000 },
+                   { ename: 'JONES', sal: 2975 },
+                   { ename: 'SCOTT', sal: 3000 },
+                   { ename: 'FORD', sal: 3000 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Processing DEPT 30 employees against their department average...',
+               inputTables: [{ name: 'EMP (e1, e2)', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [1, 2, 4, 5, 9, 11],
+               processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+               processBox: 'DEPT 30 CORRELATION\nSUBQUERY: AVG(sal) WHERE deptno=30\nCALCULATING: (1600+1250+1250+2850+1500+950)/6 = 1566.67\nALLEN: 1600 > 1566.67? ✓\nWARD: 1250 > 1566.67? ✗\nMARTIN: 1250 > 1566.67? ✗\nBLAKE: 2850 > 1566.67? ✓\nTURNER: 1500 > 1566.67? ✗\nJAMES: 950 > 1566.67? ✗',
+               processDetail: 'For department 30 employees, subquery calculates their department average (1566.67). ALLEN and BLAKE exceed it.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'KING', sal: 5000 },
+                   { ename: 'JONES', sal: 2975 },
+                   { ename: 'SCOTT', sal: 3000 },
+                   { ename: 'FORD', sal: 3000 },
+                   { ename: 'ALLEN', sal: 1600 },
+                   { ename: 'BLAKE', sal: 2850 }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'Sorting results by salary descending...',
+               inputTables: [{ name: 'EMP (e1, e2)', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'SORTING RESULTS\nABOVE-AVERAGE EARNERS: 6\nKING: 5000 (highest)\nSCOTT/FORD: 3000 (tied)\nJONES: 2975\nBLAKE: 2850\nALLEN: 1600 (lowest)',
+               processDetail: 'Sorting the 6 employees who earn above their department average by salary descending.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'KING', sal: 5000 },
+                   { ename: 'SCOTT', sal: 3000 },
+                   { ename: 'FORD', sal: 3000 },
+                   { ename: 'JONES', sal: 2975 },
+                   { ename: 'BLAKE', sal: 2850 },
+                   { ename: 'ALLEN', sal: 1600 }
+               ]
+           },
+           {
+               stepNum: 5,
+               text: 'CORRELATED subquery complete - department top performers found',
+               inputTables: [{ name: 'EMP (e1, e2)', data: emp, columns: ['ename', 'sal', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'CORRELATED COMPLETE\nDEPT 10: 1/3 above average (KING)\nDEPT 20: 3/5 above average\nDEPT 30: 2/6 above average\nTOTAL: 6 top performers',
+               processDetail: 'Correlated subquery complete. Found 6 employees who earn above their respective department averages.',
+               outputColumns: ['ename', 'sal'],
+               outputData: [
+                   { ename: 'KING', sal: 5000 },
+                   { ename: 'SCOTT', sal: 3000 },
+                   { ename: 'FORD', sal: 3000 },
+                   { ename: 'JONES', sal: 2975 },
+                   { ename: 'BLAKE', sal: 2850 },
+                   { ename: 'ALLEN', sal: 1600 }
+               ]
+           }
+       ]
+   },
+
+   'DECODE': {
+       query: 'SELECT ename, DECODE(deptno, 10, \'ACCOUNTING\', 20, \'RESEARCH\', 30, \'SALES\', \'OTHER\') as dept_name FROM emp;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing DECODE function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'DECODE PARSER\nSYNTAX: DECODE(deptno, value1, result1, value2, result2, default)\n10 → ACCOUNTING\n20 → RESEARCH\n30 → SALES\nELSE → OTHER',
+               processDetail: 'DECODE function performs conditional logic similar to CASE WHEN but with simpler syntax.',
+               outputColumns: ['ename', 'dept_name'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Processing employees - applying DECODE logic...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+               currentProcessing: [0, 1, 2, 3, 4],
+               processedRows: [],
+               processBox: 'DECODE PROCESSING BATCH 1\nSMITH: deptno=20 → RESEARCH\nALLEN: deptno=30 → SALES\nWARD: deptno=30 → SALES\nJONES: deptno=20 → RESEARCH\nMARTIN: deptno=30 → SALES',
+               processDetail: 'Applying DECODE function to first batch of employees, converting department numbers to names.',
+               outputColumns: ['ename', 'dept_name'],
+               outputData: [
+                   { ename: 'SMITH', dept_name: 'RESEARCH' },
+                   { ename: 'ALLEN', dept_name: 'SALES' },
+                   { ename: 'WARD', dept_name: 'SALES' },
+                   { ename: 'JONES', dept_name: 'RESEARCH' },
+                   { ename: 'MARTIN', dept_name: 'SALES' }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Continuing DECODE processing for remaining employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+               currentProcessing: [5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [0, 1, 2, 3, 4],
+               processBox: 'DECODE PROCESSING BATCH 2\nBLAKE: deptno=30 → SALES\nCLARK: deptno=10 → ACCOUNTING\nSCOTT: deptno=20 → RESEARCH\nKING: deptno=10 → ACCOUNTING\n... continuing for all employees',
+               processDetail: 'Continuing DECODE processing for remaining employees, all department numbers match defined values.',
+               outputColumns: ['ename', 'dept_name'],
+               outputData: [
+                   { ename: 'SMITH', dept_name: 'RESEARCH' },
+                   { ename: 'ALLEN', dept_name: 'SALES' },
+                   { ename: 'WARD', dept_name: 'SALES' },
+                   { ename: 'JONES', dept_name: 'RESEARCH' },
+                   { ename: 'MARTIN', dept_name: 'SALES' },
+                   { ename: 'BLAKE', dept_name: 'SALES' },
+                   { ename: 'CLARK', dept_name: 'ACCOUNTING' },
+                   { ename: 'SCOTT', dept_name: 'RESEARCH' },
+                   { ename: 'KING', dept_name: 'ACCOUNTING' },
+                   { ename: 'TURNER', dept_name: 'SALES' },
+                   { ename: 'ADAMS', dept_name: 'RESEARCH' },
+                   { ename: 'JAMES', dept_name: 'SALES' },
+                   { ename: 'FORD', dept_name: 'RESEARCH' },
+                   { ename: 'MILLER', dept_name: 'ACCOUNTING' }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'DECODE function complete - all department numbers converted',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'deptno'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'DECODE COMPLETE\nACCOUNTING: 3 employees\nRESEARCH: 5 employees\nSALES: 6 employees\nOTHER: 0 employees\nALL MAPPED SUCCESSFULLY',
+               processDetail: 'DECODE function complete. All department numbers successfully converted to department names. No employees had unrecognized department numbers.',
+               outputColumns: ['ename', 'dept_name'],
+               outputData: [
+                   { ename: 'SMITH', dept_name: 'RESEARCH' },
+                   { ename: 'ALLEN', dept_name: 'SALES' },
+                   { ename: 'WARD', dept_name: 'SALES' },
+                   { ename: 'JONES', dept_name: 'RESEARCH' },
+                   { ename: 'MARTIN', dept_name: 'SALES' },
+                   { ename: 'BLAKE', dept_name: 'SALES' },
+                   { ename: 'CLARK', dept_name: 'ACCOUNTING' },
+                   { ename: 'SCOTT', dept_name: 'RESEARCH' },
+                   { ename: 'KING', dept_name: 'ACCOUNTING' },
+                   { ename: 'TURNER', dept_name: 'SALES' },
+                   { ename: 'ADAMS', dept_name: 'RESEARCH' },
+                   { ename: 'JAMES', dept_name: 'SALES' },
+                   { ename: 'FORD', dept_name: 'RESEARCH' },
+                   { ename: 'MILLER', dept_name: 'ACCOUNTING' }
+               ]
+           }
+       ]
+   },
+
+   'NVL': {
+       query: 'SELECT ename, sal, NVL(comm, 0) as commission FROM emp ORDER BY commission DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing NVL function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'NVL PARSER\nSYNTAX: NVL(expr1, expr2)\nIF expr1 IS NULL THEN expr2\nELSE expr1\nREPLACES: NULL with 0',
+               processDetail: 'NVL function replaces NULL values with a specified replacement value.',
+               outputColumns: ['ename', 'sal', 'commission'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Processing employees - applying NVL to commission values...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6],
+               processedRows: [],
+               processBox: 'NVL PROCESSING BATCH 1\nSMITH: comm=NULL → NVL(NULL,0) = 0\nALLEN: comm=300 → NVL(300,0) = 300\nWARD: comm=500 → NVL(500,0) = 500\nJONES: comm=NULL → NVL(NULL,0) = 0\nMARTIN: comm=1400 → NVL(1400,0) = 1400\nBLAKE: comm=NULL → NVL(NULL,0) = 0\nCLARK: comm=NULL → NVL(NULL,0) = 0',
+               processDetail: 'Applying NVL function to commission values. NULL values are replaced with 0, existing values are preserved.',
+               outputColumns: ['ename', 'sal', 'commission'],
+               outputData: [
+                   { ename: 'SMITH', sal: 800, commission: 0 },
+                   { ename: 'ALLEN', sal: 1600, commission: 300 },
+                   { ename: 'WARD', sal: 1250, commission: 500 },
+                   { ename: 'JONES', sal: 2975, commission: 0 },
+                   { ename: 'MARTIN', sal: 1250, commission: 1400 },
+                   { ename: 'BLAKE', sal: 2850, commission: 0 },
+                   { ename: 'CLARK', sal: 2450, commission: 0 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Completing NVL processing for remaining employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [7, 8, 9, 10, 11, 12, 13],
+               processedRows: [0, 1, 2, 3, 4, 5, 6],
+               processBox: 'NVL PROCESSING BATCH 2\nSCOTT: comm=NULL → NVL(NULL,0) = 0\nKING: comm=NULL → NVL(NULL,0) = 0\nTURNER: comm=0 → NVL(0,0) = 0\nADAMS: comm=NULL → NVL(NULL,0) = 0\nJAMES: comm=NULL → NVL(NULL,0) = 0\nFORD: comm=NULL → NVL(NULL,0) = 0\nMILLER: comm=NULL → NVL(NULL,0) = 0',
+               processDetail: 'Completing NVL processing. Most employees have NULL commission (replaced with 0). TURNER has actual 0 commission.',
+               outputColumns: ['ename', 'sal', 'commission'],
+               outputData: [
+                   { ename: 'MARTIN', sal: 1250, commission: 1400 },
+                   { ename: 'WARD', sal: 1250, commission: 500 },
+                   { ename: 'ALLEN', sal: 1600, commission: 300 },
+                   { ename: 'SMITH', sal: 800, commission: 0 },
+                   { ename: 'JONES', sal: 2975, commission: 0 },
+                   { ename: 'BLAKE', sal: 2850, commission: 0 },
+                   { ename: 'CLARK', sal: 2450, commission: 0 },
+                   { ename: 'SCOTT', sal: 3000, commission: 0 },
+                   { ename: 'KING', sal: 5000, commission: 0 },
+                   { ename: 'TURNER', sal: 1500, commission: 0 },
+                   { ename: 'ADAMS', sal: 1100, commission: 0 },
+                   { ename: 'JAMES', sal: 950, commission: 0 },
+                   { ename: 'FORD', sal: 3000, commission: 0 },
+                   { ename: 'MILLER', sal: 1300, commission: 0 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'NVL function complete - all NULL commissions replaced with 0',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'NVL COMPLETE\nNULL VALUES: 11 (replaced with 0)\nNON-NULL VALUES: 3 (preserved)\nHIGHEST COMMISSION: 1400 (MARTIN)\nSORTED: by commission DESC',
+               processDetail: 'NVL function complete. All NULL commission values replaced with 0, results sorted by commission descending.',
+               outputColumns: ['ename', 'sal', 'commission'],
+               outputData: [
+                   { ename: 'MARTIN', sal: 1250, commission: 1400 },
+                   { ename: 'WARD', sal: 1250, commission: 500 },
+                   { ename: 'ALLEN', sal: 1600, commission: 300 },
+                   { ename: 'SMITH', sal: 800, commission: 0 },
+                   { ename: 'JONES', sal: 2975, commission: 0 },
+                   { ename: 'BLAKE', sal: 2850, commission: 0 },
+                   { ename: 'CLARK', sal: 2450, commission: 0 },
+                   { ename: 'SCOTT', sal: 3000, commission: 0 },
+                   { ename: 'KING', sal: 5000, commission: 0 },
+                   { ename: 'TURNER', sal: 1500, commission: 0 },
+                   { ename: 'ADAMS', sal: 1100, commission: 0 },
+                   { ename: 'JAMES', sal: 950, commission: 0 },
+                   { ename: 'FORD', sal: 3000, commission: 0 },
+                   { ename: 'MILLER', sal: 1300, commission: 0 }
+               ]
+           }
+       ]
+   },
+   
+   'COALESCE': {
+       query: 'SELECT ename, COALESCE(comm, sal*0.1, 100) as effective_comm FROM emp ORDER BY effective_comm DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing COALESCE function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'COALESCE PARSER\nSYNTAX: COALESCE(expr1, expr2, expr3, ...)\nRETURNS: first non-NULL expression\nFALLBACK ORDER: comm → sal*0.1 → 100',
+               processDetail: 'COALESCE returns the first non-NULL value from a list of expressions.',
+               outputColumns: ['ename', 'effective_comm'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Processing employees with existing commission...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }],
+               currentProcessing: [1, 2, 4, 9],
+               processedRows: [],
+               processBox: 'EMPLOYEES WITH COMMISSION\nALLEN: comm=300 → COALESCE(300, 160, 100) = 300\nWARD: comm=500 → COALESCE(500, 125, 100) = 500\nMARTIN: comm=1400 → COALESCE(1400, 125, 100) = 1400\nTURNER: comm=0 → COALESCE(0, 150, 100) = 0',
+               processDetail: 'Processing employees with existing commission values. First expression (comm) is not NULL, so it\'s used.',
+               outputColumns: ['ename', 'effective_comm'],
+               outputData: [
+                   { ename: 'ALLEN', effective_comm: 300 },
+                   { ename: 'WARD', effective_comm: 500 },
+                   { ename: 'MARTIN', effective_comm: 1400 },
+                   { ename: 'TURNER', effective_comm: 0 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Processing employees without commission - using salary fallback...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }],
+               currentProcessing: [0, 3, 5, 6, 7, 8, 10, 11, 12, 13],
+               processedRows: [1, 2, 4, 9],
+               processBox: 'EMPLOYEES WITHOUT COMMISSION\nSMITH: comm=NULL → sal*0.1 = 80\nJONES: comm=NULL → sal*0.1 = 297.5\nBLAKE: comm=NULL → sal*0.1 = 285\nKING: comm=NULL → sal*0.1 = 500\n... using 10% of salary',
+               processDetail: 'Processing employees with NULL commission. Using second expression (sal*0.1) as fallback.',
+               outputColumns: ['ename', 'effective_comm'],
+               outputData: [
+                   { ename: 'MARTIN', effective_comm: 1400 },
+                   { ename: 'KING', effective_comm: 500 },
+                   { ename: 'WARD', effective_comm: 500 },
+                   { ename: 'ALLEN', effective_comm: 300 },
+                   { ename: 'JONES', effective_comm: 297.5 },
+                   { ename: 'SCOTT', effective_comm: 300 },
+                   { ename: 'FORD', effective_comm: 300 },
+                   { ename: 'BLAKE', effective_comm: 285 },
+                   { ename: 'CLARK', effective_comm: 245 },
+                   { ename: 'TURNER', effective_comm: 150 },
+                   { ename: 'MILLER', effective_comm: 130 },
+                   { ename: 'ADAMS', effective_comm: 110 },
+                   { ename: 'JAMES', effective_comm: 95 },
+                   { ename: 'SMITH', effective_comm: 80 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'COALESCE function complete - all employees have effective commission',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'comm', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'COALESCE COMPLETE\nUSED ACTUAL COMM: 4 employees\nUSED SALARY*0.1: 10 employees\nUSED DEFAULT 100: 0 employees\nHIGHEST: 1400 (MARTIN)',
+               processDetail: 'COALESCE complete. All employees now have an effective commission value using the first available expression.',
+               outputColumns: ['ename', 'effective_comm'],
+               outputData: [
+                   { ename: 'MARTIN', effective_comm: 1400 },
+                   { ename: 'KING', effective_comm: 500 },
+                   { ename: 'WARD', effective_comm: 500 },
+                   { ename: 'ALLEN', effective_comm: 300 },
+                   { ename: 'SCOTT', effective_comm: 300 },
+                   { ename: 'FORD', effective_comm: 300 },
+                   { ename: 'JONES', effective_comm: 297.5 },
+                   { ename: 'BLAKE', effective_comm: 285 },
+                   { ename: 'CLARK', effective_comm: 245 },
+                   { ename: 'TURNER', effective_comm: 150 },
+                   { ename: 'MILLER', effective_comm: 130 },
+                   { ename: 'ADAMS', effective_comm: 110 },
+                   { ename: 'JAMES', effective_comm: 95 },
+                   { ename: 'SMITH', effective_comm: 80 }
+               ]
+           }
+       ]
+   },
+
+   'NULLIF': {
+       query: 'SELECT ename, sal, NULLIF(comm, 0) as non_zero_comm FROM emp WHERE comm IS NOT NULL;',
+       totalSteps: 3,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing NULLIF function...',
+               inputTables: [{ name: 'EMP', data: emp.filter(e => e.comm !== null), columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'NULLIF PARSER\nSYNTAX: NULLIF(expr1, expr2)\nIF expr1 = expr2 THEN NULL\nELSE expr1\nCONVERTS: 0 commission to NULL',
+               processDetail: 'NULLIF returns NULL if two expressions are equal, otherwise returns the first expression.',
+               outputColumns: ['ename', 'sal', 'non_zero_comm'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Processing employees with commission values...',
+               inputTables: [{ name: 'EMP', data: emp.filter(e => e.comm !== null), columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [0, 1, 2, 3],
+               processedRows: [],
+               processBox: 'NULLIF PROCESSING\nALLEN: comm=300 → NULLIF(300,0) = 300 ✓\nWARD: comm=500 → NULLIF(500,0) = 500 ✓\nMARTIN: comm=1400 → NULLIF(1400,0) = 1400 ✓\nTURNER: comm=0 → NULLIF(0,0) = NULL ⚠️',
+               processDetail: 'Applying NULLIF to commission values. Non-zero values are preserved, zero values become NULL.',
+               outputColumns: ['ename', 'sal', 'non_zero_comm'],
+               outputData: [
+                   { ename: 'ALLEN', sal: 1600, non_zero_comm: 300 },
+                   { ename: 'WARD', sal: 1250, non_zero_comm: 500 },
+                   { ename: 'MARTIN', sal: 1250, non_zero_comm: 1400 },
+                   { ename: 'TURNER', sal: 1500, non_zero_comm: null }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'NULLIF function complete - zero commissions converted to NULL',
+               inputTables: [{ name: 'EMP', data: emp.filter(e => e.comm !== null), columns: ['ename', 'sal', 'comm'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3],
+               processBox: 'NULLIF COMPLETE\nPROCESSED: 4 employees with commission\nPRESERVED: 3 non-zero values\nCONVERTED TO NULL: 1 zero value\nUSEFUL: for filtering meaningful commissions',
+               processDetail: 'NULLIF complete. Zero commission values converted to NULL, making it easier to distinguish between no commission and zero commission.',
+               outputColumns: ['ename', 'sal', 'non_zero_comm'],
+               outputData: [
+                   { ename: 'ALLEN', sal: 1600, non_zero_comm: 300 },
+                   { ename: 'WARD', sal: 1250, non_zero_comm: 500 },
+                   { ename: 'MARTIN', sal: 1250, non_zero_comm: 1400 },
+                   { ename: 'TURNER', sal: 1500, non_zero_comm: null }
+               ]
+           }
+       ]
+   },
+
+   'RANK': {
+       query: 'SELECT ename, sal, RANK() OVER (ORDER BY sal DESC) as salary_rank FROM emp ORDER BY salary_rank;',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing RANK window function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'RANK PARSER\nFUNCTION: RANK() OVER\nORDER BY: sal DESC\nTIES: get same rank, skip next\nEXAMPLE: 1,2,2,4 (not 1,2,2,3)',
+               processDetail: 'RANK function assigns ranking with gaps when there are ties.',
+               outputColumns: ['ename', 'sal', 'salary_rank'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Sorting all employees by salary descending...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [],
+               processBox: 'SALARY SORTING\nKING: 5000 (highest)\nSCOTT: 3000\nFORD: 3000 (tie with SCOTT)\nJONES: 2975\nBLAKE: 2850\n... descending order',
+               processDetail: 'Sorting all employees by salary to determine ranking order. SCOTT and FORD tie at 3000.',
+               outputColumns: ['ename', 'sal', 'salary_rank'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Assigning ranks - handling ties properly...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5],
+               processedRows: [],
+               processBox: 'RANK ASSIGNMENT\nKING: sal=5000 → RANK=1\nSCOTT: sal=3000 → RANK=2\nFORD: sal=3000 → RANK=2 (tie)\nJONES: sal=2975 → RANK=4 (skip 3)\nBLAKE: sal=2850 → RANK=5',
+               processDetail: 'Assigning ranks with proper tie handling. SCOTT and FORD both get rank 2, next rank is 4 (skipping 3).',
+               outputColumns: ['ename', 'sal', 'salary_rank'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, salary_rank: 1 },
+                   { ename: 'SCOTT', sal: 3000, salary_rank: 2 },
+                   { ename: 'FORD', sal: 3000, salary_rank: 2 },
+                   { ename: 'JONES', sal: 2975, salary_rank: 4 },
+                   { ename: 'BLAKE', sal: 2850, salary_rank: 5 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Continuing rank assignment for remaining employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [6, 1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [8, 7, 12, 3, 5],
+               processBox: 'CONTINUING RANKS\nCLARK: sal=2450 → RANK=6\nALLEN: sal=1600 → RANK=7\nTURNER: sal=1500 → RANK=8\nMILLER: sal=1300 → RANK=9\nWARD: sal=1250 → RANK=10\nMARTIN: sal=1250 → RANK=10 (tie)\nADAMS: sal=1100 → RANK=12\nJAMES: sal=950 → RANK=13\nSMITH: sal=800 → RANK=14',
+               processDetail: 'Continuing rank assignment. WARD and MARTIN tie at rank 10, so next rank is 12.',
+               outputColumns: ['ename', 'sal', 'salary_rank'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, salary_rank: 1 },
+                   { ename: 'SCOTT', sal: 3000, salary_rank: 2 },
+                   { ename: 'FORD', sal: 3000, salary_rank: 2 },
+                   { ename: 'JONES', sal: 2975, salary_rank: 4 },
+                   { ename: 'BLAKE', sal: 2850, salary_rank: 5 },
+                   { ename: 'CLARK', sal: 2450, salary_rank: 6 },
+                   { ename: 'ALLEN', sal: 1600, salary_rank: 7 },
+                   { ename: 'TURNER', sal: 1500, salary_rank: 8 },
+                   { ename: 'MILLER', sal: 1300, salary_rank: 9 },
+                   { ename: 'WARD', sal: 1250, salary_rank: 10 },
+                   { ename: 'MARTIN', sal: 1250, salary_rank: 10 },
+                   { ename: 'ADAMS', sal: 1100, salary_rank: 12 },
+                   { ename: 'JAMES', sal: 950, salary_rank: 13 },
+                   { ename: 'SMITH', sal: 800, salary_rank: 14 }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'RANK function complete - all employees ranked with proper tie handling',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'RANK COMPLETE\nTOTAL EMPLOYEES: 14\nUNIQUE RANKS: 12\nTIES: 2 pairs (SCOTT/FORD, WARD/MARTIN)\nGAPS IN RANKS: 3, 11 (due to ties)',
+               processDetail: 'RANK function complete. All employees ranked by salary with proper gap handling for ties.',
+               outputColumns: ['ename', 'sal', 'salary_rank'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, salary_rank: 1 },
+                   { ename: 'SCOTT', sal: 3000, salary_rank: 2 },
+                   { ename: 'FORD', sal: 3000, salary_rank: 2 },
+                   { ename: 'JONES', sal: 2975, salary_rank: 4 },
+                   { ename: 'BLAKE', sal: 2850, salary_rank: 5 },
+                   { ename: 'CLARK', sal: 2450, salary_rank: 6 },
+                   { ename: 'ALLEN', sal: 1600, salary_rank: 7 },
+                   { ename: 'TURNER', sal: 1500, salary_rank: 8 },
+                   { ename: 'MILLER', sal: 1300, salary_rank: 9 },
+                   { ename: 'WARD', sal: 1250, salary_rank: 10 },
+                   { ename: 'MARTIN', sal: 1250, salary_rank: 10 },
+                   { ename: 'ADAMS', sal: 1100, salary_rank: 12 },
+                   { ename: 'JAMES', sal: 950, salary_rank: 13 },
+                   { ename: 'SMITH', sal: 800, salary_rank: 14 }
+               ]
+           }
+       ]
+   },
+
+   'DENSE_RANK': {
+       query: 'SELECT ename, sal, DENSE_RANK() OVER (ORDER BY sal DESC) as dense_rank FROM emp ORDER BY dense_rank;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing DENSE_RANK window function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'DENSE_RANK PARSER\nFUNCTION: DENSE_RANK() OVER\nORDER BY: sal DESC\nTIES: same rank, NO gaps\nEXAMPLE: 1,2,2,3 (not 1,2,2,4)',
+               processDetail: 'DENSE_RANK assigns ranking without gaps when there are ties.',
+               outputColumns: ['ename', 'sal', 'dense_rank'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Assigning dense ranks - no gaps for ties...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6],
+               processedRows: [],
+               processBox: 'DENSE_RANK ASSIGNMENT\nKING: sal=5000 → DENSE_RANK=1\nSCOTT: sal=3000 → DENSE_RANK=2\nFORD: sal=3000 → DENSE_RANK=2 (tie)\nJONES: sal=2975 → DENSE_RANK=3 (no gap)\nBLAKE: sal=2850 → DENSE_RANK=4\nCLARK: sal=2450 → DENSE_RANK=5',
+               processDetail: 'Assigning dense ranks. SCOTT and FORD tie at rank 2, but next rank is 3 (no gap unlike RANK).',
+               outputColumns: ['ename', 'sal', 'dense_rank'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, dense_rank: 1 },
+                   { ename: 'SCOTT', sal: 3000, dense_rank: 2 },
+                   { ename: 'FORD', sal: 3000, dense_rank: 2 },
+                   { ename: 'JONES', sal: 2975, dense_rank: 3 },
+                   { ename: 'BLAKE', sal: 2850, dense_rank: 4 },
+                   { ename: 'CLARK', sal: 2450, dense_rank: 5 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Continuing dense rank assignment...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [8, 7, 12, 3, 5, 6],
+               processBox: 'CONTINUING DENSE_RANK\nALLEN: sal=1600 → DENSE_RANK=6\nTURNER: sal=1500 → DENSE_RANK=7\nMILLER: sal=1300 → DENSE_RANK=8\nWARD: sal=1250 → DENSE_RANK=9\nMARTIN: sal=1250 → DENSE_RANK=9 (tie)\nADAMS: sal=1100 → DENSE_RANK=10 (no gap)\nJAMES: sal=950 → DENSE_RANK=11\nSMITH: sal=800 → DENSE_RANK=12',
+               processDetail: 'Continuing dense rank assignment. WARD and MARTIN tie at rank 9, next rank is 10 (no gap).',
+               outputColumns: ['ename', 'sal', 'dense_rank'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, dense_rank: 1 },
+                   { ename: 'SCOTT', sal: 3000, dense_rank: 2 },
+                   { ename: 'FORD', sal: 3000, dense_rank: 2 },
+                   { ename: 'JONES', sal: 2975, dense_rank: 3 },
+                   { ename: 'BLAKE', sal: 2850, dense_rank: 4 },
+                   { ename: 'CLARK', sal: 2450, dense_rank: 5 },
+                   { ename: 'ALLEN', sal: 1600, dense_rank: 6 },
+                   { ename: 'TURNER', sal: 1500, dense_rank: 7 },
+                   { ename: 'MILLER', sal: 1300, dense_rank: 8 },
+                   { ename: 'WARD', sal: 1250, dense_rank: 9 },
+                   { ename: 'MARTIN', sal: 1250, dense_rank: 9 },
+                   { ename: 'ADAMS', sal: 1100, dense_rank: 10 },
+                   { ename: 'JAMES', sal: 950, dense_rank: 11 },
+                   { ename: 'SMITH', sal: 800, dense_rank: 12 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'DENSE_RANK function complete - consecutive ranking without gaps',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'DENSE_RANK COMPLETE\nTOTAL EMPLOYEES: 14\nUNIQUE SALARY LEVELS: 12\nHIGHEST RANK: 12 (consecutive)\nNO GAPS: unlike RANK function\nTIES HANDLED: without skipping',
+               processDetail: 'DENSE_RANK complete. All employees ranked consecutively without gaps, even with ties.',
+               outputColumns: ['ename', 'sal', 'dense_rank'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, dense_rank: 1 },
+                   { ename: 'SCOTT', sal: 3000, dense_rank: 2 },
+                   { ename: 'FORD', sal: 3000, dense_rank: 2 },
+                   { ename: 'JONES', sal: 2975, dense_rank: 3 },
+                   { ename: 'BLAKE', sal: 2850, dense_rank: 4 },
+                   { ename: 'CLARK', sal: 2450, dense_rank: 5 },
+                   { ename: 'ALLEN', sal: 1600, dense_rank: 6 },
+                   { ename: 'TURNER', sal: 1500, dense_rank: 7 },
+                   { ename: 'MILLER', sal: 1300, dense_rank: 8 },
+                   { ename: 'WARD', sal: 1250, dense_rank: 9 },
+                   { ename: 'MARTIN', sal: 1250, dense_rank: 9 },
+                   { ename: 'ADAMS', sal: 1100, dense_rank: 10 },
+                   { ename: 'JAMES', sal: 950, dense_rank: 11 },
+                   { ename: 'SMITH', sal: 800, dense_rank: 12 }
+               ]
+           }
+       ]
+   },
+
+   'LEAD_LAG': {
+       query: 'SELECT ename, sal, LAG(sal) OVER (ORDER BY sal) as prev_sal, LEAD(sal) OVER (ORDER BY sal) as next_sal FROM emp ORDER BY sal;',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing LEAD/LAG window functions...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'LEAD/LAG PARSER\nLAG: previous row value\nLEAD: next row value\nORDER BY: sal ASC\nWINDOW: default offset = 1',
+               processDetail: 'LEAD and LAG functions access values from following and preceding rows.',
+               outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Sorting employees by salary ascending...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [0, 11, 10, 13, 2, 4, 9, 1, 6, 5, 3, 7, 12, 8],
+               processedRows: [],
+               processBox: 'SALARY ORDERING\nSMITH: 800 (lowest)\nJAMES: 950\nADAMS: 1100\nMILLER: 1300\nWARD: 1250\nMARTIN: 1250\n... ascending order',
+               processDetail: 'Sorting all employees by salary ascending to establish the window order for LEAD/LAG.',
+               outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Applying LAG function - getting previous salary values...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [0, 11, 10, 13],
+               processedRows: [],
+               processBox: 'LAG PROCESSING\nSMITH: LAG(sal) = NULL (first row)\nJAMES: LAG(sal) = 800 (SMITH\'s salary)\nADAMS: LAG(sal) = 950 (JAMES\'s salary)\nMILLER: LAG(sal) = 1100 (ADAMS\'s salary)',
+               processDetail: 'Applying LAG function to get previous row salary. First row has NULL since no previous row exists.',
+               outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'],
+               outputData: [
+                   { ename: 'SMITH', sal: 800, prev_sal: null, next_sal: null },
+                   { ename: 'JAMES', sal: 950, prev_sal: 800, next_sal: null },
+                   { ename: 'ADAMS', sal: 1100, prev_sal: 950, next_sal: null },
+                   { ename: 'MILLER', sal: 1300, prev_sal: 1100, next_sal: null }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Applying LEAD function - getting next salary values...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [0, 11, 10, 13, 2, 4, 9, 1, 6, 5, 3, 7, 12, 8],
+               processedRows: [],
+               processBox: 'LEAD PROCESSING\nSMITH: LEAD(sal) = 950 (JAMES\'s salary)\nJAMES: LEAD(sal) = 1100 (ADAMS\'s salary)\nADAMS: LEAD(sal) = 1300 (MILLER\'s salary)\n... continuing for all rows\nKING: LEAD(sal) = NULL (last row)',
+               processDetail: 'Applying LEAD function to get next row salary. Last row has NULL since no next row exists.',
+               outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'],
+               outputData: [
+                   { ename: 'SMITH', sal: 800, prev_sal: null, next_sal: 950 },
+				   { ename: 'JAMES', sal: 950, prev_sal: 800, next_sal: 1100 },
+                   { ename: 'ADAMS', sal: 1100, prev_sal: 950, next_sal: 1250 },
+                   { ename: 'WARD', sal: 1250, prev_sal: 1100, next_sal: 1250 },
+                   { ename: 'MARTIN', sal: 1250, prev_sal: 1250, next_sal: 1300 },
+                   { ename: 'MILLER', sal: 1300, prev_sal: 1250, next_sal: 1500 },
+                   { ename: 'TURNER', sal: 1500, prev_sal: 1300, next_sal: 1600 },
+                   { ename: 'ALLEN', sal: 1600, prev_sal: 1500, next_sal: 2450 },
+                   { ename: 'CLARK', sal: 2450, prev_sal: 1600, next_sal: 2850 },
+                   { ename: 'BLAKE', sal: 2850, prev_sal: 2450, next_sal: 2975 },
+                   { ename: 'JONES', sal: 2975, prev_sal: 2850, next_sal: 3000 },
+                   { ename: 'SCOTT', sal: 3000, prev_sal: 2975, next_sal: 3000 },
+                   { ename: 'FORD', sal: 3000, prev_sal: 3000, next_sal: 5000 },
+                   { ename: 'KING', sal: 5000, prev_sal: 3000, next_sal: null }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'LEAD/LAG functions complete - previous and next values calculated',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'LEAD/LAG COMPLETE\nLAG: accesses previous row\nLEAD: accesses next row\nFIRST ROW: LAG = NULL\nLAST ROW: LEAD = NULL\nUSEFUL: for trend analysis',
+               processDetail: 'LEAD/LAG functions complete. Each employee now has their previous and next salary values for comparison.',
+               outputColumns: ['ename', 'sal', 'prev_sal', 'next_sal'],
+               outputData: [
+                   { ename: 'SMITH', sal: 800, prev_sal: null, next_sal: 950 },
+                   { ename: 'JAMES', sal: 950, prev_sal: 800, next_sal: 1100 },
+                   { ename: 'ADAMS', sal: 1100, prev_sal: 950, next_sal: 1250 },
+                   { ename: 'WARD', sal: 1250, prev_sal: 1100, next_sal: 1250 },
+                   { ename: 'MARTIN', sal: 1250, prev_sal: 1250, next_sal: 1300 },
+                   { ename: 'MILLER', sal: 1300, prev_sal: 1250, next_sal: 1500 },
+                   { ename: 'TURNER', sal: 1500, prev_sal: 1300, next_sal: 1600 },
+                   { ename: 'ALLEN', sal: 1600, prev_sal: 1500, next_sal: 2450 },
+                   { ename: 'CLARK', sal: 2450, prev_sal: 1600, next_sal: 2850 },
+                   { ename: 'BLAKE', sal: 2850, prev_sal: 2450, next_sal: 2975 },
+                   { ename: 'JONES', sal: 2975, prev_sal: 2850, next_sal: 3000 },
+                   { ename: 'SCOTT', sal: 3000, prev_sal: 2975, next_sal: 3000 },
+                   { ename: 'FORD', sal: 3000, prev_sal: 3000, next_sal: 5000 },
+                   { ename: 'KING', sal: 5000, prev_sal: 3000, next_sal: null }
+               ]
+           }
+       ]
+   },
+
+   'FIRST_VALUE': {
+       query: 'SELECT ename, sal, FIRST_VALUE(ename) OVER (ORDER BY sal DESC) as highest_earner FROM emp ORDER BY sal DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing FIRST_VALUE window function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'FIRST_VALUE PARSER\nFUNCTION: FIRST_VALUE(ename)\nWINDOW: ORDER BY sal DESC\nRETURNS: first value in ordered window\nSAME FOR ALL: highest earner name',
+               processDetail: 'FIRST_VALUE returns the first value in the ordered window frame.',
+               outputColumns: ['ename', 'sal', 'highest_earner'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Establishing window order by salary descending...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6, 1, 9, 13],
+               processedRows: [],
+               processBox: 'WINDOW ORDERING\nKING: 5000 (first in window)\nSCOTT: 3000\nFORD: 3000\nJONES: 2975\nBLAKE: 2850\n... descending salary order',
+               processDetail: 'Establishing window order by salary descending. KING with highest salary becomes first value.',
+               outputColumns: ['ename', 'sal', 'highest_earner'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Applying FIRST_VALUE to all rows...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6, 1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [],
+               processBox: 'FIRST_VALUE APPLICATION\nKING: FIRST_VALUE = KING\nSCOTT: FIRST_VALUE = KING\nFORD: FIRST_VALUE = KING\n... all rows get same value\nFIRST VALUE: always KING',
+               processDetail: 'Applying FIRST_VALUE to all rows. Every row gets the same result - KING (the highest earner).',
+               outputColumns: ['ename', 'sal', 'highest_earner'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, highest_earner: 'KING' },
+                   { ename: 'SCOTT', sal: 3000, highest_earner: 'KING' },
+                   { ename: 'FORD', sal: 3000, highest_earner: 'KING' },
+                   { ename: 'JONES', sal: 2975, highest_earner: 'KING' },
+                   { ename: 'BLAKE', sal: 2850, highest_earner: 'KING' },
+                   { ename: 'CLARK', sal: 2450, highest_earner: 'KING' },
+                   { ename: 'ALLEN', sal: 1600, highest_earner: 'KING' },
+                   { ename: 'TURNER', sal: 1500, highest_earner: 'KING' },
+                   { ename: 'MILLER', sal: 1300, highest_earner: 'KING' },
+                   { ename: 'WARD', sal: 1250, highest_earner: 'KING' },
+                   { ename: 'MARTIN', sal: 1250, highest_earner: 'KING' },
+                   { ename: 'ADAMS', sal: 1100, highest_earner: 'KING' },
+                   { ename: 'JAMES', sal: 950, highest_earner: 'KING' },
+                   { ename: 'SMITH', sal: 800, highest_earner: 'KING' }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'FIRST_VALUE function complete - highest earner identified for all rows',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'FIRST_VALUE COMPLETE\nHIGHEST EARNER: KING (5000)\nSAME VALUE: for all 14 rows\nUSEFUL: for comparisons to top performer\nWINDOW FRAME: unbounded preceding',
+               processDetail: 'FIRST_VALUE complete. All employees now have reference to the highest earner (KING) for comparison purposes.',
+               outputColumns: ['ename', 'sal', 'highest_earner'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, highest_earner: 'KING' },
+                   { ename: 'SCOTT', sal: 3000, highest_earner: 'KING' },
+                   { ename: 'FORD', sal: 3000, highest_earner: 'KING' },
+                   { ename: 'JONES', sal: 2975, highest_earner: 'KING' },
+                   { ename: 'BLAKE', sal: 2850, highest_earner: 'KING' },
+                   { ename: 'CLARK', sal: 2450, highest_earner: 'KING' },
+                   { ename: 'ALLEN', sal: 1600, highest_earner: 'KING' },
+                   { ename: 'TURNER', sal: 1500, highest_earner: 'KING' },
+                   { ename: 'MILLER', sal: 1300, highest_earner: 'KING' },
+                   { ename: 'WARD', sal: 1250, highest_earner: 'KING' },
+                   { ename: 'MARTIN', sal: 1250, highest_earner: 'KING' },
+                   { ename: 'ADAMS', sal: 1100, highest_earner: 'KING' },
+                   { ename: 'JAMES', sal: 950, highest_earner: 'KING' },
+                   { ename: 'SMITH', sal: 800, highest_earner: 'KING' }
+               ]
+           }
+       ]
+   },
+
+   'LAST_VALUE': {
+       query: 'SELECT ename, sal, LAST_VALUE(ename) OVER (ORDER BY sal DESC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as lowest_earner FROM emp ORDER BY sal DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing LAST_VALUE window function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'LAST_VALUE PARSER\nFUNCTION: LAST_VALUE(ename)\nWINDOW: ORDER BY sal DESC\nFRAME: UNBOUNDED PRECEDING AND FOLLOWING\nRETURNS: last value in full window',
+               processDetail: 'LAST_VALUE returns the last value in the window frame. Frame clause ensures we see the full window.',
+               outputColumns: ['ename', 'sal', 'lowest_earner'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Establishing full window frame...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6, 1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [],
+               processBox: 'FULL WINDOW FRAME\nFIRST: KING (5000)\nLAST: SMITH (800)\nFRAME: includes all rows\nUNBOUNDED: from first to last row\nWINDOW SIZE: 14 employees',
+               processDetail: 'Establishing full window frame from highest to lowest earner. SMITH with lowest salary is last value.',
+               outputColumns: ['ename', 'sal', 'lowest_earner'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Applying LAST_VALUE to all rows...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6, 1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [],
+               processBox: 'LAST_VALUE APPLICATION\nKING: LAST_VALUE = SMITH\nSCOTT: LAST_VALUE = SMITH\nFORD: LAST_VALUE = SMITH\n... all rows get same value\nLAST VALUE: always SMITH',
+               processDetail: 'Applying LAST_VALUE to all rows. Every row gets SMITH (the lowest earner) due to full window frame.',
+               outputColumns: ['ename', 'sal', 'lowest_earner'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, lowest_earner: 'SMITH' },
+                   { ename: 'SCOTT', sal: 3000, lowest_earner: 'SMITH' },
+                   { ename: 'FORD', sal: 3000, lowest_earner: 'SMITH' },
+                   { ename: 'JONES', sal: 2975, lowest_earner: 'SMITH' },
+                   { ename: 'BLAKE', sal: 2850, lowest_earner: 'SMITH' },
+                   { ename: 'CLARK', sal: 2450, lowest_earner: 'SMITH' },
+                   { ename: 'ALLEN', sal: 1600, lowest_earner: 'SMITH' },
+                   { ename: 'TURNER', sal: 1500, lowest_earner: 'SMITH' },
+                   { ename: 'MILLER', sal: 1300, lowest_earner: 'SMITH' },
+                   { ename: 'WARD', sal: 1250, lowest_earner: 'SMITH' },
+                   { ename: 'MARTIN', sal: 1250, lowest_earner: 'SMITH' },
+                   { ename: 'ADAMS', sal: 1100, lowest_earner: 'SMITH' },
+                   { ename: 'JAMES', sal: 950, lowest_earner: 'SMITH' },
+                   { ename: 'SMITH', sal: 800, lowest_earner: 'SMITH' }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'LAST_VALUE function complete - lowest earner identified for all rows',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'LAST_VALUE COMPLETE\nLOWEST EARNER: SMITH (800)\nSAME VALUE: for all 14 rows\nFRAME CLAUSE: essential for correct result\nUSEFUL: for min/max comparisons',
+               processDetail: 'LAST_VALUE complete. All employees now have reference to the lowest earner (SMITH) for comparison.',
+               outputColumns: ['ename', 'sal', 'lowest_earner'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, lowest_earner: 'SMITH' },
+                   { ename: 'SCOTT', sal: 3000, lowest_earner: 'SMITH' },
+                   { ename: 'FORD', sal: 3000, lowest_earner: 'SMITH' },
+                   { ename: 'JONES', sal: 2975, lowest_earner: 'SMITH' },
+                   { ename: 'BLAKE', sal: 2850, lowest_earner: 'SMITH' },
+                   { ename: 'CLARK', sal: 2450, lowest_earner: 'SMITH' },
+                   { ename: 'ALLEN', sal: 1600, lowest_earner: 'SMITH' },
+                   { ename: 'TURNER', sal: 1500, lowest_earner: 'SMITH' },
+                   { ename: 'MILLER', sal: 1300, lowest_earner: 'SMITH' },
+                   { ename: 'WARD', sal: 1250, lowest_earner: 'SMITH' },
+                   { ename: 'MARTIN', sal: 1250, lowest_earner: 'SMITH' },
+                   { ename: 'ADAMS', sal: 1100, lowest_earner: 'SMITH' },
+                   { ename: 'JAMES', sal: 950, lowest_earner: 'SMITH' },
+                   { ename: 'SMITH', sal: 800, lowest_earner: 'SMITH' }
+               ]
+           }
+       ]
+   },
+
+   'NTILE': {
+       query: 'SELECT ename, sal, NTILE(4) OVER (ORDER BY sal DESC) as quartile FROM emp ORDER BY sal DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing NTILE window function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'NTILE PARSER\nFUNCTION: NTILE(4)\nDIVIDES: data into 4 groups\nORDER BY: sal DESC\nQUARTILE: 1=highest, 4=lowest',
+               processDetail: 'NTILE divides ordered data into specified number of roughly equal groups.',
+               outputColumns: ['ename', 'sal', 'quartile'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Dividing 14 employees into 4 quartiles...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6, 1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [],
+               processBox: 'QUARTILE CALCULATION\nTOTAL EMPLOYEES: 14\nQUARTILE SIZE: 14÷4 = 3.5\nQ1: 4 employees (positions 1-4)\nQ2: 4 employees (positions 5-8)\nQ3: 3 employees (positions 9-11)\nQ4: 3 employees (positions 12-14)',
+               processDetail: 'Calculating quartile sizes. With 14 employees, first two quartiles get 4 members, last two get 3.',
+               outputColumns: ['ename', 'sal', 'quartile'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Assigning quartile numbers to employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [8, 7, 12, 3, 5, 6, 1, 9, 13, 2, 4, 10, 11, 0],
+               processedRows: [],
+               processBox: 'QUARTILE ASSIGNMENT\nQ1 (TOP): KING, SCOTT, FORD, JONES\nQ2 (HIGH): BLAKE, CLARK, ALLEN, TURNER\nQ3 (LOW): MILLER, WARD, MARTIN\nQ4 (BOTTOM): ADAMS, JAMES, SMITH',
+               processDetail: 'Assigning quartile numbers based on salary ranking. Top earners in Q1, lowest in Q4.',
+               outputColumns: ['ename', 'sal', 'quartile'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, quartile: 1 },
+                   { ename: 'SCOTT', sal: 3000, quartile: 1 },
+                   { ename: 'FORD', sal: 3000, quartile: 1 },
+                   { ename: 'JONES', sal: 2975, quartile: 1 },
+                   { ename: 'BLAKE', sal: 2850, quartile: 2 },
+                   { ename: 'CLARK', sal: 2450, quartile: 2 },
+                   { ename: 'ALLEN', sal: 1600, quartile: 2 },
+                   { ename: 'TURNER', sal: 1500, quartile: 2 },
+                   { ename: 'MILLER', sal: 1300, quartile: 3 },
+                   { ename: 'WARD', sal: 1250, quartile: 3 },
+                   { ename: 'MARTIN', sal: 1250, quartile: 3 },
+                   { ename: 'ADAMS', sal: 1100, quartile: 4 },
+                   { ename: 'JAMES', sal: 950, quartile: 4 },
+                   { ename: 'SMITH', sal: 800, quartile: 4 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'NTILE function complete - employees divided into salary quartiles',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'NTILE COMPLETE\nQUARTILE 1: 4 employees (top 25%)\nQUARTILE 2: 4 employees\nQUARTILE 3: 3 employees\nQUARTILE 4: 3 employees (bottom 25%)\nBALANCED DISTRIBUTION',
+               processDetail: 'NTILE complete. Employees successfully divided into 4 salary quartiles for performance analysis.',
+               outputColumns: ['ename', 'sal', 'quartile'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, quartile: 1 },
+                   { ename: 'SCOTT', sal: 3000, quartile: 1 },
+                   { ename: 'FORD', sal: 3000, quartile: 1 },
+                   { ename: 'JONES', sal: 2975, quartile: 1 },
+                   { ename: 'BLAKE', sal: 2850, quartile: 2 },
+                   { ename: 'CLARK', sal: 2450, quartile: 2 },
+                   { ename: 'ALLEN', sal: 1600, quartile: 2 },
+                   { ename: 'TURNER', sal: 1500, quartile: 2 },
+                   { ename: 'MILLER', sal: 1300, quartile: 3 },
+                   { ename: 'WARD', sal: 1250, quartile: 3 },
+                   { ename: 'MARTIN', sal: 1250, quartile: 3 },
+                   { ename: 'ADAMS', sal: 1100, quartile: 4 },
+                   { ename: 'JAMES', sal: 950, quartile: 4 },
+                   { ename: 'SMITH', sal: 800, quartile: 4 }
+               ]
+           }
+       ]
+   },
+
+   'ROWNUM': {
+       query: 'SELECT ROWNUM, ename, sal FROM emp WHERE ROWNUM <= 5 ORDER BY sal DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing ROWNUM pseudo-column...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'ROWNUM PARSER\nPSEUDO-COLUMN: assigned during processing\nFILTER: ROWNUM <= 5\nLIMITS: to first 5 rows\nORDER BY: applied after ROWNUM',
+               processDetail: 'ROWNUM is assigned as Oracle processes rows, before ORDER BY is applied.',
+               outputColumns: ['rownum', 'ename', 'sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Processing rows and assigning ROWNUM values...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [0, 1, 2, 3, 4],
+               processedRows: [],
+               processBox: 'ROWNUM ASSIGNMENT\nSMITH: ROWNUM = 1\nALLEN: ROWNUM = 2\nWARD: ROWNUM = 3\nJONES: ROWNUM = 4\nMARTIN: ROWNUM = 5\nROWNUM <= 5: all qualify',
+               processDetail: 'Assigning ROWNUM as rows are processed. First 5 rows get ROWNUM 1-5 and qualify for the filter.',
+               outputColumns: ['rownum', 'ename', 'sal'],
+               outputData: [
+                   { rownum: 1, ename: 'SMITH', sal: 800 },
+                   { rownum: 2, ename: 'ALLEN', sal: 1600 },
+                   { rownum: 3, ename: 'WARD', sal: 1250 },
+                   { rownum: 4, ename: 'JONES', sal: 2975 },
+                   { rownum: 5, ename: 'MARTIN', sal: 1250 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Applying ORDER BY to selected rows...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [3, 1, 2, 4, 0],
+               processedRows: [],
+               processBox: 'POST-ROWNUM SORTING\nORDER BY: sal DESC\nJONES: sal=2975 → first\nALLEN: sal=1600 → second\nWARD: sal=1250 → third\nMARTIN: sal=1250 → fourth\nSMITH: sal=800 → last',
+               processDetail: 'Applying ORDER BY to the 5 selected rows. ROWNUM values stay with their original rows.',
+               outputColumns: ['rownum', 'ename', 'sal'],
+               outputData: [
+                   { rownum: 4, ename: 'JONES', sal: 2975 },
+                   { rownum: 2, ename: 'ALLEN', sal: 1600 },
+                   { rownum: 3, ename: 'WARD', sal: 1250 },
+                   { rownum: 5, ename: 'MARTIN', sal: 1250 },
+                   { rownum: 1, ename: 'SMITH', sal: 800 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'ROWNUM operation complete - first 5 rows selected and sorted',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4],
+               processBox: 'ROWNUM COMPLETE\nSELECTED: first 5 rows by position\nROWNUM: preserves original order\nORDER BY: sorts after selection\nUSEFUL: for pagination, top-N queries',
+               processDetail: 'ROWNUM complete. Selected first 5 employees by processing order, then sorted by salary.',
+               outputColumns: ['rownum', 'ename', 'sal'],
+               outputData: [
+                   { rownum: 4, ename: 'JONES', sal: 2975 },
+                   { rownum: 2, ename: 'ALLEN', sal: 1600 },
+                   { rownum: 3, ename: 'WARD', sal: 1250 },
+                   { rownum: 5, ename: 'MARTIN', sal: 1250 },
+                   { rownum: 1, ename: 'SMITH', sal: 800 }
+               ]
+           }
+       ]
+   },
+
+   'ROWID': {
+       query: 'SELECT ROWID, ename, sal FROM emp WHERE ROWNUM <= 3;',
+       totalSteps: 3,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing ROWID pseudo-column...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'ROWID PARSER\nPSEUDO-COLUMN: physical row identifier\nUNIQUE: for each row in database\nFORMAT: base64 encoded address\nLIMIT: first 3 rows',
+               processDetail: 'ROWID uniquely identifies the physical location of each row in the database.',
+               outputColumns: ['rowid', 'ename', 'sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Generating ROWID values for first 3 employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [0, 1, 2],
+               processedRows: [],
+               processBox: 'ROWID GENERATION\nSMITH: ROWID = AAAEuZAAHAAAAGZAAA\nALLEN: ROWID = AAAEuZAAHAAAAGZAAB\nWARD: ROWID = AAAEuZAAHAAAAGZAAC\nUNIQUE PHYSICAL ADDRESSES',
+               processDetail: 'Generating ROWID values - unique physical addresses for each row in the database.',
+               outputColumns: ['rowid', 'ename', 'sal'],
+               outputData: [
+                   { rowid: 'AAAEuZAAHAAAAGZAAA', ename: 'SMITH', sal: 800 },
+                   { rowid: 'AAAEuZAAHAAAAGZAAB', ename: 'ALLEN', sal: 1600 },
+                   { rowid: 'AAAEuZAAHAAAAGZAAC', ename: 'WARD', sal: 1250 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'ROWID operation complete - physical row addresses retrieved',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2],
+               processBox: 'ROWID COMPLETE\nPHYSICAL ADDRESSES: retrieved\nFORMAT: base64 encoded\nUSES: direct row access, debugging\nFAST ACCESS: bypasses index scans',
+               processDetail: 'ROWID complete. Physical row addresses retrieved for direct database access.',
+               outputColumns: ['rowid', 'ename', 'sal'],
+               outputData: [
+                   { rowid: 'AAAEuZAAHAAAAGZAAA', ename: 'SMITH', sal: 800 },
+                   { rowid: 'AAAEuZAAHAAAAGZAAB', ename: 'ALLEN', sal: 1600 },
+                   { rowid: 'AAAEuZAAHAAAAGZAAC', ename: 'WARD', sal: 1250 }
+               ]
+           }
+       ]
+   },
+
+   'START_WITH': {
+       query: 'SELECT ename, empno, mgr FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing START WITH clause...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'START WITH PARSER\nCONDITION: mgr IS NULL\nFINDS: root nodes (top-level employees)\nHIERARCHY: organizational structure\nBEGINS: tree traversal',
+               processDetail: 'START WITH identifies the root nodes of a hierarchical query - employees with no manager.',
+               outputColumns: ['ename', 'empno', 'mgr'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Finding root employees (no manager)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [8],
+               processedRows: [],
+               processBox: 'ROOT IDENTIFICATION\nSCANNING: mgr IS NULL\nFOUND: KING (empno=7839, mgr=NULL)\nROOT EMPLOYEE: company president\nHIERARCHY STARTS: from KING',
+               processDetail: 'Found root of organizational hierarchy: KING has no manager, making him the top of the tree.',
+               outputColumns: ['ename', 'empno', 'mgr'],
+               outputData: [
+                   { ename: 'KING', empno: 7839, mgr: null }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'CONNECT BY will continue from this root...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [8],
+               processBox: 'HIERARCHY FOUNDATION\nROOT ESTABLISHED: KING\nNEXT PHASE: CONNECT BY traversal\nWILL FIND: direct reports to KING\nTREE EXPANSION: level by level',
+               processDetail: 'START WITH complete. Hierarchy root established, ready for CONNECT BY to build the organizational tree.',
+               outputColumns: ['ename', 'empno', 'mgr'],
+               outputData: [
+                   { ename: 'KING', empno: 7839, mgr: null }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'START WITH complete - hierarchy root identified',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'START WITH COMPLETE\nROOT FOUND: KING (president)\nHIERARCHY BASE: established\nREADY FOR: CONNECT BY expansion\nORGANIZATIONAL TREE: rooted',
+               processDetail: 'START WITH complete. Organizational hierarchy rooted at KING, ready for full tree traversal.',
+               outputColumns: ['ename', 'empno', 'mgr'],
+               outputData: [
+                   { ename: 'KING', empno: 7839, mgr: null }
+               ]
+           }
+       ]
+   },
+
+   'LEVEL': {
+       query: 'SELECT LEVEL, ename, empno, mgr FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr ORDER BY LEVEL, ename;',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing LEVEL pseudo-column...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'LEVEL PARSER\nPSEUDO-COLUMN: hierarchy depth\nSTART WITH: mgr IS NULL (LEVEL 1)\nCONNECT BY: PRIOR empno = mgr\nNUMBERS: tree levels 1,2,3,4...',
+               processDetail: 'LEVEL shows the depth of each node in the hierarchical tree structure.',
+               outputColumns: ['level', 'ename', 'empno', 'mgr'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'LEVEL 1: Root level (KING - President)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [8],
+               processedRows: [],
+               processBox: 'LEVEL 1 PROCESSING\nKING: empno=7839, mgr=NULL\nLEVEL: 1 (root)\nROLE: PRESIDENT\nDIRECT REPORTS: will be LEVEL 2',
+               processDetail: 'Processing LEVEL 1: KING is at the root of the organizational hierarchy.',
+               outputColumns: ['level', 'ename', 'empno', 'mgr'],
+               outputData: [
+                   { level: 1, ename: 'KING', empno: 7839, mgr: null }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'LEVEL 2: Department managers reporting to KING...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [3, 5, 6],
+               processedRows: [8],
+               processBox: 'LEVEL 2 PROCESSING\nBLAKE: mgr=7839 → LEVEL 2\nCLARK: mgr=7839 → LEVEL 2\nJONES: mgr=7839 → LEVEL 2\nMANAGERS: reporting to KING',
+               processDetail: 'Processing LEVEL 2: Department managers BLAKE, CLARK, JONES all report to KING.',
+               outputColumns: ['level', 'ename', 'empno', 'mgr'],
+               outputData: [
+                   { level: 1, ename: 'KING', empno: 7839, mgr: null },
+                   { level: 2, ename: 'BLAKE', empno: 7698, mgr: 7839 },
+                   { level: 2, ename: 'CLARK', empno: 7782, mgr: 7839 },
+                   { level: 2, ename: 'JONES', empno: 7566, mgr: 7839 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'LEVEL 3: Employees reporting to department managers...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [1, 2, 4, 9, 11, 13, 7, 12],
+               processedRows: [3, 5, 6, 8],
+               processBox: 'LEVEL 3 PROCESSING\nALLEN, MARTIN, TURNER, WARD, JAMES: mgr=7698 (BLAKE)\nMILLER: mgr=7782 (CLARK)\nFORD, SCOTT: mgr=7566 (JONES)\nEMPLOYEES: under managers',
+               processDetail: 'Processing LEVEL 3: Various employees reporting to the department managers.',
+               outputColumns: ['level', 'ename', 'empno', 'mgr'],
+               outputData: [
+                   { level: 1, ename: 'KING', empno: 7839, mgr: null },
+                   { level: 2, ename: 'BLAKE', empno: 7698, mgr: 7839 },
+                   { level: 2, ename: 'CLARK', empno: 7782, mgr: 7839 },
+                   { level: 2, ename: 'JONES', empno: 7566, mgr: 7839 },
+                   { level: 3, ename: 'ALLEN', empno: 7499, mgr: 7698 },
+                   { level: 3, ename: 'FORD', empno: 7902, mgr: 7566 },
+                   { level: 3, ename: 'JAMES', empno: 7900, mgr: 7698 },
+                   { level: 3, ename: 'MARTIN', empno: 7654, mgr: 7698 },
+                   { level: 3, ename: 'MILLER', empno: 7934, mgr: 7782 },
+                   { level: 3, ename: 'SCOTT', empno: 7788, mgr: 7566 },
+                   { level: 3, ename: 'TURNER', empno: 7844, mgr: 7698 },
+                   { level: 3, ename: 'WARD', empno: 7521, mgr: 7698 }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'LEVEL hierarchy complete - 4 levels of organization',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'LEVEL COMPLETE\nLEVEL 1: 1 president\nLEVEL 2: 3 managers\nLEVEL 3: 8 employees\nLEVEL 4: 2 clerks\nORGANIZATION: 4 levels deep',
+               processDetail: 'LEVEL hierarchy complete. Organization has 4 levels from president down to entry-level employees.',
+               outputColumns: ['level', 'ename', 'empno', 'mgr'],
+               outputData: [
+                   { level: 1, ename: 'KING', empno: 7839, mgr: null },
+                   { level: 2, ename: 'BLAKE', empno: 7698, mgr: 7839 },
+                   { level: 2, ename: 'CLARK', empno: 7782, mgr: 7839 },
+                   { level: 2, ename: 'JONES', empno: 7566, mgr: 7839 },
+                   { level: 3, ename: 'ALLEN', empno: 7499, mgr: 7698 },
+                   { level: 3, ename: 'FORD', empno: 7902, mgr: 7566 },
+                   { level: 3, ename: 'JAMES', empno: 7900, mgr: 7698 },
+                   { level: 3, ename: 'MARTIN', empno: 7654, mgr: 7698 },
+                   { level: 3, ename: 'MILLER', empno: 7934, mgr: 7782 },
+                   { level: 3, ename: 'SCOTT', empno: 7788, mgr: 7566 },
+                   { level: 3, ename: 'TURNER', empno: 7844, mgr: 7698 },
+                   { level: 3, ename: 'WARD', empno: 7521, mgr: 7698 },
+                   { level: 4, ename: 'ADAMS', empno: 7876, mgr: 7788 },
+                   { level: 4, ename: 'SMITH', empno: 7369, mgr: 7902 }
+               ]
+           }
+       ]
+   },
+
+   'SYS_CONNECT_BY_PATH': {
+       query: 'SELECT SYS_CONNECT_BY_PATH(ename, \'/\') as hierarchy_path FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno = mgr;',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing SYS_CONNECT_BY_PATH function...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'SYS_CONNECT_BY_PATH PARSER\nFUNCTION: builds hierarchy paths\nPARAMETERS: (ename, \'/\')\nDELIMITER: forward slash\nSHOWS: full path from root',
+               processDetail: 'SYS_CONNECT_BY_PATH builds a string showing the complete path from root to current node.',
+               outputColumns: ['hierarchy_path'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Building path for root level (KING)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [8],
+               processedRows: [],
+               processBox: 'ROOT PATH BUILDING\nKING: root node\nPATH: /KING\nLEVEL 1: starts hierarchy\nNO PARENT: path begins here',
+               processDetail: 'Building hierarchy path for KING. As root node, path is simply /KING.',
+               outputColumns: ['hierarchy_path'],
+               outputData: [
+                   { hierarchy_path: '/KING' }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Building paths for level 2 managers...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [3, 5, 6],
+               processedRows: [8],
+               processBox: 'LEVEL 2 PATH BUILDING\nBLAKE: parent=KING → /KING/BLAKE\nCLARK: parent=KING → /KING/CLARK\nJONES: parent=KING → /KING/JONES\nMANAGER PATHS: extended from root',
+               processDetail: 'Building paths for department managers. Each path extends from KING to show reporting structure.',
+               outputColumns: ['hierarchy_path'],
+               outputData: [
+                   { hierarchy_path: '/KING' },
+                   { hierarchy_path: '/KING/BLAKE' },
+                   { hierarchy_path: '/KING/CLARK' },
+                   { hierarchy_path: '/KING/JONES' }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Building paths for level 3 employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [1, 2, 4, 9, 11, 13, 7, 12],
+               processedRows: [3, 5, 6, 8],
+               processBox: 'LEVEL 3 PATH BUILDING\nALLEN: /KING/BLAKE/ALLEN\nWARD: /KING/BLAKE/WARD\nSCOTT: /KING/JONES/SCOTT\nFORD: /KING/JONES/FORD\nMILLER: /KING/CLARK/MILLER\n... full lineage paths',
+               processDetail: 'Building paths for level 3 employees. Each path shows complete management lineage.',
+               outputColumns: ['hierarchy_path'],
+               outputData: [
+                   { hierarchy_path: '/KING' },
+                   { hierarchy_path: '/KING/BLAKE' },
+                   { hierarchy_path: '/KING/BLAKE/ALLEN' },
+                   { hierarchy_path: '/KING/BLAKE/JAMES' },
+                   { hierarchy_path: '/KING/BLAKE/MARTIN' },
+                   { hierarchy_path: '/KING/BLAKE/TURNER' },
+                   { hierarchy_path: '/KING/BLAKE/WARD' },
+                   { hierarchy_path: '/KING/CLARK' },
+                   { hierarchy_path: '/KING/CLARK/MILLER' },
+                   { hierarchy_path: '/KING/JONES' },
+                   { hierarchy_path: '/KING/JONES/FORD' },
+                   { hierarchy_path: '/KING/JONES/SCOTT' }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'SYS_CONNECT_BY_PATH complete - full hierarchy paths built',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['ename', 'empno', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'PATH BUILDING COMPLETE\nROOT: /KING\nLONGEST PATH: /KING/JONES/SCOTT/ADAMS\nSHORTEST PATH: /KING\nSHOWS: complete org structure\nUSEFUL: for hierarchy analysis',
+               processDetail: 'SYS_CONNECT_BY_PATH complete. All employees have complete hierarchy paths showing their management lineage.',
+               outputColumns: ['hierarchy_path'],
+               outputData: [
+                   { hierarchy_path: '/KING' },
+                   { hierarchy_path: '/KING/BLAKE' },
+                   { hierarchy_path: '/KING/BLAKE/ALLEN' },
+                   { hierarchy_path: '/KING/BLAKE/JAMES' },
+                   { hierarchy_path: '/KING/BLAKE/MARTIN' },
+                   { hierarchy_path: '/KING/BLAKE/TURNER' },
+                   { hierarchy_path: '/KING/BLAKE/WARD' },
+                   { hierarchy_path: '/KING/CLARK' },
+                   { hierarchy_path: '/KING/CLARK/MILLER' },
+                   { hierarchy_path: '/KING/JONES' },
+                   { hierarchy_path: '/KING/JONES/FORD' },
+                   { hierarchy_path: '/KING/JONES/FORD/SMITH' },
+                   { hierarchy_path: '/KING/JONES/SCOTT' },
+                   { hierarchy_path: '/KING/JONES/SCOTT/ADAMS' }
+               ]
+           }
+       ]
+   },
+
+   'CTE': {
+       query: 'WITH high_earners AS (SELECT * FROM emp WHERE sal > 2000) SELECT ename, sal, job FROM high_earners ORDER BY sal DESC;',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing Common Table Expression (CTE)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'CTE PARSER\nCTE NAME: high_earners\nCTE QUERY: sal > 2000\nMAIN QUERY: uses CTE as table\nTEMPORARY: result set in memory',
+               processDetail: 'CTE creates a temporary named result set that can be referenced in the main query.',
+               outputColumns: ['ename', 'sal', 'job'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Phase 1: Executing CTE subquery (high_earners)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal'] }],
+               currentProcessing: [3, 5, 6, 7, 8, 12],
+               processedRows: [],
+               processBox: 'CTE EXECUTION\nFILTERING: sal > 2000\nJONES: sal=2975 ✓\nBLAKE: sal=2850 ✓\nCLARK: sal=2450 ✓\nSCOTT: sal=3000 ✓\nKING: sal=5000 ✓\nFORD: sal=3000 ✓\nCTE RESULT: 6 employees',
+               processDetail: 'Executing CTE subquery to find employees earning more than 2000. Found 6 high earners.',
+               outputColumns: ['ename', 'sal', 'job'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Phase 2: CTE result set created in memory...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [3, 5, 6, 7, 8, 12],
+               processBox: 'CTE MATERIALIZATION\nhigh_earners TABLE:\nJONES: 2975, MANAGER\nBLAKE: 2850, MANAGER\nCLARK: 2450, MANAGER\nSCOTT: 3000, ANALYST\nKING: 5000, PRESIDENT\nFORD: 3000, ANALYST\nTEMPORARY: exists for this query',
+               processDetail: 'CTE result set materialized in memory as temporary table "high_earners" containing 6 employees.',
+               outputColumns: ['ename', 'sal', 'job'],
+               outputData: []
+           },
+           {
+               stepNum: 3,
+               text: 'Phase 3: Executing main query against CTE...',
+               inputTables: [{ name: 'HIGH_EARNERS (CTE)', data: emp.filter(e => e.sal > 2000), columns: ['ename', 'sal', 'job'] }],
+               currentProcessing: [0, 1, 2, 3, 4, 5],
+               processedRows: [],
+               processBox: 'MAIN QUERY EXECUTION\nSELECT: ename, sal, job\nFROM: high_earners (CTE)\nORDER BY: sal DESC\nSOURCE: temporary CTE result\nFINAL SORTING: by salary',
+               processDetail: 'Executing main query against the CTE. Selecting columns and sorting by salary descending.',
+               outputColumns: ['ename', 'sal', 'job'],
+               outputData: [
+                   { ename: 'KING', sal: 5000, job: 'PRESIDENT' },
+                   { ename: 'SCOTT', sal: 3000, job: 'ANALYST' },
+                   { ename: 'FORD', sal: 3000, job: 'ANALYST' },
+                   { ename: 'JONES', sal: 2975, job: 'MANAGER' },
+                   { ename: 'BLAKE', sal: 2850, job: 'MANAGER' },
+                   { ename: 'CLARK', sal: 2450, job: 'MANAGER' }
+               ]
+           }
+       ]
+   },
+
+   'RECURSIVE_CTE': {
+       query: 'WITH RECURSIVE emp_hierarchy AS (SELECT empno, ename, mgr, 1 as level FROM emp WHERE mgr IS NULL UNION ALL SELECT e.empno, e.ename, e.mgr, h.level + 1 FROM emp e JOIN emp_hierarchy h ON e.mgr = h.empno) SELECT * FROM emp_hierarchy ORDER BY level, ename;',
+       totalSteps: 6,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing RECURSIVE CTE...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'RECURSIVE CTE PARSER\nCTE NAME: emp_hierarchy\nANCHOR: mgr IS NULL (root)\nRECURSIVE: join with self\nITERATIVE: builds hierarchy levels\nTERMINATES: when no more matches',
+               processDetail: 'Recursive CTE builds hierarchy iteratively, starting with root and adding levels until complete.',
+               outputColumns: ['empno', 'ename', 'mgr', 'level'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Iteration 1: Anchor query - finding root employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }],
+               currentProcessing: [8],
+               processedRows: [],
+               processBox: 'ANCHOR QUERY\nFINDING: mgr IS NULL\nFOUND: KING (empno=7839)\nLEVEL: 1 (assigned)\nFIRST ITERATION: complete\nNEXT: find level 2',
+               processDetail: 'Anchor query finds root employees (no manager). KING found at level 1.',
+               outputColumns: ['empno', 'ename', 'mgr', 'level'],
+               outputData: [
+                   { empno: 7839, ename: 'KING', mgr: null, level: 1 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Iteration 2: Recursive query - finding level 2 employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }],
+               currentProcessing: [3, 5, 6],
+               processedRows: [8],
+               processBox: 'RECURSIVE ITERATION 2\nJOIN: e.mgr = h.empno (7839)\nFOUND: JONES, BLAKE, CLARK\nLEVEL: 2 (h.level + 1)\nMANAGERS: reporting to KING\nCONTINUE: recursion',
+               processDetail: 'Recursive iteration finds employees reporting to level 1. Found 3 managers at level 2.',
+               outputColumns: ['empno', 'ename', 'mgr', 'level'],
+               outputData: [
+                   { empno: 7839, ename: 'KING', mgr: null, level: 1 },
+                   { empno: 7566, ename: 'JONES', mgr: 7839, level: 2 },
+                   { empno: 7698, ename: 'BLAKE', mgr: 7839, level: 2 },
+                   { empno: 7782, ename: 'CLARK', mgr: 7839, level: 2 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Iteration 3: Finding level 3 employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }],
+               currentProcessing: [1, 2, 4, 9, 11, 13, 7, 12],
+               processedRows: [3, 5, 6, 8],
+               processBox: 'RECURSIVE ITERATION 3\nJOIN: with level 2 managers\nFOUND: 8 employees\nBLAKE reports: 5 employees\nJONES reports: 2 employees\nCLARK reports: 1 employee\nLEVEL: 3 assigned',
+               processDetail: 'Iteration 3 finds employees reporting to level 2 managers. Found 8 employees at level 3.',
+               outputColumns: ['empno', 'ename', 'mgr', 'level'],
+               outputData: [
+                   { empno: 7839, ename: 'KING', mgr: null, level: 1 },
+                   { empno: 7566, ename: 'JONES', mgr: 7839, level: 2 },
+                   { empno: 7698, ename: 'BLAKE', mgr: 7839, level: 2 },
+                   { empno: 7782, ename: 'CLARK', mgr: 7839, level: 2 },
+                   { empno: 7499, ename: 'ALLEN', mgr: 7698, level: 3 },
+                   { empno: 7900, ename: 'JAMES', mgr: 7698, level: 3 },
+                   { empno: 7654, ename: 'MARTIN', mgr: 7698, level: 3 },
+                   { empno: 7934, ename: 'MILLER', mgr: 7782, level: 3 },
+                   { empno: 7788, ename: 'SCOTT', mgr: 7566, level: 3 },
+                   { empno: 7844, ename: 'TURNER', mgr: 7698, level: 3 },
+                   { empno: 7521, ename: 'WARD', mgr: 7698, level: 3 },
+                   { empno: 7902, ename: 'FORD', mgr: 7566, level: 3 }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'Iteration 4: Finding level 4 employees...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }],
+               currentProcessing: [0, 10],
+               processedRows: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13],
+               processBox: 'RECURSIVE ITERATION 4\nJOIN: with level 3 employees\nFOUND: 2 employees\nSCOTT reports: ADAMS\nFORD reports: SMITH\nLEVEL: 4 (deepest)\nFINAL LEVEL: reached',
+               processDetail: 'Final iteration finds employees reporting to level 3. Found 2 clerks at level 4.',
+               outputColumns: ['empno', 'ename', 'mgr', 'level'],
+               outputData: [
+                   { empno: 7839, ename: 'KING', mgr: null, level: 1 },
+                   { empno: 7566, ename: 'JONES', mgr: 7839, level: 2 },
+                   { empno: 7698, ename: 'BLAKE', mgr: 7839, level: 2 },
+                   { empno: 7782, ename: 'CLARK', mgr: 7839, level: 2 },
+                   { empno: 7499, ename: 'ALLEN', mgr: 7698, level: 3 },
+                   { empno: 7902, ename: 'FORD', mgr: 7566, level: 3 },
+                   { empno: 7900, ename: 'JAMES', mgr: 7698, level: 3 },
+                   { empno: 7654, ename: 'MARTIN', mgr: 7698, level: 3 },
+                   { empno: 7934, ename: 'MILLER', mgr: 7782, level: 3 },
+                   { empno: 7788, ename: 'SCOTT', mgr: 7566, level: 3 },
+                   { empno: 7844, ename: 'TURNER', mgr: 7698, level: 3 },
+                   { empno: 7521, ename: 'WARD', mgr: 7698, level: 3 },
+                   { empno: 7876, ename: 'ADAMS', mgr: 7788, level: 4 },
+                   { empno: 7369, ename: 'SMITH', mgr: 7902, level: 4 }
+               ]
+           },
+           {
+               stepNum: 5,
+               text: 'RECURSIVE CTE complete - full hierarchy built iteratively',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'mgr'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'RECURSIVE CTE COMPLETE\nITERATIONS: 4 total\nLEVEL 1: 1 president\nLEVEL 2: 3 managers\nLEVEL 3: 8 employees\nLEVEL 4: 2 clerks\nTERMINATED: no more children',
+               processDetail: 'Recursive CTE complete. Built complete organizational hierarchy in 4 iterations, terminating when no more children found.',
+               outputColumns: ['empno', 'ename', 'mgr', 'level'],
+               outputData: [
+                   { empno: 7839, ename: 'KING', mgr: null, level: 1 },
+                   { empno: 7698, ename: 'BLAKE', mgr: 7839, level: 2 },
+                   { empno: 7782, ename: 'CLARK', mgr: 7839, level: 2 },
+                   { empno: 7566, ename: 'JONES', mgr: 7839, level: 2 },
+                   { empno: 7499, ename: 'ALLEN', mgr: 7698, level: 3 },
+                   { empno: 7902, ename: 'FORD', mgr: 7566, level: 3 },
+                   { empno: 7900, ename: 'JAMES', mgr: 7698, level: 3 },
+                   { empno: 7654, ename: 'MARTIN', mgr: 7698, level: 3 },
+                   { empno: 7934, ename: 'MILLER', mgr: 7782, level: 3 },
+                   { empno: 7788, ename: 'SCOTT', mgr: 7566, level: 3 },
+                   { empno: 7844, ename: 'TURNER', mgr: 7698, level: 3 },
+                   { empno: 7521, ename: 'WARD', mgr: 7698, level: 3 },
+                   { empno: 7876, ename: 'ADAMS', mgr: 7788, level: 4 },
+                   { empno: 7369, ename: 'SMITH', mgr: 7902, level: 4 }
+               ]
+           }
+       ]
+   },
+
+   'PIVOT': {
+       query: 'SELECT * FROM (SELECT deptno, job, sal FROM emp) PIVOT (SUM(sal) FOR job IN (\'CLERK\' as clerk, \'SALESMAN\' as salesman, \'MANAGER\' as manager));',
+       totalSteps: 5,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing PIVOT operation...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'PIVOT PARSER\nSOURCE: deptno, job, sal\nAGGREGATE: SUM(sal)\nPIVOT COLUMN: job\nTARGET VALUES: CLERK, SALESMAN, MANAGER\nTRANSFORM: rows to columns',
+               processDetail: 'PIVOT transforms rows into columns by rotating job values into column headers.',
+               outputColumns: ['deptno', 'clerk', 'salesman', 'manager'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Identifying pivot values and grouping data...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [],
+               processBox: 'PIVOT ANALYSIS\nGROUP BY: deptno\nPIVOT VALUES FOUND:\n- CLERK in depts 10,20,30\n- SALESMAN in dept 30\n- MANAGER in depts 10,20,30\nOTHER JOBS: excluded from pivot',
+               processDetail: 'Analyzing data to identify which departments have each job type. Will aggregate salaries by department and job.',
+               outputColumns: ['deptno', 'clerk', 'salesman', 'manager'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Processing DEPT 10 - aggregating by job type...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }],
+               currentProcessing: [6, 8, 13],
+               processedRows: [],
+               processBox: 'DEPT 10 PIVOT\nCLARK: MANAGER, sal=2450\nKING: PRESIDENT, sal=5000 (excluded)\nMILLER: CLERK, sal=1300\nAGGREGATES:\nclerk = 1300\nsalesman = NULL\nmanager = 2450',
+               processDetail: 'Processing department 10. MILLER (CLERK) contributes 1300, CLARK (MANAGER) contributes 2450. KING excluded as PRESIDENT not in pivot list.',
+               outputColumns: ['deptno', 'clerk', 'salesman', 'manager'],
+               outputData: [
+                   { deptno: 10, clerk: 1300, salesman: null, manager: 2450 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'Processing DEPT 20 and 30 - completing pivot transformation...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }],
+               currentProcessing: [0, 3, 7, 10, 12, 1, 2, 4, 5, 9, 11],
+               processedRows: [6, 8, 13],
+               processBox: 'DEPT 20 & 30 PIVOT\nDEPT 20:\nSMITH,ADAMS: CLERK → 1900\nJONES: MANAGER → 2975\nSCOTT,FORD: ANALYST → excluded\nDEPT 30:\nJAMES: CLERK → 950\nALLEN,WARD,MARTIN,TURNER: SALESMAN → 5600\nBLAKE: MANAGER → 2850',
+               processDetail: 'Processing remaining departments. DEPT 20: clerks total 1900, manager 2975. DEPT 30: clerk 950, salesmen 5600, manager 2850.',
+               outputColumns: ['deptno', 'clerk', 'salesman', 'manager'],
+               outputData: [
+                   { deptno: 10, clerk: 1300, salesman: null, manager: 2450 },
+                   { deptno: 20, clerk: 1900, salesman: null, manager: 2975 },
+                   { deptno: 30, clerk: 950, salesman: 5600, manager: 2850 }
+               ]
+           },
+           {
+               stepNum: 4,
+               text: 'PIVOT operation complete - rows transformed to columns',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['deptno', 'job', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'PIVOT COMPLETE\nTRANSFORMATION: jobs → columns\nAGGREGATION: SUM(sal) by dept/job\nRESULT: 3 depts × 3 job types\nNULL VALUES: where job doesn\'t exist\nCOMPACT: format for analysis',
+               processDetail: 'PIVOT complete. Transformed job-based rows into job-type columns, showing salary totals by department and job.',
+               outputColumns: ['deptno', 'clerk', 'salesman', 'manager'],
+               outputData: [
+                   { deptno: 10, clerk: 1300, salesman: null, manager: 2450 },
+                   { deptno: 20, clerk: 1900, salesman: null, manager: 2975 },
+                   { deptno: 30, clerk: 950, salesman: 5600, manager: 2850 }
+               ]
+           }
+       ]
+   },
+
+   'UNPIVOT': {
+       query: 'SELECT deptno, job_type, total_sal FROM dept_summary UNPIVOT (total_sal FOR job_type IN (clerk, salesman, manager));',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing UNPIVOT operation...',
+               inputTables: [{
+                   name: 'DEPT_SUMMARY',
+                   data: [
+                       { deptno: 10, clerk: 1300, salesman: null, manager: 2450 },
+                       { deptno: 20, clerk: 1900, salesman: null, manager: 2975 },
+                       { deptno: 30, clerk: 950, salesman: 5600, manager: 2850 }
+                   ],
+                   columns: ['deptno', 'clerk', 'salesman', 'manager']
+               }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'UNPIVOT PARSER\nSOURCE: dept_summary (pivoted table)\nVALUE COLUMN: total_sal\nLABEL COLUMN: job_type\nUNPIVOT COLUMNS: clerk, salesman, manager\nTRANSFORMS: columns to rows',
+               processDetail: 'UNPIVOT transforms columns back into rows, opposite of PIVOT operation.',
+               outputColumns: ['deptno', 'job_type', 'total_sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Unpivoting DEPT 10 columns to rows...',
+               inputTables: [{
+                   name: 'DEPT_SUMMARY',
+                   data: [
+                       { deptno: 10, clerk: 1300, salesman: null, manager: 2450 },
+                       { deptno: 20, clerk: 1900, salesman: null, manager: 2975 },
+                       { deptno: 30, clerk: 950, salesman: 5600, manager: 2850 }
+                   ],
+                   columns: ['deptno', 'clerk', 'salesman', 'manager']
+               }],
+               currentProcessing: [0],
+               processedRows: [],
+               processBox: 'DEPT 10 UNPIVOT\nclerk: 1300 → (10, \'clerk\', 1300)\nsalesman: NULL → excluded\nmanager: 2450 → (10, \'manager\', 2450)\nNULL VALUES: automatically excluded',
+               processDetail: 'Unpivoting department 10. Each non-NULL column becomes a row with job_type and total_sal values.',
+               outputColumns: ['deptno', 'job_type', 'total_sal'],
+               outputData: [
+                   { deptno: 10, job_type: 'clerk', total_sal: 1300 },
+                   { deptno: 10, job_type: 'manager', total_sal: 2450 }
+               ]
+           },
+           {
+               stepNum: 2,
+               text: 'Unpivoting DEPT 20 and 30...',
+               inputTables: [{
+                   name: 'DEPT_SUMMARY',
+                   data: [
+                       { deptno: 10, clerk: 1300, salesman: null, manager: 2450 },
+                       { deptno: 20, clerk: 1900, salesman: null, manager: 2975 },
+                       { deptno: 30, clerk: 950, salesman: 5600, manager: 2850 }
+                   ],
+                   columns: ['deptno', 'clerk', 'salesman', 'manager']
+               }],
+               currentProcessing: [1, 2],
+               processedRows: [0],
+               processBox: 'DEPT 20 & 30 UNPIVOT\nDEPT 20:\nclerk: 1900, manager: 2975\nDEPT 30:\nclerk: 950, salesman: 5600, manager: 2850\nALL NON-NULL: values converted to rows',
+               processDetail: 'Unpivoting departments 20 and 30. Each department contributes multiple rows based on non-NULL job type values.',
+               outputColumns: ['deptno', 'job_type', 'total_sal'],
+               outputData: [
+                   { deptno: 10, job_type: 'clerk', total_sal: 1300 },
+                   { deptno: 10, job_type: 'manager', total_sal: 2450 },
+                   { deptno: 20, job_type: 'clerk', total_sal: 1900 },
+                   { deptno: 20, job_type: 'manager', total_sal: 2975 },
+                   { deptno: 30, job_type: 'clerk', total_sal: 950 },
+                   { deptno: 30, job_type: 'salesman', total_sal: 5600 },
+                   { deptno: 30, job_type: 'manager', total_sal: 2850 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'UNPIVOT operation complete - columns transformed back to rows',
+               inputTables: [{
+                   name: 'DEPT_SUMMARY',
+                   data: [
+                       { deptno: 10, clerk: 1300, salesman: null, manager: 2450 },
+                       { deptno: 20, clerk: 1900, salesman: null, manager: 2975 },
+                       { deptno: 30, clerk: 950, salesman: 5600, manager: 2850 }
+                   ],
+                   columns: ['deptno', 'clerk', 'salesman', 'manager']
+               }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2],
+               processBox: 'UNPIVOT COMPLETE\nINPUT ROWS: 3\nOUTPUT ROWS: 7\nNULL EXCLUSION: automatic\nNORMALIZED: data structure\nREVERSES: PIVOT operation',
+               processDetail: 'UNPIVOT complete. Transformed 3 summary rows with job columns into 7 normalized rows with job_type and total_sal.',
+               outputColumns: ['deptno', 'job_type', 'total_sal'],
+               outputData: [
+                   { deptno: 10, job_type: 'clerk', total_sal: 1300 },
+                   { deptno: 10, job_type: 'manager', total_sal: 2450 },
+                   { deptno: 20, job_type: 'clerk', total_sal: 1900 },
+                   { deptno: 20, job_type: 'manager', total_sal: 2975 },
+                   { deptno: 30, job_type: 'clerk', total_sal: 950 },
+                   { deptno: 30, job_type: 'salesman', total_sal: 5600 },
+                   { deptno: 30, job_type: 'manager', total_sal: 2850 }
+               ]
+           }
+       ]
+   },
+
+   'MODEL': {
+       query: 'SELECT empno, ename, sal, new_sal FROM (SELECT * FROM emp) MODEL DIMENSION BY (empno) MEASURES (sal, sal as new_sal) RULES (new_sal[7369] = new_sal[7369] * 1.1);',
+       totalSteps: 4,
+       steps: [
+           {
+               stepNum: 0,
+               text: 'Oracle parser analyzing MODEL clause...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [],
+               processBox: 'MODEL PARSER\nDIMENSION: empno (row identifier)\nMEASURES: sal, new_sal\nRULES: new_sal[7369] = sal * 1.1\nSPREADSHEET: like calculations\nUPDATE: specific cells',
+               processDetail: 'MODEL clause enables spreadsheet-like calculations on relational data using dimensions and measures.',
+               outputColumns: ['empno', 'ename', 'sal', 'new_sal'],
+               outputData: []
+           },
+           {
+               stepNum: 1,
+               text: 'Setting up MODEL dimensions and measures...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }],
+               currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processedRows: [],
+               processBox: 'MODEL SETUP\nDIMENSION ARRAY: empno values\nMEASURE ARRAYS: sal[], new_sal[]\nINITIALIZATION: new_sal = sal\nREADY: for rule application\nTARGET: empno 7369 (SMITH)',
+               processDetail: 'Setting up MODEL arrays. Each employee becomes a dimension, sal and new_sal become measure arrays.',
+               outputColumns: ['empno', 'ename', 'sal', 'new_sal'],
+               outputData: []
+           },
+           {
+               stepNum: 2,
+               text: 'Applying MODEL rule to SMITH (empno=7369)...',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }],
+               currentProcessing: [0],
+               processedRows: [],
+               processBox: 'RULE APPLICATION\nTARGET: new_sal[7369]\nCURRENT VALUE: 800\nRULE: new_sal[7369] = sal[7369] * 1.1\nCALCULATION: 800 * 1.1 = 880\nUPDATED: SMITH gets raise',
+               processDetail: 'Applying MODEL rule to SMITH. His new salary calculated as 800 * 1.1 = 880 (10% increase).',
+               outputColumns: ['empno', 'ename', 'sal', 'new_sal'],
+               outputData: [
+                   { empno: 7369, ename: 'SMITH', sal: 800, new_sal: 880 }
+               ]
+           },
+           {
+               stepNum: 3,
+               text: 'MODEL clause complete - targeted salary update applied',
+               inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal'] }],
+               currentProcessing: [],
+               processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+               processBox: 'MODEL COMPLETE\nRULES APPLIED: 1\nTARGETED UPDATE: SMITH only\nOTHER EMPLOYEES: unchanged\nNEW_SAL: 880 (was 800)\nSPREADSHEET: like functionality',
+               processDetail: 'MODEL clause complete. Applied targeted 10% salary increase to SMITH while leaving other employees unchanged.',
+               outputColumns: ['empno', 'ename', 'sal', 'new_sal'],
+               outputData: [
+                   { empno: 7369, ename: 'SMITH', sal: 800, new_sal: 880 },
+                   { empno: 7499, ename: 'ALLEN', sal: 1600, new_sal: 1600 },
+                   { empno: 7521, ename: 'WARD', sal: 1250, new_sal: 1250 },
+                   { empno: 7566, ename: 'JONES', sal: 2975, new_sal: 2975 },
+                   { empno: 7654, ename: 'MARTIN', sal: 1250, new_sal: 1250 },
+                   { empno: 7698, ename: 'BLAKE', sal: 2850, new_sal: 2850 },
+                   { empno: 7782, ename: 'CLARK', sal: 2450, new_sal: 2450 },
+                   { empno: 7788, ename: 'SCOTT', sal: 3000, new_sal: 3000 },
+                   { empno: 7839, ename: 'KING', sal: 5000, new_sal: 5000 },
+                   { empno: 7844, ename: 'TURNER', sal: 1500, new_sal: 1500 },
+                   { empno: 7876, ename: 'ADAMS', sal: 1100, new_sal: 1100 },
+                   { empno: 7900, ename: 'JAMES', sal: 950, new_sal: 950 },
+                   { empno: 7902, ename: 'FORD', sal: 3000, new_sal: 3000 },
+                   { empno: 7934, ename: 'MILLER', sal: 1300, new_sal: 1300 }
+               ]
+           }
+       ]
+   },
+
+            
+   
+
+
+          
 
           'SUBQUERY': {
               query: 'SELECT ename, sal FROM emp WHERE sal > (SELECT AVG(sal) FROM emp) ORDER BY sal DESC;',
