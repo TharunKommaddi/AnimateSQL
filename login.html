@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle SQL Visualizer - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Cascadia Code', 'Consolas', monospace;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: #111;
+            border: 1px solid #333;
+            max-width: 450px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .header {
+            background: #1a1a1a;
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: #222;
+            border: 1px solid #444;
+            color: #e8e8e8;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px;
+        }
+
+        .password-toggle:hover {
+            color: #ff6b35;
+        }
+
+        .login-button {
+            width: 100%;
+            background: #333;
+            border: 1px solid #555;
+            color: #e8e8e8;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            background: #444;
+            border-color: #666;
+        }
+
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-button:disabled:hover {
+            background: #333;
+            border-color: #555;
+        }
+
+        .message {
+            padding: 10px 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            border: 1px solid;
+        }
+
+        .error-message {
+            background: #1a0a0a;
+            border-color: #ff4444;
+            color: #ff6666;
+        }
+
+        .success-message {
+            background: #0a1a0a;
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .status-bar {
+            background: #0a0a0a;
+            padding: 12px 20px;
+            border-top: 1px solid #333;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* Hidden main content */
+        .main-content {
+            display: none;
+        }
+
+        .main-content.authenticated {
+            display: block;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .login-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="header">
+            <h1>Oracle.SQL.Visualizer()</h1>
+            <p>// Authentication required for access</p>
+        </div>
+
+        <div class="login-form">
+            <div id="errorMessage" class="message error-message" style="display: none;"></div>
+            <div id="successMessage" class="message success-message" style="display: none;"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">email address</label>
+                    <input type="email" id="email" name="email" required autocomplete="username" placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                        <button type="button" class="password-toggle" id="passwordToggle">show</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-button" id="loginButton">
+                    <span id="buttonText">access visualizer</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="status-bar">
+            oracle sql visualizer v2.0 - secure access portal
+        </div>
+    </div>
+
+    <!-- Main Content (Your existing Oracle SQL Visualizer) -->
+    <div class="main-content" id="mainContent">
+        <div style="
+            min-height: 100vh; 
+            background: #0a0a0a; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-direction: column;
+            text-align: center;
+        ">
+            <div style="
+                background: #111; 
+                border: 1px solid #333; 
+                padding: 40px; 
+                max-width: 600px;
+            ">
+                <h1 style="
+                    color: #ff6b35; 
+                    font-size: 32px; 
+                    margin-bottom: 15px; 
+                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Cascadia Code', 'Consolas', monospace;
+                ">
+                    Access Granted
+                </h1>
+                <p style="
+                    color: #00ff88; 
+                    margin-bottom: 20px; 
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                ">
+                    authentication successful
+                </p>
+                <p style="
+                    color: #e8e8e8; 
+                    margin-bottom: 30px; 
+                    font-size: 11px;
+                ">
+                    In production, this would redirect to your main Oracle SQL Visualizer application.
+                    <br>Replace the redirect URL in the script with your main application file.
+                </p>
+                <button onclick="logout()" style="
+                    background: #333; 
+                    border: 1px solid #555; 
+                    color: #e8e8e8; 
+                    padding: 10px 20px; 
+                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Cascadia Code', 'Consolas', monospace; 
+                    cursor: pointer; 
+                    text-transform: uppercase; 
+                    letter-spacing: 0.5px;
+                    font-size: 11px;
+                    transition: all 0.2s;
+                " onmouseover="this.style.background='#444'; this.style.borderColor='#666';" 
+                   onmouseout="this.style.background='#333'; this.style.borderColor='#555';">
+                    logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login configuration
+        const LOGIN_CONFIG = {
+            email: 'tharunkommaddi@gmail.com',
+            password: 'sqlinterviewmastery',
+            sessionKey: 'oracleVisualizer_authenticated',
+            sessionDuration: 24 * 60 * 60 * 1000 // 24 hours
+        };
+
+        // DOM elements
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('passwordToggle');
+        const loginButton = document.getElementById('loginButton');
+        const buttonText = document.getElementById('buttonText');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+
+        // Check authentication status
+        function checkAuthStatus() {
+            const authData = localStorage.getItem(LOGIN_CONFIG.sessionKey);
+            
+            if (authData) {
+                try {
+                    const { timestamp, email } = JSON.parse(authData);
+                    const now = Date.now();
+                    
+                    if (now - timestamp < LOGIN_CONFIG.sessionDuration && email === LOGIN_CONFIG.email) {
+                        showMainContent();
+                        return true;
+                    } else {
+                        localStorage.removeItem(LOGIN_CONFIG.sessionKey);
+                    }
+                } catch (e) {
+                    localStorage.removeItem(LOGIN_CONFIG.sessionKey);
+                }
+            }
+            
+            return false;
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        // Hide messages
+        function hideMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        // Show loading state
+        function showLoading() {
+            loginButton.disabled = true;
+            buttonText.textContent = 'authenticating...';
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            loginButton.disabled = false;
+            buttonText.textContent = 'access visualizer';
+        }
+
+        // Show main content
+        function showMainContent() {
+            loginContainer.style.display = 'none';
+            mainContent.classList.add('authenticated');
+            
+            // In production, redirect to your main application:
+            // window.location.href = 'index.html'; // your main Oracle SQL Visualizer file
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem(LOGIN_CONFIG.sessionKey);
+            location.reload();
+        }
+
+        // Make logout globally available
+        window.logout = logout;
+
+        // Validate credentials
+        function validateCredentials(email, password) {
+            return email.trim().toLowerCase() === LOGIN_CONFIG.email.toLowerCase() && 
+                   password === LOGIN_CONFIG.password;
+        }
+
+        // Handle form submission
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessages();
+            showLoading();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showError('please enter both email and password');
+                hideLoading();
+                return;
+            }
+
+            // Simulate brief loading delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            if (validateCredentials(email, password)) {
+                const authData = {
+                    timestamp: Date.now(),
+                    email: email
+                };
+                localStorage.setItem(LOGIN_CONFIG.sessionKey, JSON.stringify(authData));
+
+                showSuccess('login successful - redirecting...');
+                
+                setTimeout(() => {
+                    showMainContent();
+                }, 1000);
+            } else {
+                showError('invalid credentials - access denied');
+                hideLoading();
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        });
+
+        // Password toggle
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'show' : 'hide';
+        });
+
+        // Auto-focus email field
+        emailInput.focus();
+
+        // Hide messages when typing
+        [emailInput, passwordInput].forEach(input => {
+            input.addEventListener('input', hideMessages);
+        });
+
+        // Check auth on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuthStatus()) {
+                loginContainer.style.display = 'block';
+            }
+        });
+
+        // Clear password on page unload
+        window.addEventListener('beforeunload', function() {
+            passwordInput.value = '';
+        });
+    </script>
+</body>
+</html>
