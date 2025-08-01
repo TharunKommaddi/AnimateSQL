@@ -4550,7 +4550,1042 @@
    },
 
             
-   
+   // Add these remaining operations to your operations object:
+
+'COUNT': {
+   query: 'SELECT deptno, COUNT(*) as total_employees, COUNT(comm) as employees_with_commission FROM emp GROUP BY deptno ORDER BY deptno;',
+   totalSteps: 6,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing COUNT aggregate function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'deptno', 'comm'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'COUNT FUNCTION PARSER\nCOUNT(*): counts all rows\nCOUNT(comm): counts non-NULL values\nGROUP BY: deptno\nNULL HANDLING: automatic',
+           processDetail: 'COUNT function analysis: COUNT(*) includes all rows, COUNT(column) excludes NULLs.',
+           outputColumns: ['deptno', 'total_employees', 'employees_with_commission'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Grouping employees by department...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'deptno', 'comm'] }],
+           currentProcessing: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processedRows: [],
+           processBox: 'GROUPING BY DEPARTMENT\nDEPT 10: CLARK, KING, MILLER\nDEPT 20: SMITH, JONES, SCOTT, ADAMS, FORD\nDEPT 30: ALLEN, WARD, MARTIN, BLAKE, TURNER, JAMES\n3 GROUPS FORMED',
+           processDetail: 'Grouping all 14 employees into 3 departments for COUNT calculations.',
+           outputColumns: ['deptno', 'total_employees', 'employees_with_commission'],
+           outputData: []
+       },
+       {
+           stepNum: 2,
+           text: 'Counting DEPT 10 employees...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'deptno', 'comm'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 COUNT\nCLARK: comm=NULL\nKING: comm=NULL\nMILLER: comm=NULL\nCOUNT(*) = 3\nCOUNT(comm) = 0',
+           processDetail: 'DEPT 10: COUNT(*) = 3 employees, COUNT(comm) = 0 (all have NULL commission).',
+           outputColumns: ['deptno', 'total_employees', 'employees_with_commission'],
+           outputData: [
+               { deptno: 10, total_employees: 3, employees_with_commission: 0 }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Counting DEPT 20 employees...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'deptno', 'comm'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 COUNT\nSMITH: comm=NULL\nJONES: comm=NULL\nSCOTT: comm=NULL\nADAMS: comm=NULL\nFORD: comm=NULL\nCOUNT(*) = 5\nCOUNT(comm) = 0',
+           processDetail: 'DEPT 20: COUNT(*) = 5 employees, COUNT(comm) = 0 (all have NULL commission).',
+           outputColumns: ['deptno', 'total_employees', 'employees_with_commission'],
+           outputData: [
+               { deptno: 10, total_employees: 3, employees_with_commission: 0 },
+               { deptno: 20, total_employees: 5, employees_with_commission: 0 }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'Counting DEPT 30 employees...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'deptno', 'comm'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 COUNT\nALLEN: comm=300 ✓\nWARD: comm=500 ✓\nMARTIN: comm=1400 ✓\nBLAKE: comm=NULL\nTURNER: comm=0 ✓\nJAMES: comm=NULL\nCOUNT(*) = 6\nCOUNT(comm) = 4',
+           processDetail: 'DEPT 30: COUNT(*) = 6 employees, COUNT(comm) = 4 (ALLEN, WARD, MARTIN, TURNER have commission).',
+           outputColumns: ['deptno', 'total_employees', 'employees_with_commission'],
+           outputData: [
+               { deptno: 10, total_employees: 3, employees_with_commission: 0 },
+               { deptno: 20, total_employees: 5, employees_with_commission: 0 },
+               { deptno: 30, total_employees: 6, employees_with_commission: 4 }
+           ]
+       },
+       {
+           stepNum: 5,
+           text: 'COUNT operation complete - all departments counted',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'deptno', 'comm'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'COUNT COMPLETE\nTOTAL EMPLOYEES: 14\nDEPT 10: 3 employees, 0 with commission\nDEPT 20: 5 employees, 0 with commission\nDEPT 30: 6 employees, 4 with commission\nCOUNT FUNCTIONS APPLIED',
+           processDetail: 'COUNT operation complete. Demonstrated difference between COUNT(*) and COUNT(column) with NULL handling.',
+           outputColumns: ['deptno', 'total_employees', 'employees_with_commission'],
+           outputData: [
+               { deptno: 10, total_employees: 3, employees_with_commission: 0 },
+               { deptno: 20, total_employees: 5, employees_with_commission: 0 },
+               { deptno: 30, total_employees: 6, employees_with_commission: 4 }
+           ]
+       }
+   ]
+},
+
+'SUM': {
+   query: 'SELECT deptno, SUM(sal) as total_salary, SUM(comm) as total_commission FROM emp GROUP BY deptno ORDER BY deptno;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing SUM aggregate function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'SUM FUNCTION PARSER\nSUM(sal): total salaries\nSUM(comm): total commissions\nNULL VALUES: ignored in calculation\nGROUP BY: deptno',
+           processDetail: 'SUM function ignores NULL values and calculates totals for each department.',
+           outputColumns: ['deptno', 'total_salary', 'total_commission'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Calculating SUM for DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 SUM CALCULATION\nCLARK: sal=2450, comm=NULL\nKING: sal=5000, comm=NULL\nMILLER: sal=1300, comm=NULL\nSUM(sal) = 2450+5000+1300 = 8750\nSUM(comm) = 0 (all NULL)',
+           processDetail: 'DEPT 10 calculations: Total salary = 8750, Total commission = 0 (NULL values ignored).',
+           outputColumns: ['deptno', 'total_salary', 'total_commission'],
+           outputData: [
+               { deptno: 10, total_salary: 8750, total_commission: 0 }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Calculating SUM for DEPT 20...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 SUM CALCULATION\nSMITH: sal=800, comm=NULL\nJONES: sal=2975, comm=NULL\nSCOTT: sal=3000, comm=NULL\nADAMS: sal=1100, comm=NULL\nFORD: sal=3000, comm=NULL\nSUM(sal) = 10875\nSUM(comm) = 0',
+           processDetail: 'DEPT 20 calculations: Total salary = 10875, Total commission = 0 (all NULL).',
+           outputColumns: ['deptno', 'total_salary', 'total_commission'],
+           outputData: [
+               { deptno: 10, total_salary: 8750, total_commission: 0 },
+               { deptno: 20, total_salary: 10875, total_commission: 0 }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Calculating SUM for DEPT 30...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 SUM CALCULATION\nALLEN: sal=1600, comm=300\nWARD: sal=1250, comm=500\nMARTIN: sal=1250, comm=1400\nBLAKE: sal=2850, comm=NULL\nTURNER: sal=1500, comm=0\nJAMES: sal=950, comm=NULL\nSUM(sal) = 9400\nSUM(comm) = 2200',
+           processDetail: 'DEPT 30 calculations: Total salary = 9400, Total commission = 2200 (NULL values ignored).',
+           outputColumns: ['deptno', 'total_salary', 'total_commission'],
+           outputData: [
+               { deptno: 10, total_salary: 8750, total_commission: 0 },
+               { deptno: 20, total_salary: 10875, total_commission: 0 },
+               { deptno: 30, total_salary: 9400, total_commission: 2200 }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'SUM operation complete - totals calculated for all departments',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'SUM COMPLETE\nCOMPANY TOTALS:\nTotal Salaries: 29025\nTotal Commissions: 2200\nDEPT 30: only dept with commissions\nNULL HANDLING: demonstrated',
+           processDetail: 'SUM operation complete. Company totals: 29025 in salaries, 2200 in commissions (only DEPT 30 pays commission).',
+           outputColumns: ['deptno', 'total_salary', 'total_commission'],
+           outputData: [
+               { deptno: 10, total_salary: 8750, total_commission: 0 },
+               { deptno: 20, total_salary: 10875, total_commission: 0 },
+               { deptno: 30, total_salary: 9400, total_commission: 2200 }
+           ]
+       }
+   ]
+},
+
+'AVG': {
+   query: 'SELECT deptno, AVG(sal) as avg_salary, ROUND(AVG(sal), 2) as avg_salary_rounded FROM emp GROUP BY deptno ORDER BY avg_salary DESC;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing AVG aggregate function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'AVG FUNCTION PARSER\nAVG(sal): arithmetic mean\nNULL VALUES: excluded from calculation\nROUND: for display formatting\nORDER BY: avg_salary DESC',
+           processDetail: 'AVG function calculates arithmetic mean, excluding NULL values from both numerator and denominator.',
+           outputColumns: ['deptno', 'avg_salary', 'avg_salary_rounded'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Calculating AVG for DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 AVG CALCULATION\nCLARK: sal=2450\nKING: sal=5000\nMILLER: sal=1300\nSUM = 8750, COUNT = 3\nAVG = 8750/3 = 2916.67',
+           processDetail: 'DEPT 10 average: (2450 + 5000 + 1300) ÷ 3 = 2916.67',
+           outputColumns: ['deptno', 'avg_salary', 'avg_salary_rounded'],
+           outputData: [
+               { deptno: 10, avg_salary: 2916.67, avg_salary_rounded: 2916.67 }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Calculating AVG for DEPT 20...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 AVG CALCULATION\nSMITH: sal=800\nJONES: sal=2975\nSCOTT: sal=3000\nADAMS: sal=1100\nFORD: sal=3000\nSUM = 10875, COUNT = 5\nAVG = 10875/5 = 2175',
+           processDetail: 'DEPT 20 average: (800 + 2975 + 3000 + 1100 + 3000) ÷ 5 = 2175',
+           outputColumns: ['deptno', 'avg_salary', 'avg_salary_rounded'],
+           outputData: [
+               { deptno: 10, avg_salary: 2916.67, avg_salary_rounded: 2916.67 },
+               { deptno: 20, avg_salary: 2175, avg_salary_rounded: 2175 }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Calculating AVG for DEPT 30...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 AVG CALCULATION\nALLEN: sal=1600\nWARD: sal=1250\nMARTIN: sal=1250\nBLAKE: sal=2850\nTURNER: sal=1500\nJAMES: sal=950\nSUM = 9400, COUNT = 6\nAVG = 9400/6 = 1566.67',
+           processDetail: 'DEPT 30 average: (1600 + 1250 + 1250 + 2850 + 1500 + 950) ÷ 6 = 1566.67',
+           outputColumns: ['deptno', 'avg_salary', 'avg_salary_rounded'],
+           outputData: [
+               { deptno: 10, avg_salary: 2916.67, avg_salary_rounded: 2916.67 },
+               { deptno: 20, avg_salary: 2175, avg_salary_rounded: 2175 },
+               { deptno: 30, avg_salary: 1566.67, avg_salary_rounded: 1566.67 }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'AVG operation complete - averages calculated and sorted',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'AVG COMPLETE\nHIGHEST AVG: DEPT 10 (2916.67)\nMIDDLE AVG: DEPT 20 (2175.00)\nLOWEST AVG: DEPT 30 (1566.67)\nCOMPANY AVG: 2073.21\nSORTED BY: avg DESC',
+           processDetail: 'AVG operation complete. DEPT 10 has highest average salary, DEPT 30 has lowest. Results sorted by average descending.',
+           outputColumns: ['deptno', 'avg_salary', 'avg_salary_rounded'],
+           outputData: [
+               { deptno: 10, avg_salary: 2916.67, avg_salary_rounded: 2916.67 },
+               { deptno: 20, avg_salary: 2175, avg_salary_rounded: 2175 },
+               { deptno: 30, avg_salary: 1566.67, avg_salary_rounded: 1566.67 }
+           ]
+       }
+   ]
+},
+
+'MIN_MAX': {
+   query: 'SELECT deptno, MIN(sal) as min_salary, MAX(sal) as max_salary, MAX(sal) - MIN(sal) as salary_range FROM emp GROUP BY deptno ORDER BY salary_range DESC;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing MIN and MAX functions...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'MIN/MAX PARSER\nMIN(sal): lowest salary per dept\nMAX(sal): highest salary per dept\nRANGE: MAX - MIN\nORDER BY: salary_range DESC',
+           processDetail: 'MIN and MAX functions find extreme values, ignoring NULL values. Calculating salary range per department.',
+           outputColumns: ['deptno', 'min_salary', 'max_salary', 'salary_range'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Finding MIN/MAX for DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 MIN/MAX\nCLARK: sal=2450\nKING: sal=5000 ← MAX\nMILLER: sal=1300 ← MIN\nMIN = 1300\nMAX = 5000\nRANGE = 3700',
+           processDetail: 'DEPT 10: MIN=1300 (MILLER), MAX=5000 (KING), Range=3700',
+           outputColumns: ['deptno', 'min_salary', 'max_salary', 'salary_range'],
+           outputData: [
+               { deptno: 10, min_salary: 1300, max_salary: 5000, salary_range: 3700 }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Finding MIN/MAX for DEPT 20...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 MIN/MAX\nSMITH: sal=800 ← MIN\nJONES: sal=2975\nSCOTT: sal=3000 ← MAX\nADAMS: sal=1100\nFORD: sal=3000 ← MAX\nMIN = 800\nMAX = 3000\nRANGE = 2200',
+           processDetail: 'DEPT 20: MIN=800 (SMITH), MAX=3000 (SCOTT/FORD tied), Range=2200',
+           outputColumns: ['deptno', 'min_salary', 'max_salary', 'salary_range'],
+           outputData: [
+               { deptno: 10, min_salary: 1300, max_salary: 5000, salary_range: 3700 },
+               { deptno: 20, min_salary: 800, max_salary: 3000, salary_range: 2200 }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Finding MIN/MAX for DEPT 30...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 MIN/MAX\nALLEN: sal=1600\nWARD: sal=1250\nMARTIN: sal=1250\nBLAKE: sal=2850 ← MAX\nTURNER: sal=1500\nJAMES: sal=950 ← MIN\nMIN = 950\nMAX = 2850\nRANGE = 1900',
+           processDetail: 'DEPT 30: MIN=950 (JAMES), MAX=2850 (BLAKE), Range=1900',
+           outputColumns: ['deptno', 'min_salary', 'max_salary', 'salary_range'],
+           outputData: [
+               { deptno: 10, min_salary: 1300, max_salary: 5000, salary_range: 3700 },
+               { deptno: 20, min_salary: 800, max_salary: 3000, salary_range: 2200 },
+               { deptno: 30, min_salary: 950, max_salary: 2850, salary_range: 1900 }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'MIN/MAX operation complete - salary ranges calculated',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'MIN/MAX COMPLETE\nLARGEST RANGE: DEPT 10 (3700)\nMEDIUM RANGE: DEPT 20 (2200)\nSMALLEST RANGE: DEPT 30 (1900)\nSORTED BY: salary_range DESC\nREADY FOR OUTPUT',
+           processDetail: 'MIN/MAX operation complete. DEPT 10 has largest salary range (3700), showing significant pay disparity between KING and MILLER.',
+           outputColumns: ['deptno', 'min_salary', 'max_salary', 'salary_range'],
+           outputData: [
+               { deptno: 10, min_salary: 1300, max_salary: 5000, salary_range: 3700 },
+               { deptno: 20, min_salary: 800, max_salary: 3000, salary_range: 2200 },
+               { deptno: 30, min_salary: 950, max_salary: 2850, salary_range: 1900 }
+           ]
+       }
+   ]
+},
+
+'LISTAGG': {
+   query: 'SELECT deptno, LISTAGG(ename, \', \') WITHIN GROUP (ORDER BY sal DESC) as employees_by_salary FROM emp GROUP BY deptno ORDER BY deptno;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing LISTAGG function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'LISTAGG PARSER\nFUNCTION: concatenates values\nSEPARATOR: \', \' (comma space)\nWITHIN GROUP: ORDER BY sal DESC\nGROUP BY: deptno',
+           processDetail: 'LISTAGG concatenates column values into a single string, ordered within each group.',
+           outputColumns: ['deptno', 'employees_by_salary'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Building LISTAGG for DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 LISTAGG\nORDERING BY SALARY DESC:\nKING: sal=5000 (1st)\nCLARK: sal=2450 (2nd)\nMILLER: sal=1300 (3rd)\nCONCATENATED: \'KING, CLARK, MILLER\'',
+           processDetail: 'DEPT 10: Ordering employees by salary descending, then concatenating names with comma separator.',
+           outputColumns: ['deptno', 'employees_by_salary'],
+           outputData: [
+               { deptno: 10, employees_by_salary: 'KING, CLARK, MILLER' }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Building LISTAGG for DEPT 20...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 LISTAGG\nORDERING BY SALARY DESC:\nSCOTT: sal=3000 (1st)\nFORD: sal=3000 (2nd)\nJONES: sal=2975 (3rd)\nADAMS: sal=1100 (4th)\nSMITH: sal=800 (5th)\nCONCATENATED: \'SCOTT, FORD, JONES, ADAMS, SMITH\'',
+           processDetail: 'DEPT 20: Five employees ordered by salary, with SCOTT and FORD tied at the top.',
+           outputColumns: ['deptno', 'employees_by_salary'],
+           outputData: [
+               { deptno: 10, employees_by_salary: 'KING, CLARK, MILLER' },
+               { deptno: 20, employees_by_salary: 'SCOTT, FORD, JONES, ADAMS, SMITH' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Building LISTAGG for DEPT 30...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 LISTAGG\nORDERING BY SALARY DESC:\nBLAKE: sal=2850 (1st)\nALLEN: sal=1600 (2nd)\nTURNER: sal=1500 (3rd)\nWARD: sal=1250 (4th)\nMARTIN: sal=1250 (5th)\nJAMES: sal=950 (6th)\nCONCATENATED: \'BLAKE, ALLEN, TURNER, WARD, MARTIN, JAMES\'',
+           processDetail: 'DEPT 30: Six employees ordered by salary, with BLAKE leading and JAMES at the bottom.',
+           outputColumns: ['deptno', 'employees_by_salary'],
+           outputData: [
+               { deptno: 10, employees_by_salary: 'KING, CLARK, MILLER' },
+               { deptno: 20, employees_by_salary: 'SCOTT, FORD, JONES, ADAMS, SMITH' },
+               { deptno: 30, employees_by_salary: 'BLAKE, ALLEN, TURNER, WARD, MARTIN, JAMES' }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'LISTAGG operation complete - employee lists created',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'LISTAGG COMPLETE\nDEPT 10: 3 employees listed\nDEPT 20: 5 employees listed\nDEPT 30: 6 employees listed\nORDERED BY: salary DESC within groups\nCONCATENATED: with comma separator',
+           processDetail: 'LISTAGG operation complete. Each department shows employees ordered by salary from highest to lowest.',
+           outputColumns: ['deptno', 'employees_by_salary'],
+           outputData: [
+               { deptno: 10, employees_by_salary: 'KING, CLARK, MILLER' },
+               { deptno: 20, employees_by_salary: 'SCOTT, FORD, JONES, ADAMS, SMITH' },
+               { deptno: 30, employees_by_salary: 'BLAKE, ALLEN, TURNER, WARD, MARTIN, JAMES' }
+           ]
+       }
+   ]
+},
+
+'INSERT': {
+   query: 'INSERT INTO emp (empno, ename, job, sal, deptno) VALUES (9999, \'NEWCOMER\', \'CLERK\', 1200, 10);',
+   totalSteps: 4,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing INSERT statement...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'INSERT PARSER\nTABLE: emp\nCOLUMNS: empno, ename, job, sal, deptno\nVALUES: 9999, \'NEWCOMER\', \'CLERK\', 1200, 10\nVALIDATING: data types and constraints',
+           processDetail: 'INSERT statement parsed. Validating new employee data before insertion.',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Validating data and constraints...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'CONSTRAINT VALIDATION\nPRIMARY KEY: empno=9999 (unique ✓)\nNOT NULL: ename=\'NEWCOMER\' ✓\nFOREIGN KEY: deptno=10 exists ✓\nDATA TYPES: all valid ✓\nREADY TO INSERT',
+           processDetail: 'Validation complete: Primary key unique, foreign key valid, data types correct.',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 2,
+           text: 'Inserting new employee record...',
+           inputTables: [{ name: 'EMP', data: [...emp, { empno: 9999, ename: 'NEWCOMER', job: 'CLERK', sal: 1200, deptno: 10 }], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+           currentProcessing: [14],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'INSERTING RECORD\nNEW EMPLOYEE: NEWCOMER\nEMPNO: 9999\nJOB: CLERK\nSALARY: 1200\nDEPARTMENT: 10 (ACCOUNTING)\nROW INSERTED',
+           processDetail: 'New employee NEWCOMER inserted into ACCOUNTING department as a CLERK.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: '1 row inserted successfully' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'INSERT operation complete - new employee added',
+           inputTables: [{ name: 'EMP', data: [...emp, { empno: 9999, ename: 'NEWCOMER', job: 'CLERK', sal: 1200, deptno: 10 }], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+           processBox: 'INSERT COMPLETE\nTOTAL EMPLOYEES: 15 (was 14)\nNEW EMPLOYEE: NEWCOMER (9999)\nDEPT 10: now has 4 employees\nTRANSACTION: committed',
+           processDetail: 'INSERT operation complete. Employee table now contains 15 employees. Transaction committed successfully.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: '1 row inserted successfully' },
+               { result: 'Employee NEWCOMER (9999) added to ACCOUNTING' },
+               { result: 'Total employees: 15' }
+           ]
+       }
+   ]
+},
+
+'UPDATE': {
+   query: 'UPDATE emp SET sal = sal * 1.1 WHERE deptno = 10;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing UPDATE statement...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'UPDATE PARSER\nTABLE: emp\nSET: sal = sal * 1.1 (10% raise)\nWHERE: deptno = 10\nIDENTIFYING: affected rows',
+           processDetail: 'UPDATE statement parsed. Will give 10% salary increase to ACCOUNTING department employees.',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Identifying rows to update in DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'IDENTIFYING UPDATES\nCLARK: deptno=10, sal=2450 → 2695\nKING: deptno=10, sal=5000 → 5500\nMILLER: deptno=10, sal=1300 → 1430\n3 EMPLOYEES QUALIFY',
+           processDetail: 'Found 3 employees in DEPT 10 qualifying for salary update.',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 2,
+           text: 'Updating CLARK salary...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6],
+           processedRows: [],
+           processBox: 'UPDATING CLARK\nOLD SALARY: 2450\nNEW SALARY: 2450 * 1.1 = 2695\nINCREASE: 245\nUPDATE APPLIED',
+           processDetail: 'CLARK salary updated from 2450 to 2695 (10% increase = 245).',
+           outputColumns: ['result'],
+           outputData: [
+               { result: 'CLARK salary: 2450 → 2695 (+245)' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Updating KING and MILLER salaries...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [8, 13],
+           processedRows: [6],
+           processBox: 'UPDATING REMAINING\nKING: 5000 → 5500 (+500)\nMILLER: 1300 → 1430 (+130)\nALL DEPT 10 UPDATED\nTOTAL INCREASE: 875',
+           processDetail: 'KING and MILLER salaries updated. Total salary increase for DEPT 10: 875.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: 'CLARK salary: 2450 → 2695 (+245)' },
+               { result: 'KING salary: 5000 → 5500 (+500)' },
+               { result: 'MILLER salary: 1300 → 1430 (+130)' }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'UPDATE operation complete - 3 salaries increased',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [6, 8, 13],
+           processBox: 'UPDATE COMPLETE\nROWS AFFECTED: 3\nDEPARTMENT: 10 (ACCOUNTING)\nTOTAL INCREASE: 875\nNEW DEPT 10 TOTAL: 9625\nTRANSACTION: committed',
+           processDetail: 'UPDATE operation complete. 3 employees in ACCOUNTING received 10% salary increases totaling 875.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: '3 rows updated successfully' },
+               { result: 'DEPT 10 total salary increase: 875' },
+               { result: 'New DEPT 10 salary total: 9625' }
+           ]
+       }
+   ]
+},
+
+'DELETE': {
+   query: 'DELETE FROM emp WHERE sal < 1000;',
+   totalSteps: 4,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing DELETE statement...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'job'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'DELETE PARSER\nTABLE: emp\nWHERE: sal < 1000\nIDENTIFYING: low salary employees\nCHECKING: referential integrity',
+           processDetail: 'DELETE statement parsed. Identifying employees with salary below 1000.',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Identifying employees with salary < 1000...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'job'] }],
+           currentProcessing: [0, 11],
+           processedRows: [],
+           processBox: 'IDENTIFYING DELETIONS\nSMITH: sal=800 < 1000 ✓\nJAMES: sal=950 < 1000 ✓\nOTHER EMPLOYEES: sal >= 1000\n2 EMPLOYEES QUALIFY FOR DELETION',
+           processDetail: 'Found 2 employees with salary below 1000: SMITH (800) and JAMES (950).',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 2,
+           text: 'Deleting low salary employees...',
+           inputTables: [{ name: 'EMP', data: emp.filter(e => e.sal >= 1000), columns: ['empno', 'ename', 'sal', 'job'] }],
+           currentProcessing: [],
+           processedRows: [0, 11],
+           processBox: 'DELETING RECORDS\nSMITH (empno=7369): DELETED\nJAMES (empno=7900): DELETED\nCHECKING: cascade constraints\nREFERENCES: updated if needed',
+           processDetail: 'Deleting SMITH and JAMES from employee table. Checking for dependent records.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: 'SMITH (7369) deleted - sal: 800' },
+               { result: 'JAMES (7900) deleted - sal: 950' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'DELETE operation complete - 2 employees removed',
+           inputTables: [{ name: 'EMP', data: emp.filter(e => e.sal >= 1000), columns: ['empno', 'ename', 'sal', 'job'] }],
+           currentProcessing: [],
+           processedRows: [0, 11],
+           processBox: 'DELETE COMPLETE\nROWS DELETED: 2\nREMAINING EMPLOYEES: 12\nSALARY THRESHOLD: 1000\nTRANSACTION: committed\nDATA INTEGRITY: maintained',
+           processDetail: 'DELETE operation complete. 2 employees with salary below 1000 have been removed. 12 employees remain.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: '2 rows deleted successfully' },
+               { result: 'Employees removed: SMITH, JAMES' },
+               { result: 'Remaining employees: 12' },
+               { result: 'Minimum salary now: 1100 (ADAMS)' }
+           ]
+       }
+   ]
+},
+
+'MERGE': {
+   query: 'MERGE INTO emp_target t USING emp_updates s ON (t.empno = s.empno) WHEN MATCHED THEN UPDATE SET sal = s.sal WHEN NOT MATCHED THEN INSERT VALUES (s.empno, s.ename, s.job, s.sal, s.deptno);',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing MERGE statement...',
+           inputTables: [
+               { name: 'EMP_TARGET', data: emp.slice(0, 3), columns: ['empno', 'ename', 'job', 'sal', 'deptno'] },
+               { name: 'EMP_UPDATES', data: [
+                   { empno: 7369, ename: 'SMITH', job: 'CLERK', sal: 900, deptno: 20 },
+                   { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }
+               ], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }
+           ],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'MERGE PARSER\nTARGET: emp_target\nSOURCE: emp_updates\nJOIN: ON empno\nUPDATE: matched records\nINSERT: unmatched records',
+           processDetail: 'MERGE statement combines INSERT and UPDATE operations based on match condition.',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Analyzing source data for matches...',
+           inputTables: [
+               { name: 'EMP_TARGET', data: emp.slice(0, 3), columns: ['empno', 'ename', 'job', 'sal', 'deptno'] },
+               { name: 'EMP_UPDATES', data: [
+                   { empno: 7369, ename: 'SMITH', job: 'CLERK', sal: 900, deptno: 20 },
+                   { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }
+               ], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }
+           ],
+           currentProcessing: [0, 1],
+           processedRows: [],
+           processBox: 'MATCH ANALYSIS\nSMITH (7369): EXISTS in target → UPDATE\nNEWBIE (9998): NOT in target → INSERT\n1 UPDATE, 1 INSERT required',
+           processDetail: 'Analyzing matches: SMITH exists (will update salary), NEWBIE does not exist (will insert).',
+           outputColumns: ['result'],
+           outputData: []
+       },
+       {
+           stepNum: 2,
+           text: 'Processing MATCHED record - updating SMITH...',
+           inputTables: [
+               { name: 'EMP_TARGET', data: emp.slice(0, 3), columns: ['empno', 'ename', 'job', 'sal', 'deptno'] },
+               { name: 'EMP_UPDATES', data: [
+                   { empno: 7369, ename: 'SMITH', job: 'CLERK', sal: 900, deptno: 20 },
+                   { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }
+               ], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }
+           ],
+           currentProcessing: [0],
+           processedRows: [],
+           processBox: 'UPDATING MATCHED\nSMITH (7369):\nOLD salary: 800\nNEW salary: 900\nUPDATE applied',
+           processDetail: 'MATCHED condition: Updating SMITH salary from 800 to 900.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: 'UPDATED: SMITH salary 800 → 900' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Processing NOT MATCHED record - inserting NEWBIE...',
+           inputTables: [
+               { name: 'EMP_TARGET', data: [...emp.slice(0, 3), { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] },
+               { name: 'EMP_UPDATES', data: [
+                   { empno: 7369, ename: 'SMITH', job: 'CLERK', sal: 900, deptno: 20 },
+                   { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }
+               ], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }
+           ],
+           currentProcessing: [1],
+           processedRows: [0],
+           processBox: 'INSERTING NOT MATCHED\nNEWBIE (9998):\nNEW employee\nINTERN position\nSalary: 800\nINSERT applied',
+           processDetail: 'NOT MATCHED condition: Inserting new employee NEWBIE as INTERN.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: 'UPDATED: SMITH salary 800 → 900' },
+               { result: 'INSERTED: NEWBIE (9998) as INTERN' }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'MERGE operation complete - 1 update, 1 insert performed',
+           inputTables: [
+               { name: 'EMP_TARGET', data: [...emp.slice(0, 3), { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] },
+               { name: 'EMP_UPDATES', data: [
+                   { empno: 7369, ename: 'SMITH', job: 'CLERK', sal: 900, deptno: 20 },
+                   { empno: 9998, ename: 'NEWBIE', job: 'INTERN', sal: 800, deptno: 10 }
+               ], columns: ['empno', 'ename', 'job', 'sal', 'deptno'] }
+           ],
+           currentProcessing: [],
+           processedRows: [0, 1],
+           processBox: 'MERGE COMPLETE\nROWS PROCESSED: 2\nUPDATES: 1\nINSERTS: 1\nTARGET ROWS: 4 (was 3)\nTRANSACTION: committed',
+           processDetail: 'MERGE operation complete. Synchronized target table with source data using single statement.',
+           outputColumns: ['result'],
+           outputData: [
+               { result: '2 rows merged successfully' },
+               { result: '1 row updated, 1 row inserted' },
+               { result: 'Target table now has 4 employees' }
+           ]
+       }
+   ]
+},
+
+'STDDEV': {
+   query: 'SELECT deptno, ROUND(STDDEV(sal), 2) as salary_stddev, ROUND(AVG(sal), 2) as avg_salary FROM emp GROUP BY deptno ORDER BY salary_stddev DESC;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing STDDEV function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'STDDEV PARSER\nFUNCTION: standard deviation\nMEASURES: salary variation\nROUND: to 2 decimal places\nCOMPARE: with average salary',
+           processDetail: 'STDDEV measures how much salaries vary from the average within each department.',
+           outputColumns: ['deptno', 'salary_stddev', 'avg_salary'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Calculating STDDEV for DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 STDDEV CALCULATION\nSalaries: 2450, 5000, 1300\nAverage: 2916.67\nDeviations: -466.67, +2083.33, -1616.67\nVariance: 3243055.56\nSTDDEV: 1800.85',
+           processDetail: 'DEPT 10 has high standard deviation (1800.85) due to large salary gap between KING and others.',
+           outputColumns: ['deptno', 'salary_stddev', 'avg_salary'],
+           outputData: [
+               { deptno: 10, salary_stddev: 1800.85, avg_salary: 2916.67 }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Calculating STDDEV for DEPT 20...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 STDDEV CALCULATION\nSalaries: 800, 2975, 3000, 1100, 3000\nAverage: 2175\nDeviations: -1375, +800, +825, -1075, +825\nVariance: 1056250\nSTDDEV: 1027.74',
+           processDetail: 'DEPT 20 has moderate standard deviation (1027.74) with more consistent salaries.',
+           outputColumns: ['deptno', 'salary_stddev', 'avg_salary'],
+           outputData: [
+               { deptno: 10, salary_stddev: 1800.85, avg_salary: 2916.67 },
+               { deptno: 20, salary_stddev: 1027.74, avg_salary: 2175 }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Calculating STDDEV for DEPT 30...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 STDDEV CALCULATION\nSalaries: 1600, 1250, 1250, 2850, 1500, 950\nAverage: 1566.67\nDeviations: +33.33, -316.67, -316.67, +1283.33, -66.67, -616.67\nVariance: 548611.11\nSTDDEV: 740.68',
+           processDetail: 'DEPT 30 has lowest standard deviation (740.68) showing most consistent salary distribution.',
+           outputColumns: ['deptno', 'salary_stddev', 'avg_salary'],
+           outputData: [
+               { deptno: 10, salary_stddev: 1800.85, avg_salary: 2916.67 },
+               { deptno: 20, salary_stddev: 1027.74, avg_salary: 2175 },
+               { deptno: 30, salary_stddev: 740.68, avg_salary: 1566.67 }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'STDDEV operation complete - salary variations calculated',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'STDDEV COMPLETE\nHIGHEST VARIATION: DEPT 10 (1800.85)\nMODERATE VARIATION: DEPT 20 (1027.74)\nLOWEST VARIATION: DEPT 30 (740.68)\nSORTED BY: stddev DESC\nSALARY CONSISTENCY ANALYZED',
+           processDetail: 'STDDEV analysis complete. DEPT 10 has most salary variation, DEPT 30 has most consistency.',
+           outputColumns: ['deptno', 'salary_stddev', 'avg_salary'],
+           outputData: [
+               { deptno: 10, salary_stddev: 1800.85, avg_salary: 2916.67 },
+               { deptno: 20, salary_stddev: 1027.74, avg_salary: 2175 },
+               { deptno: 30, salary_stddev: 740.68, avg_salary: 1566.67 }
+           ]
+       }
+   ]
+},
+
+'VARIANCE': {
+   query: 'SELECT deptno, ROUND(VARIANCE(sal), 2) as salary_variance, ROUND(STDDEV(sal), 2) as salary_stddev FROM emp GROUP BY deptno ORDER BY salary_variance DESC;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing VARIANCE function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'VARIANCE PARSER\nFUNCTION: variance calculation\nRELATION: variance = stddev²\nMEASURES: squared deviation\nCOMPARE: with standard deviation',
+           processDetail: 'VARIANCE measures squared deviations from the mean. Standard deviation is square root of variance.',
+           outputColumns: ['deptno', 'salary_variance', 'salary_stddev'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Calculating VARIANCE for DEPT 10...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 VARIANCE CALCULATION\nSalaries: 2450, 5000, 1300\nMean: 2916.67\nSquared deviations:\n(-466.67)² = 217,781.78\n(+2083.33)² = 4,340,264.44\n(-1616.67)² = 2,613,622.22\nVARIANCE: 3,243,055.56\nSTDDEV: √3,243,055.56 = 1800.85',
+           processDetail: 'DEPT 10 variance calculation: sum of squared deviations divided by (n-1).',
+           outputColumns: ['deptno', 'salary_variance', 'salary_stddev'],
+           outputData: [
+               { deptno: 10, salary_variance: 3243055.56, salary_stddev: 1800.85 }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Calculating VARIANCE for DEPT 20...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 VARIANCE CALCULATION\nSalaries: 800, 2975, 3000, 1100, 3000\nMean: 2175\nSquared deviations:\n(-1375)² = 1,890,625\n(+800)² = 640,000\n(+825)² = 680,625\n(-1075)² = 1,155,625\n(+825)² = 680,625\nVARIANCE: 1,261,875\nSTDDEV: √1,261,875 = 1123.51',
+           processDetail: 'DEPT 20 variance: 1,261,875. Standard deviation is square root of variance.',
+           outputColumns: ['deptno', 'salary_variance', 'salary_stddev'],
+           outputData: [
+               { deptno: 10, salary_variance: 3243055.56, salary_stddev: 1800.85 },
+               { deptno: 20, salary_variance: 1261875, salary_stddev: 1123.51 }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Calculating VARIANCE for DEPT 30...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 VARIANCE CALCULATION\nSalaries: 1600, 1250, 1250, 2850, 1500, 950\nMean: 1566.67\nSquared deviations:\n(+33.33)² = 1,111\n(-316.67)² = 100,278\n(-316.67)² = 100,278\n(+1283.33)² = 1,646,936\n(-66.67)² = 4,445\n(-616.67)² = 380,278\nVARIANCE: 548,666.67\nSTDDEV: √548,666.67 = 740.72',
+           processDetail: 'DEPT 30 has lowest variance (548,666.67) indicating most consistent salaries.',
+           outputColumns: ['deptno', 'salary_variance', 'salary_stddev'],
+           outputData: [
+               { deptno: 10, salary_variance: 3243055.56, salary_stddev: 1800.85 },
+               { deptno: 20, salary_variance: 1261875, salary_stddev: 1123.51 },
+               { deptno: 30, salary_variance: 548666.67, salary_stddev: 740.72 }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'VARIANCE operation complete - salary dispersions calculated',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'VARIANCE COMPLETE\nHIGHEST VARIANCE: DEPT 10 (3,243,055.56)\nMEDIUM VARIANCE: DEPT 20 (1,261,875)\nLOWEST VARIANCE: DEPT 30 (548,666.67)\nRELATIONSHIP: variance = stddev²\nSALARY DISPERSION ANALYZED',
+           processDetail: 'VARIANCE analysis complete. Shows squared measure of salary dispersion within each department.',
+           outputColumns: ['deptno', 'salary_variance', 'salary_stddev'],
+           outputData: [
+               { deptno: 10, salary_variance: 3243055.56, salary_stddev: 1800.85 },
+               { deptno: 20, salary_variance: 1261875, salary_stddev: 1123.51 },
+               { deptno: 30, salary_variance: 548666.67, salary_stddev: 740.72 }
+           ]
+       }
+   ]
+},
+
+'DECODE': {
+   query: 'SELECT ename, sal, DECODE(deptno, 10, \'ACCOUNTING\', 20, \'RESEARCH\', 30, \'SALES\', \'OTHER\') as department_name FROM emp ORDER BY deptno;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing DECODE function...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'DECODE FUNCTION PARSER\nSYNTAX: DECODE(expr, search1, result1, search2, result2, default)\nCOLUMN: deptno\nMAPPINGS: 10→ACCOUNTING, 20→RESEARCH, 30→SALES\nDEFAULT: OTHER',
+           processDetail: 'DECODE function performs conditional logic similar to CASE WHEN, mapping department numbers to names.',
+           outputColumns: ['ename', 'sal', 'department_name'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Processing DEPT 10 employees with DECODE...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [6, 8, 13],
+           processedRows: [],
+           processBox: 'DEPT 10 DECODE PROCESSING\nCLARK: deptno=10 → DECODE → \'ACCOUNTING\'\nKING: deptno=10 → DECODE → \'ACCOUNTING\'\nMILLER: deptno=10 → DECODE → \'ACCOUNTING\'\n3 EMPLOYEES MAPPED',
+           processDetail: 'DECODE maps deptno 10 to \'ACCOUNTING\' for CLARK, KING, and MILLER.',
+           outputColumns: ['ename', 'sal', 'department_name'],
+           outputData: [
+               { ename: 'CLARK', sal: 2450, department_name: 'ACCOUNTING' },
+               { ename: 'KING', sal: 5000, department_name: 'ACCOUNTING' },
+               { ename: 'MILLER', sal: 1300, department_name: 'ACCOUNTING' }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Processing DEPT 20 employees with DECODE...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [0, 3, 7, 10, 12],
+           processedRows: [6, 8, 13],
+           processBox: 'DEPT 20 DECODE PROCESSING\nSMITH: deptno=20 → DECODE → \'RESEARCH\'\nJONES: deptno=20 → DECODE → \'RESEARCH\'\nSCOTT: deptno=20 → DECODE → \'RESEARCH\'\nADAMS: deptno=20 → DECODE → \'RESEARCH\'\nFORD: deptno=20 → DECODE → \'RESEARCH\'\n5 EMPLOYEES MAPPED',
+           processDetail: 'DECODE maps deptno 20 to \'RESEARCH\' for all 5 employees in department 20.',
+           outputColumns: ['ename', 'sal', 'department_name'],
+           outputData: [
+               { ename: 'CLARK', sal: 2450, department_name: 'ACCOUNTING' },
+               { ename: 'KING', sal: 5000, department_name: 'ACCOUNTING' },
+               { ename: 'MILLER', sal: 1300, department_name: 'ACCOUNTING' },
+               { ename: 'SMITH', sal: 800, department_name: 'RESEARCH' },
+               { ename: 'JONES', sal: 2975, department_name: 'RESEARCH' },
+               { ename: 'SCOTT', sal: 3000, department_name: 'RESEARCH' },
+               { ename: 'ADAMS', sal: 1100, department_name: 'RESEARCH' },
+               { ename: 'FORD', sal: 3000, department_name: 'RESEARCH' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Processing DEPT 30 employees with DECODE...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [1, 2, 4, 5, 9, 11],
+           processedRows: [0, 3, 6, 7, 8, 10, 12, 13],
+           processBox: 'DEPT 30 DECODE PROCESSING\nALLEN: deptno=30 → DECODE → \'SALES\'\nWARD: deptno=30 → DECODE → \'SALES\'\nMARTIN: deptno=30 → DECODE → \'SALES\'\nBLAKE: deptno=30 → DECODE → \'SALES\'\nTURNER: deptno=30 → DECODE → \'SALES\'\nJAMES: deptno=30 → DECODE → \'SALES\'\n6 EMPLOYEES MAPPED',
+           processDetail: 'DECODE maps deptno 30 to \'SALES\' for all 6 employees in department 30.',
+           outputColumns: ['ename', 'sal', 'department_name'],
+           outputData: [
+               { ename: 'CLARK', sal: 2450, department_name: 'ACCOUNTING' },
+               { ename: 'KING', sal: 5000, department_name: 'ACCOUNTING' },
+               { ename: 'MILLER', sal: 1300, department_name: 'ACCOUNTING' },
+               { ename: 'SMITH', sal: 800, department_name: 'RESEARCH' },
+               { ename: 'JONES', sal: 2975, department_name: 'RESEARCH' },
+               { ename: 'SCOTT', sal: 3000, department_name: 'RESEARCH' },
+               { ename: 'ADAMS', sal: 1100, department_name: 'RESEARCH' },
+               { ename: 'FORD', sal: 3000, department_name: 'RESEARCH' },
+               { ename: 'ALLEN', sal: 1600, department_name: 'SALES' },
+               { ename: 'WARD', sal: 1250, department_name: 'SALES' },
+               { ename: 'MARTIN', sal: 1250, department_name: 'SALES' },
+               { ename: 'BLAKE', sal: 2850, department_name: 'SALES' },
+               { ename: 'TURNER', sal: 1500, department_name: 'SALES' },
+               { ename: 'JAMES', sal: 950, department_name: 'SALES' }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'DECODE operation complete - all department codes translated',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'deptno'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'DECODE COMPLETE\nDEPT 10 → ACCOUNTING: 3 employees\nDEPT 20 → RESEARCH: 5 employees\nDEPT 30 → SALES: 6 employees\nDEFAULT \'OTHER\': not used\nALL CODES TRANSLATED',
+           processDetail: 'DECODE operation complete. All department codes successfully translated to descriptive names.',
+           outputColumns: ['ename', 'sal', 'department_name'],
+           outputData: [
+               { ename: 'CLARK', sal: 2450, department_name: 'ACCOUNTING' },
+               { ename: 'KING', sal: 5000, department_name: 'ACCOUNTING' },
+               { ename: 'MILLER', sal: 1300, department_name: 'ACCOUNTING' },
+               { ename: 'SMITH', sal: 800, department_name: 'RESEARCH' },
+               { ename: 'JONES', sal: 2975, department_name: 'RESEARCH' },
+               { ename: 'SCOTT', sal: 3000, department_name: 'RESEARCH' },
+               { ename: 'ADAMS', sal: 1100, department_name: 'RESEARCH' },
+               { ename: 'FORD', sal: 3000, department_name: 'RESEARCH' },
+               { ename: 'ALLEN', sal: 1600, department_name: 'SALES' },
+               { ename: 'WARD', sal: 1250, department_name: 'SALES' },
+               { ename: 'MARTIN', sal: 1250, department_name: 'SALES' },
+               { ename: 'BLAKE', sal: 2850, department_name: 'SALES' },
+               { ename: 'TURNER', sal: 1500, department_name: 'SALES' },
+               { ename: 'JAMES', sal: 950, department_name: 'SALES' }
+           ]
+       }
+   ]
+},
+
+'NVL': {
+   query: 'SELECT ename, sal, comm, NVL(comm, 0) as commission_with_default, NVL2(comm, \'Has Commission\', \'No Commission\') as comm_status FROM emp ORDER BY comm DESC NULLS LAST;',
+   totalSteps: 5,
+   steps: [
+       {
+           stepNum: 0,
+           text: 'Oracle parser analyzing NVL and NVL2 functions...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm'] }],
+           currentProcessing: [],
+           processedRows: [],
+           processBox: 'NVL/NVL2 PARSER\nNVL(comm, 0): replace NULL with 0\nNVL2(comm, \'Has\', \'No\'): different values for NULL/not NULL\nNULL HANDLING: comprehensive\nORDER BY: comm DESC NULLS LAST',
+           processDetail: 'NVL replaces NULL with specified value. NVL2 returns different values based on NULL/not NULL condition.',
+           outputColumns: ['ename', 'sal', 'comm', 'commission_with_default', 'comm_status'],
+           outputData: []
+       },
+       {
+           stepNum: 1,
+           text: 'Processing employees with commission...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm'] }],
+           currentProcessing: [1, 2, 4, 9],
+           processedRows: [],
+           processBox: 'PROCESSING NON-NULL COMMISSION\nALLEN: comm=300 → NVL(300,0)=300, NVL2=\'Has Commission\'\nWARD: comm=500 → NVL(500,0)=500, NVL2=\'Has Commission\'\nMARTIN: comm=1400 → NVL(1400,0)=1400, NVL2=\'Has Commission\'\nTURNER: comm=0 → NVL(0,0)=0, NVL2=\'Has Commission\'',
+           processDetail: 'Processing employees with non-NULL commission values. NVL keeps original values, NVL2 returns \'Has Commission\'.',
+           outputColumns: ['ename', 'sal', 'comm', 'commission_with_default', 'comm_status'],
+           outputData: [
+               { ename: 'MARTIN', sal: 1250, comm: 1400, commission_with_default: 1400, comm_status: 'Has Commission' },
+               { ename: 'WARD', sal: 1250, comm: 500, commission_with_default: 500, comm_status: 'Has Commission' },
+               { ename: 'ALLEN', sal: 1600, comm: 300, commission_with_default: 300, comm_status: 'Has Commission' },
+               { ename: 'TURNER', sal: 1500, comm: 0, commission_with_default: 0, comm_status: 'Has Commission' }
+           ]
+       },
+       {
+           stepNum: 2,
+           text: 'Processing employees without commission (NULL values)...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm'] }],
+           currentProcessing: [0, 3, 5, 6, 7, 8, 10, 11, 12, 13],
+           processedRows: [1, 2, 4, 9],
+           processBox: 'PROCESSING NULL COMMISSION\nSMITH: comm=NULL → NVL(NULL,0)=0, NVL2=\'No Commission\'\nJONES: comm=NULL → NVL(NULL,0)=0, NVL2=\'No Commission\'\nBLAKE: comm=NULL → NVL(NULL,0)=0, NVL2=\'No Commission\'\n... (10 total employees with NULL commission)',
+           processDetail: 'Processing employees with NULL commission. NVL converts NULL to 0, NVL2 returns \'No Commission\'.',
+           outputColumns: ['ename', 'sal', 'comm', 'commission_with_default', 'comm_status'],
+           outputData: [
+               { ename: 'MARTIN', sal: 1250, comm: 1400, commission_with_default: 1400, comm_status: 'Has Commission' },
+               { ename: 'WARD', sal: 1250, comm: 500, commission_with_default: 500, comm_status: 'Has Commission' },
+               { ename: 'ALLEN', sal: 1600, comm: 300, commission_with_default: 300, comm_status: 'Has Commission' },
+               { ename: 'TURNER', sal: 1500, comm: 0, commission_with_default: 0, comm_status: 'Has Commission' },
+               { ename: 'SMITH', sal: 800, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'JONES', sal: 2975, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'BLAKE', sal: 2850, comm: null, commission_with_default: 0, comm_status: 'No Commission' }
+           ]
+       },
+       {
+           stepNum: 3,
+           text: 'Completing NULL value processing...',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm'] }],
+           currentProcessing: [6, 7, 8, 10, 11, 12, 13],
+           processedRows: [0, 1, 2, 3, 4, 5, 9],
+           processBox: 'COMPLETING NULL PROCESSING\nCLARK: comm=NULL → 0, \'No Commission\'\nSCOTT: comm=NULL → 0, \'No Commission\'\nKING: comm=NULL → 0, \'No Commission\'\nADAMS: comm=NULL → 0, \'No Commission\'\nJAMES: comm=NULL → 0, \'No Commission\'\nFORD: comm=NULL → 0, \'No Commission\'\nMILLER: comm=NULL → 0, \'No Commission\'',
+           processDetail: 'Completing processing of remaining employees with NULL commission values.',
+           outputColumns: ['ename', 'sal', 'comm', 'commission_with_default', 'comm_status'],
+           outputData: [
+               { ename: 'MARTIN', sal: 1250, comm: 1400, commission_with_default: 1400, comm_status: 'Has Commission' },
+               { ename: 'WARD', sal: 1250, comm: 500, commission_with_default: 500, comm_status: 'Has Commission' },
+               { ename: 'ALLEN', sal: 1600, comm: 300, commission_with_default: 300, comm_status: 'Has Commission' },
+               { ename: 'TURNER', sal: 1500, comm: 0, commission_with_default: 0, comm_status: 'Has Commission' },
+               { ename: 'SMITH', sal: 800, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'JONES', sal: 2975, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'BLAKE', sal: 2850, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'CLARK', sal: 2450, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'SCOTT', sal: 3000, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'KING', sal: 5000, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'ADAMS', sal: 1100, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'JAMES', sal: 950, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'FORD', sal: 3000, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'MILLER', sal: 1300, comm: null, commission_with_default: 0, comm_status: 'No Commission' }
+           ]
+       },
+       {
+           stepNum: 4,
+           text: 'NVL/NVL2 operation complete - NULL values handled',
+           inputTables: [{ name: 'EMP', data: emp, columns: ['empno', 'ename', 'sal', 'comm'] }],
+           currentProcessing: [],
+           processedRows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+           processBox: 'NVL/NVL2 COMPLETE\nNVL CONVERSIONS: 10 NULL → 0\nNVL2 CLASSIFICATIONS:\n- Has Commission: 4 employees\n- No Commission: 10 employees\nORDERED: comm DESC, NULLs last\nNULL HANDLING DEMONSTRATED',
+           processDetail: 'NVL/NVL2 operation complete. Demonstrated comprehensive NULL value handling with both replacement and conditional logic.',
+           outputColumns: ['ename', 'sal', 'comm', 'commission_with_default', 'comm_status'],
+           outputData: [
+               { ename: 'MARTIN', sal: 1250, comm: 1400, commission_with_default: 1400, comm_status: 'Has Commission' },
+               { ename: 'WARD', sal: 1250, comm: 500, commission_with_default: 500, comm_status: 'Has Commission' },
+               { ename: 'ALLEN', sal: 1600, comm: 300, commission_with_default: 300, comm_status: 'Has Commission' },
+               { ename: 'TURNER', sal: 1500, comm: 0, commission_with_default: 0, comm_status: 'Has Commission' },
+               { ename: 'SMITH', sal: 800, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'JONES', sal: 2975, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'BLAKE', sal: 2850, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'CLARK', sal: 2450, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'SCOTT', sal: 3000, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'KING', sal: 5000, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'ADAMS', sal: 1100, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'JAMES', sal: 950, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'FORD', sal: 3000, comm: null, commission_with_default: 0, comm_status: 'No Commission' },
+               { ename: 'MILLER', sal: 1300, comm: null, commission_with_default: 0, comm_status: 'No Commission' }
+           ]
+       }
+   ]
+},
 
 
           
